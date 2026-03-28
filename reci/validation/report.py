@@ -9,9 +9,9 @@ from enum import Enum
 class Severity(Enum):
     """ESLint-style three-level severity."""
 
-    ERROR = 'error'
-    WARNING = 'warning'
-    INFO = 'info'
+    ERROR = "error"
+    WARNING = "warning"
+    INFO = "info"
 
 
 @dataclass

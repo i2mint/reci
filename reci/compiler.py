@@ -20,7 +20,7 @@ from reci.graph import RecipeGraph, ActionNode, CrossJobEdge
 # Config reference rewriting
 # ---------------------------------------------------------------------------
 
-_CONFIG_REF_RE = re.compile(r'\$\{\{\s*config\.(\w+)\s*\}\}')
+_CONFIG_REF_RE = re.compile(r"\$\{\{\s*config\.(\w+)\s*\}\}")
 
 
 def _rewrite_config_refs(value: str) -> str:
@@ -29,7 +29,7 @@ def _rewrite_config_refs(value: str) -> str:
     >>> _rewrite_config_refs('${{ config.python_versions }}')
     '${{ needs.setup.outputs.python_versions }}'
     """
-    return _CONFIG_REF_RE.sub(r'${{ needs.setup.outputs.\1 }}', value)
+    return _CONFIG_REF_RE.sub(r"${{ needs.setup.outputs.\1 }}", value)
 
 
 def _rewrite_all_config_refs(obj: Any) -> Any:
@@ -53,7 +53,7 @@ def _serialize_config_value(value: Any) -> str:
     if isinstance(value, (list, dict)):
         return json.dumps(value)
     if isinstance(value, bool):
-        return 'true' if value else 'false'
+        return "true" if value else "false"
     return str(value)
 
 
@@ -65,19 +65,19 @@ def _build_setup_job(config: dict[str, Any]) -> dict:
     for key, value in config.items():
         serialized = _serialize_config_value(value)
         lines.append(f'echo "{key}={serialized}" >> $GITHUB_OUTPUT')
-        outputs[key] = f'${{{{ steps.config.outputs.{key} }}}}'
+        outputs[key] = f"${{{{ steps.config.outputs.{key} }}}}"
 
-    run_script = '\n'.join(lines) if lines else 'echo "No config values"'
+    run_script = "\n".join(lines) if lines else 'echo "No config values"'
 
     return {
-        'name': 'Setup',
-        'runs-on': 'ubuntu-latest',
-        'outputs': outputs,
-        'steps': [
+        "name": "Setup",
+        "runs-on": "ubuntu-latest",
+        "outputs": outputs,
+        "steps": [
             {
-                'name': 'Export config',
-                'id': 'config',
-                'run': run_script,
+                "name": "Export config",
+                "id": "config",
+                "run": run_script,
             }
         ],
     }
@@ -96,19 +96,19 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
     """
     d: dict[str, Any] = {}
     if step.name:
-        d['name'] = step.name
-    d['id'] = step.id
+        d["name"] = step.name
+    d["id"] = step.id
 
     if step.uses:
-        d['uses'] = step.uses
+        d["uses"] = step.uses
     if step.run:
-        d['run'] = _rewrite_config_refs(step.run)
+        d["run"] = _rewrite_config_refs(step.run)
     if step.if_:
-        d['if'] = _rewrite_config_refs(step.if_)
+        d["if"] = _rewrite_config_refs(step.if_)
     if step.with_:
-        d['with'] = {k: _rewrite_config_refs(v) for k, v in step.with_.items()}
+        d["with"] = {k: _rewrite_config_refs(v) for k, v in step.with_.items()}
     if step.env:
-        d['env'] = {k: _rewrite_config_refs(v) for k, v in step.env.items()}
+        d["env"] = {k: _rewrite_config_refs(v) for k, v in step.env.items()}
 
     return d
 
@@ -131,28 +131,28 @@ def _build_job(
     d: dict[str, Any] = {}
 
     if job_spec.if_:
-        d['if'] = _rewrite_config_refs(job_spec.if_)
-    d['runs-on'] = job_spec.runs_on
+        d["if"] = _rewrite_config_refs(job_spec.if_)
+    d["runs-on"] = job_spec.runs_on
 
     # needs: explicit + setup + data-flow driven
     needs = list(job_spec.needs)
-    if 'setup' not in needs:
-        needs.insert(0, 'setup')
+    if "setup" not in needs:
+        needs.insert(0, "setup")
     # Add cross-job needs
     if cross_job_edges:
         for edge in cross_job_edges:
             if edge.target_job == job_spec.id and edge.source_job not in needs:
                 needs.append(edge.source_job)
-    d['needs'] = needs
+    d["needs"] = needs
 
     if job_spec.strategy:
-        d['strategy'] = _rewrite_all_config_refs(job_spec.strategy)
+        d["strategy"] = _rewrite_all_config_refs(job_spec.strategy)
     if job_spec.permissions:
-        d['permissions'] = job_spec.permissions
+        d["permissions"] = job_spec.permissions
     if job_spec.continue_on_error:
-        d['continue-on-error'] = True
+        d["continue-on-error"] = True
     if job_spec.env:
-        d['env'] = {k: _rewrite_config_refs(v) for k, v in job_spec.env.items()}
+        d["env"] = {k: _rewrite_config_refs(v) for k, v in job_spec.env.items()}
 
     # Job-level outputs for cross-job forwarding
     if cross_job_edges:
@@ -160,7 +160,7 @@ def _build_job(
             job_spec.id, graph.job_nodes(job_spec.id), cross_job_edges
         )
         if job_outputs:
-            d['outputs'] = job_outputs
+            d["outputs"] = job_outputs
 
     # Steps
     steps: list[dict] = []
@@ -169,18 +169,18 @@ def _build_job(
         step_dict = _build_step(step_spec, action_spec=spec)
 
         # Apply wired inputs (from Phase 2+)
-        node_key = f'{job_spec.id}.{step_spec.id}'
+        node_key = f"{job_spec.id}.{step_spec.id}"
         if wired_inputs and node_key in wired_inputs:
             wired = wired_inputs[node_key]
-            existing_with = step_dict.get('with', {})
+            existing_with = step_dict.get("with", {})
             # Wired inputs fill in gaps; explicit with: takes precedence
             merged = {**wired, **existing_with}
             if merged:
-                step_dict['with'] = merged
+                step_dict["with"] = merged
 
         steps.append(step_dict)
 
-    d['steps'] = steps
+    d["steps"] = steps
     return d
 
 
@@ -200,7 +200,7 @@ def _build_job_outputs(
         if edge.source_job == job_id:
             output_key = edge.source_output
             outputs[output_key] = (
-                f'${{{{ steps.{edge.source_step_id}.outputs.{edge.source_output} }}}}'
+                f"${{{{ steps.{edge.source_step_id}.outputs.{edge.source_output} }}}}"
             )
     return outputs
 
@@ -222,7 +222,7 @@ def _resolve_config_key(
     """
     if ref:
         local = action_local_name(ref)
-        scoped = f'{local}__{input_name}'
+        scoped = f"{local}__{input_name}"
         if scoped in config:
             return scoped
     if input_name in config:
@@ -259,15 +259,13 @@ def _wire_step_inputs(
         # Level 2: upstream output name match
         if search_name in upstream_outputs:
             step_id, out_name = upstream_outputs[search_name]
-            wired[input_spec.name] = f'${{{{ steps.{step_id}.outputs.{out_name} }}}}'
+            wired[input_spec.name] = f"${{{{ steps.{step_id}.outputs.{out_name} }}}}"
             continue
 
         # Level 3: config (scoped then shared)
         config_key = _resolve_config_key(norm_name, node.ref, config)
         if config_key is not None:
-            wired[input_spec.name] = (
-                f'${{{{ needs.setup.outputs.{config_key} }}}}'
-            )
+            wired[input_spec.name] = f"${{{{ needs.setup.outputs.{config_key} }}}}"
             continue
 
         # Level 4: default exists → omit (GitHub Actions uses the default)
@@ -398,7 +396,7 @@ def compile_recipe(
             for edge in cross_job_edges:
                 if edge.target_job == job_id and edge.target_step_id == node.step_id:
                     upstream[edge.source_output] = (
-                        f'needs.{edge.source_job}.outputs',
+                        f"needs.{edge.source_job}.outputs",
                         edge.source_output,
                     )
 
@@ -412,17 +410,17 @@ def compile_recipe(
 
     # Build workflow
     workflow: dict[str, Any] = {}
-    workflow['name'] = recipe.name or 'CI'
-    workflow['on'] = recipe.on
+    workflow["name"] = recipe.name or "CI"
+    workflow["on"] = recipe.on
 
     if recipe.env:
-        workflow['env'] = recipe.env
+        workflow["env"] = recipe.env
 
     jobs: dict[str, Any] = {}
 
     # Setup job (always present when config is provided)
     if config:
-        jobs['setup'] = _build_setup_job(config)
+        jobs["setup"] = _build_setup_job(config)
 
     # Recipe jobs
     for job_id, job_spec in recipe.jobs.items():
@@ -435,5 +433,5 @@ def compile_recipe(
             wired_inputs=all_wired,
         )
 
-    workflow['jobs'] = jobs
+    workflow["jobs"] = jobs
     return workflow

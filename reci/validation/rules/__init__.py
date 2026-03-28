@@ -47,7 +47,7 @@ def run_all_rules(
             # Apply severity override
             if finding.rule_id in severity_overrides:
                 override = severity_overrides[finding.rule_id]
-                if override == 'off':
+                if override == "off":
                     continue
                 finding = Finding(
                     rule_id=finding.rule_id,

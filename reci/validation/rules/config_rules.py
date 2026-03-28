@@ -19,15 +19,13 @@ def _all_config_references(graph) -> set[str]:
             # Scoped key
             if node.ref:
                 local = action_local_name(node.ref)
-                refs.add(f'{local}__{norm_name}')
+                refs.add(f"{local}__{norm_name}")
             refs.add(norm_name)
     return refs
 
 
-@register_rule('CONF001')
-def check_missing_required_config(
-    graph, config: dict[str, Any]
-) -> Iterable[Finding]:
+@register_rule("CONF001")
+def check_missing_required_config(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Config keys that are required but not present."""
     for node in graph.nodes():
         for norm_name, input_spec in node.input_specs.items():
@@ -51,13 +49,13 @@ def check_missing_required_config(
             # Now check config
             if node.ref:
                 local = action_local_name(node.ref)
-                scoped = f'{local}__{norm_name}'
+                scoped = f"{local}__{norm_name}"
                 if scoped in config:
                     continue
             if norm_name in config:
                 continue
             yield Finding(
-                rule_id='CONF001',
+                rule_id="CONF001",
                 severity=Severity.ERROR,
                 message=(
                     f"Required config key '{norm_name}' (for '{node.key}') "
@@ -67,14 +65,14 @@ def check_missing_required_config(
             )
 
 
-@register_rule('CONF003')
+@register_rule("CONF003")
 def check_unused_config(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Config keys present but not referenced by any action."""
     referenced = _all_config_references(graph)
     for key in config:
         if key not in referenced:
             yield Finding(
-                rule_id='CONF003',
+                rule_id="CONF003",
                 severity=Severity.INFO,
                 message=f"Config key '{key}' is not referenced by any action input.",
             )

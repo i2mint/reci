@@ -14,7 +14,7 @@ def _resolve_config_key(
 ) -> str | None:
     if ref:
         local = action_local_name(ref)
-        scoped = f'{local}__{input_name}'
+        scoped = f"{local}__{input_name}"
         if scoped in config:
             return scoped
     if input_name in config:
@@ -33,10 +33,8 @@ def _build_upstream_outputs(graph, job_id: str, up_to_key: str) -> dict[str, str
     return outputs
 
 
-@register_rule('FLOW001')
-def check_unsourced_required_inputs(
-    graph, config: dict[str, Any]
-) -> Iterable[Finding]:
+@register_rule("FLOW001")
+def check_unsourced_required_inputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Required input has no source at any level."""
     for node in graph.nodes():
         upstream = _build_upstream_outputs(graph, node.job, node.key)
@@ -58,7 +56,7 @@ def check_unsourced_required_inputs(
                 continue
             # Level 5: error
             yield Finding(
-                rule_id='FLOW001',
+                rule_id="FLOW001",
                 severity=Severity.ERROR,
                 message=(
                     f"Required input '{input_spec.name}' of '{node.key}' "
@@ -69,7 +67,7 @@ def check_unsourced_required_inputs(
             )
 
 
-@register_rule('FLOW002')
+@register_rule("FLOW002")
 def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """An input name matches multiple upstream outputs."""
     for node in graph.nodes():
@@ -86,7 +84,7 @@ def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
                     matches.append(prev_node.step_id)
             if len(matches) > 1:
                 yield Finding(
-                    rule_id='FLOW002',
+                    rule_id="FLOW002",
                     severity=Severity.WARNING,
                     message=(
                         f"Input '{input_spec.name}' of '{node.key}' matches "
@@ -97,7 +95,7 @@ def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
-@register_rule('FLOW004')
+@register_rule("FLOW004")
 def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """An output is declared but never consumed downstream."""
     consumed: set[str] = set()
@@ -107,14 +105,14 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
             consumed.add(search)
         # Also count explicit with: values that reference steps
         for v in node.with_.values():
-            if 'steps.' in str(v) and '.outputs.' in str(v):
+            if "steps." in str(v) and ".outputs." in str(v):
                 consumed.add(str(v))
 
     for node in graph.nodes():
         for name in node.output_names:
             if name not in consumed:
                 yield Finding(
-                    rule_id='FLOW004',
+                    rule_id="FLOW004",
                     severity=Severity.INFO,
                     message=(
                         f"Output '{name}' of '{node.key}' "
@@ -124,15 +122,14 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
-@register_rule('FLOW005')
+@register_rule("FLOW005")
 def check_boolean_coercion(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """A string output is wired to a likely-boolean input."""
     for node in graph.nodes():
         for norm_name, input_spec in node.input_specs.items():
-            is_boolean = (
-                input_spec.default is not None
-                and str(input_spec.default).lower() in ('true', 'false')
-            )
+            is_boolean = input_spec.default is not None and str(
+                input_spec.default
+            ).lower() in ("true", "false")
             if not is_boolean:
                 continue
             # Check if this input is wired from an upstream output
@@ -142,7 +139,7 @@ def check_boolean_coercion(graph, config: dict[str, Any]) -> Iterable[Finding]:
             upstream = _build_upstream_outputs(graph, node.job, node.key)
             if search_name in upstream:
                 yield Finding(
-                    rule_id='FLOW005',
+                    rule_id="FLOW005",
                     severity=Severity.WARNING,
                     message=(
                         f"Input '{input_spec.name}' of '{node.key}' "
@@ -155,7 +152,7 @@ def check_boolean_coercion(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
-@register_rule('FLOW006')
+@register_rule("FLOW006")
 def check_matrix_output(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Matrix job outputs consumed by downstream are non-deterministic."""
     # This requires knowing which jobs have matrix strategies.

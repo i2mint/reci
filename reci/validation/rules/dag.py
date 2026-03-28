@@ -10,7 +10,7 @@ from reci.validation.report import Finding, Severity
 from reci.validation.rules import register_rule
 
 
-@register_rule('DAG001')
+@register_rule("DAG001")
 def check_cycles(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Detect cycles in the dependency graph."""
     ts = TopologicalSorter(graph._deps)
@@ -19,13 +19,13 @@ def check_cycles(graph, config: dict[str, Any]) -> Iterable[Finding]:
     except CycleError as e:
         cycle = e.args[1] if len(e.args) > 1 else []
         yield Finding(
-            rule_id='DAG001',
+            rule_id="DAG001",
             severity=Severity.ERROR,
             message=f"Cycle detected: {' -> '.join(str(n) for n in cycle)}",
         )
 
 
-@register_rule('DAG002')
+@register_rule("DAG002")
 def check_duplicate_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Flag duplicate output names within a job (at the job output level)."""
     for job_id in graph.job_ids():
@@ -36,7 +36,7 @@ def check_duplicate_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
         for name, sources in output_sources.items():
             if len(sources) > 1:
                 yield Finding(
-                    rule_id='DAG002',
+                    rule_id="DAG002",
                     severity=Severity.ERROR,
                     message=(
                         f"Duplicate output '{name}' in job '{job_id}' "
@@ -46,7 +46,7 @@ def check_duplicate_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
-@register_rule('DAG004')
+@register_rule("DAG004")
 def check_isolated_nodes(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Flag nodes with no data connections (no outputs consumed, no inputs from graph)."""
     # Collect all consumed output names
@@ -61,7 +61,7 @@ def check_isolated_nodes(graph, config: dict[str, Any]) -> Iterable[Finding]:
         has_graph_input = bool(node.input_specs)
         if not has_consumed_output and not has_graph_input and not node.run:
             yield Finding(
-                rule_id='DAG004',
+                rule_id="DAG004",
                 severity=Severity.WARNING,
                 message=f"Node '{node.key}' appears isolated (no data connections).",
                 location=node.key,

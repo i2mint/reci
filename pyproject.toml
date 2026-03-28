@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reci"
-version = "0.0.1"
+version = "0.0.2"
 description = "Compile declarative CI recipes into fully-wired GitHub Actions workflows with typed data-flow validation."
 readme = "README.md"
 requires-python = ">=3.10"

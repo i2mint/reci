@@ -27,7 +27,7 @@ def resolve_config_for_input(
     """
     if ref:
         local = action_local_name(ref)
-        scoped = f'{local}__{input_name}'
+        scoped = f"{local}__{input_name}"
         if scoped in config:
             return scoped, config[scoped]
     if input_name in config:
@@ -35,7 +35,7 @@ def resolve_config_for_input(
     return None
 
 
-def flatten_config(nested: dict, *, prefix: str = '') -> dict[str, Any]:
+def flatten_config(nested: dict, *, prefix: str = "") -> dict[str, Any]:
     """Convert a nested dict to a flat dict with ``__`` separators.
 
     >>> flatten_config({'testing': {'python_versions': ['3.10']}})
@@ -43,7 +43,7 @@ def flatten_config(nested: dict, *, prefix: str = '') -> dict[str, Any]:
     """
     result: dict[str, Any] = {}
     for k, v in nested.items():
-        full_key = f'{prefix}__{k}' if prefix else k
+        full_key = f"{prefix}__{k}" if prefix else k
         if isinstance(v, dict):
             result.update(flatten_config(v, prefix=full_key))
         else:

@@ -19,8 +19,8 @@ class YamlAdapter:
 
     def write(self, path: str, config: dict[str, Any]) -> None:
         y = _make_yaml()
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             y.dump(config, f)
 
     def default_path(self) -> str:
-        return '.ci.yml'
+        return ".ci.yml"

@@ -17,7 +17,7 @@ from ruamel.yaml.scalarstring import (
     SingleQuotedScalarString,
 )
 
-_EXPRESSION_RE = re.compile(r'\$\{\{.*?\}\}')
+_EXPRESSION_RE = re.compile(r"\$\{\{.*?\}\}")
 
 
 def _make_yaml() -> YAML:
@@ -70,7 +70,7 @@ def _prepare_workflow_dict(d: Any) -> Any:
     if isinstance(d, list):
         return [_prepare_workflow_dict(v) for v in d]
     if isinstance(d, str):
-        if '\n' in d:
+        if "\n" in d:
             return LiteralScalarString(d)
         if _EXPRESSION_RE.search(d):
             return SingleQuotedScalarString(d)

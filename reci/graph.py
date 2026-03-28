@@ -36,16 +36,14 @@ class ActionNode:
     with_: dict[str, str] = field(default_factory=dict, hash=False, compare=False)
     bind: dict[str, str] = field(default_factory=dict, hash=False, compare=False)
     if_: str | None = field(default=None, hash=False, compare=False)
-    declared_outputs: list[str] = field(
-        default_factory=list, hash=False, compare=False
-    )
+    declared_outputs: list[str] = field(default_factory=list, hash=False, compare=False)
     run: str | None = field(default=None, hash=False, compare=False)
     name: str | None = field(default=None, hash=False, compare=False)
     env: dict[str, str] = field(default_factory=dict, hash=False, compare=False)
 
     @property
     def key(self) -> str:
-        return f'{self.job}.{self.step_id}'
+        return f"{self.job}.{self.step_id}"
 
     @property
     def output_names(self) -> list[str]:
@@ -169,10 +167,7 @@ class RecipeGraph:
         return self._nodes.keys()
 
     def jobs(self) -> dict[str, list[ActionNode]]:
-        return {
-            jid: [self._nodes[k] for k in keys]
-            for jid, keys in self._jobs.items()
-        }
+        return {jid: [self._nodes[k] for k in keys] for jid, keys in self._jobs.items()}
 
     def job_ids(self) -> list[str]:
         return list(self._jobs.keys())
