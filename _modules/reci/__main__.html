@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>reci.__main__ &mdash; reci 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            reci
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci.html">reci</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/__main__.html">reci.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/action_spec.html">reci.action_spec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters.html">reci.adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/base.html">reci.adapters.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/package_json.html">reci.adapters.package_json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/pyproject.html">reci.adapters.pyproject</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/wads.html">reci.adapters.wads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/yaml_adapter.html">reci.adapters.yaml_adapter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/compiler.html">reci.compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/config.html">reci.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/graph.html">reci.graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation.html">reci.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules.html">reci.validation.rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/action.html">reci.validation.rules.action</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/config_rules.html">reci.validation.rules.config_rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/dag.html">reci.validation.rules.dag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/flow.html">reci.validation.rules.flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/purity.html">reci.validation.rules.purity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/yaml_gen.html">reci.yaml_gen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">reci</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">reci.__main__</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for reci.__main__</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;CLI entry point — ``python -m reci`` or ``reci`` command.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argh</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.action_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">action_spec_from_ref</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">,</span> <span class="n">ActionFetchError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.recipe</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_recipe</span><span class="p">,</span> <span class="n">RecipeParseError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecipeGraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.compiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_recipe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">collect_required_config_keys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.yaml_gen</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_workflow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.validation.formatters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">format_cli</span><span class="p">,</span>
+    <span class="n">format_json</span><span class="p">,</span>
+    <span class="n">format_github_annotations</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_adapter</span><span class="p">,</span> <span class="n">detect_adapter</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_config</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">adapter</span> <span class="o">=</span> <span class="n">get_adapter</span><span class="p">(</span><span class="n">config_adapter</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">config_path</span> <span class="ow">or</span> <span class="n">adapter</span><span class="o">.</span><span class="n">default_path</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fetch_specs</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">]:</span>
+    <span class="n">specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span> <span class="ow">and</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">specs</span><span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_spec_from_ref</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">ActionFetchError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;warning: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">specs</span>
+
+
+<div class="viewcode-block" id="compile">
+<a class="viewcode-back" href="../../module_docs/reci/__main__.html#reci.__main__.compile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span>
+    <span class="n">recipe</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.github/workflows/ci.yml&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compile a recipe into a GitHub Actions workflow YAML.&quot;&quot;&quot;</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">parse_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">_fetch_specs</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">_load_config</span><span class="p">(</span><span class="n">config_adapter</span><span class="o">=</span><span class="n">config_adapter</span><span class="p">,</span> <span class="n">config_path</span><span class="o">=</span><span class="n">config_path</span><span class="p">)</span>
+
+    <span class="n">workflow</span> <span class="o">=</span> <span class="n">compile_recipe</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">specs</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="c1"># Validate and print warnings</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">RecipeGraph</span><span class="o">.</span><span class="n">from_recipe</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">specs</span><span class="p">)</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">findings</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">format_cli</span><span class="p">(</span><span class="n">report</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">has_errors</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Compilation aborted due to errors.&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Write output</span>
+    <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">dump_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrote </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="validate">
+<a class="viewcode-back" href="../../module_docs/reci/__main__.html#reci.__main__.validate">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">recipe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;recipe.yml&#39;</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cli&#39;</span><span class="p">,</span>
+    <span class="n">max_warnings</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate recipe and config for correctness.&quot;&quot;&quot;</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">parse_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">_fetch_specs</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">_load_config</span><span class="p">(</span><span class="n">config_adapter</span><span class="o">=</span><span class="n">config_adapter</span><span class="p">,</span> <span class="n">config_path</span><span class="o">=</span><span class="n">config_path</span><span class="p">)</span>
+
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">RecipeGraph</span><span class="o">.</span><span class="n">from_recipe</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">specs</span><span class="p">)</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="c1"># Format output</span>
+    <span class="n">formatter</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;cli&#39;</span><span class="p">:</span> <span class="n">format_cli</span><span class="p">,</span>
+        <span class="s1">&#39;json&#39;</span><span class="p">:</span> <span class="n">format_json</span><span class="p">,</span>
+        <span class="s1">&#39;github&#39;</span><span class="p">:</span> <span class="n">format_github_annotations</span><span class="p">,</span>
+    <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="n">format_cli</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">formatter</span><span class="p">(</span><span class="n">report</span><span class="p">))</span>
+
+    <span class="c1"># Exit code</span>
+    <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">has_errors</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_warnings</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">report</span><span class="o">.</span><span class="n">warning_count</span> <span class="o">&gt;</span> <span class="n">max_warnings</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Too many warnings: </span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">warning_count</span><span class="si">}</span><span class="s1"> &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;(max </span><span class="si">{</span><span class="n">max_warnings</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+            <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="scaffold">
+<a class="viewcode-back" href="../../module_docs/reci/__main__.html#reci.__main__.scaffold">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scaffold</span><span class="p">(</span>
+    <span class="n">recipe</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.github/workflows/ci.yml&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate workflow YAML and config skeleton.&quot;&quot;&quot;</span>
+    <span class="n">rec</span> <span class="o">=</span> <span class="n">parse_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">_fetch_specs</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span>
+    <span class="n">required</span> <span class="o">=</span> <span class="n">collect_required_config_keys</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">specs</span><span class="p">)</span>
+
+    <span class="n">adapter</span> <span class="o">=</span> <span class="n">get_adapter</span><span class="p">(</span><span class="n">config_adapter</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">config_path</span> <span class="ow">or</span> <span class="n">adapter</span><span class="o">.</span><span class="n">default_path</span><span class="p">()</span>
+
+    <span class="c1"># Read existing config or start fresh</span>
+    <span class="n">existing</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">is_required</span> <span class="ow">in</span> <span class="n">required</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing</span><span class="p">:</span>
+            <span class="n">existing</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;REQUIRED: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&gt;&#39;</span> <span class="k">if</span> <span class="n">is_required</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="n">adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">existing</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated config: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Compile with skeleton config</span>
+    <span class="n">workflow</span> <span class="o">=</span> <span class="n">compile_recipe</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">specs</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">existing</span><span class="p">)</span>
+    <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">dump_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrote </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="inspect">
+<a class="viewcode-back" href="../../module_docs/reci/__main__.html#reci.__main__.inspect">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inspect</span><span class="p">(</span><span class="n">action_ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch and display an action&#39;s input/output contract.&quot;&quot;&quot;</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">action_spec_from_ref</span><span class="p">(</span><span class="n">action_ref</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Action: </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">inputs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Inputs:&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="s1">&#39; (required)&#39;</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39; [default: </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s1">]&#39;</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">default</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="n">req</span><span class="si">}{</span><span class="n">default</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Inputs: none&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Outputs:&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">out</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">out</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Outputs: none&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="n">argh</span><span class="o">.</span><span class="n">dispatch_commands</span><span class="p">([</span><span class="nb">compile</span><span class="p">,</span> <span class="n">validate</span><span class="p">,</span> <span class="n">scaffold</span><span class="p">,</span> <span class="n">inspect</span><span class="p">])</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

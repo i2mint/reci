@@ -1,0 +1,4 @@
+reci.adapters.pyproject
+=======================
+.. automodule:: reci.adapters.pyproject
+   :members:

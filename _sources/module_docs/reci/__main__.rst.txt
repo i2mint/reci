@@ -1,0 +1,4 @@
+reci.__main__
+=============
+.. automodule:: reci.__main__
+   :members:

@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>reci.action_spec &mdash; reci 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            reci
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci.html">reci</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/__main__.html">reci.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/action_spec.html">reci.action_spec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters.html">reci.adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/base.html">reci.adapters.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/package_json.html">reci.adapters.package_json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/pyproject.html">reci.adapters.pyproject</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/wads.html">reci.adapters.wads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/yaml_adapter.html">reci.adapters.yaml_adapter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/compiler.html">reci.compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/config.html">reci.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/graph.html">reci.graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation.html">reci.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules.html">reci.validation.rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/action.html">reci.validation.rules.action</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/config_rules.html">reci.validation.rules.config_rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/dag.html">reci.validation.rules.dag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/flow.html">reci.validation.rules.flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/purity.html">reci.validation.rules.purity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/yaml_gen.html">reci.yaml_gen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">reci</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">reci.action_spec</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for reci.action_spec</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Action contract model — parsed from ``action.yml`` metadata.</span>
+
+<span class="sd">An :class:`ActionSpec` captures the typed input/output contract of a GitHub</span>
+<span class="sd">Action so that downstream modules (graph, compiler, validation) can reason</span>
+<span class="sd">about data flow without fetching YAML at every step.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.yaml_gen</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_yaml_string</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Name normalization</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="n">_NORMALIZE_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[-\s]+&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="normalize_name">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.normalize_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Canonical form: lowercase, hyphens/spaces → underscores.</span>
+
+<span class="sd">    &gt;&gt;&gt; normalize_name(&#39;python-version&#39;)</span>
+<span class="sd">    &#39;python_version&#39;</span>
+<span class="sd">    &gt;&gt;&gt; normalize_name(&#39;Root Dir&#39;)</span>
+<span class="sd">    &#39;root_dir&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_NORMALIZE_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Data classes</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="InputSpec">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.InputSpec">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InputSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One declared input of a GitHub Action.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># normalized</span>
+    <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">default</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="OutputSpec">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.OutputSpec">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutputSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One declared output of a GitHub Action.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># normalized</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="ActionSpec">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.ActionSpec">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ActionSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The typed contract of a single GitHub Action.</span>
+
+<span class="sd">    *inputs* and *outputs* are keyed by **normalized** name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InputSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OutputSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Parsing</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_bool</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_action_spec">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.parse_action_spec">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_action_spec</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">action_yml_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an :class:`ActionSpec` from a ref string and parsed action.yml data.&quot;&quot;&quot;</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InputSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="p">(</span><span class="n">action_yml_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;inputs&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">inputs</span><span class="p">[</span><span class="n">norm</span><span class="p">]</span> <span class="o">=</span> <span class="n">InputSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+            <span class="n">required</span><span class="o">=</span><span class="n">_parse_bool</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;required&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+    <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OutputSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="p">(</span><span class="n">action_yml_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="n">norm</span><span class="p">]</span> <span class="o">=</span> <span class="n">OutputSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ActionSpec</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Fetching from GitHub</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split ``owner/repo/path@tag`` into (owner, repo, subpath, tag).</span>
+
+<span class="sd">    &gt;&gt;&gt; _parse_ref(&#39;i2mint/wads/actions/run-tests@master&#39;)</span>
+<span class="sd">    (&#39;i2mint&#39;, &#39;wads&#39;, &#39;actions/run-tests&#39;, &#39;master&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; _parse_ref(&#39;actions/checkout@v4&#39;)</span>
+<span class="sd">    (&#39;actions&#39;, &#39;checkout&#39;, &#39;&#39;, &#39;v4&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">at_parts</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tag</span> <span class="o">=</span> <span class="n">at_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">at_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;main&#39;</span>
+    <span class="n">path_parts</span> <span class="o">=</span> <span class="n">at_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">path_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">repo</span> <span class="o">=</span> <span class="n">path_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">subpath</span> <span class="o">=</span> <span class="n">path_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">owner</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">subpath</span><span class="p">,</span> <span class="n">tag</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_raw_url</span><span class="p">(</span><span class="n">owner</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repo</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;https://raw.githubusercontent.com/</span><span class="si">{</span><span class="n">owner</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">repo</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="n">subpath</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">subpath</span><span class="si">}</span><span class="s1">/action.yml&#39;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s1">/action.yml&#39;</span>
+
+
+<div class="viewcode-block" id="ActionFetchError">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.ActionFetchError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ActionFetchError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when an action.yml cannot be retrieved.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="fetch_action_yml">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.fetch_action_yml">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_action_yml</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch and parse an ``action.yml`` from GitHub.</span>
+
+<span class="sd">    Tries the raw URL first, then a fallback with ``action.yaml``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">owner</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">subpath</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="n">_parse_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+    <span class="n">urls</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_raw_url</span><span class="p">(</span><span class="n">owner</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subpath</span><span class="p">),</span>
+        <span class="n">_raw_url</span><span class="p">(</span><span class="n">owner</span><span class="p">,</span> <span class="n">repo</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">subpath</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;action.yml&#39;</span><span class="p">,</span> <span class="s1">&#39;action.yaml&#39;</span><span class="p">),</span>
+    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">follow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">load_yaml_string</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
+            <span class="k">continue</span>
+    <span class="k">raise</span> <span class="n">ActionFetchError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Could not fetch action.yml for &#39;</span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">&#39;. Tried:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  - </span><span class="si">{</span><span class="n">u</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="action_spec_from_ref">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.action_spec_from_ref">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">action_spec_from_ref</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch action.yml from GitHub and return an :class:`ActionSpec`.&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">fetch_action_yml</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">parse_action_spec</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">action_yml_data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Manual declaration from recipe</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="action_spec_from_declaration">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.action_spec_from_declaration">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">action_spec_from_declaration</span><span class="p">(</span>
+    <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build an :class:`ActionSpec` from inline recipe declarations.</span>
+
+<span class="sd">    Used when the recipe manually annotates inputs/outputs for a ``run:``</span>
+<span class="sd">    step or overrides the fetched metadata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InputSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="p">(</span><span class="n">inputs</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">parsed_inputs</span><span class="p">[</span><span class="n">norm</span><span class="p">]</span> <span class="o">=</span> <span class="n">InputSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+            <span class="n">required</span><span class="o">=</span><span class="n">_parse_bool</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;required&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
+            <span class="n">default</span><span class="o">=</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;default&#39;</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+    <span class="n">parsed_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OutputSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">outputs</span> <span class="ow">or</span> <span class="p">[]:</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">parsed_outputs</span><span class="p">[</span><span class="n">norm</span><span class="p">]</span> <span class="o">=</span> <span class="n">OutputSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ActionSpec</span><span class="p">(</span><span class="n">ref</span><span class="o">=</span><span class="n">ref</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">parsed_inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">parsed_outputs</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Utilities</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="action_local_name">
+<a class="viewcode-back" href="../../module_docs/reci/action_spec.html#reci.action_spec.action_local_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">action_local_name</span><span class="p">(</span><span class="n">ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract the last path segment of an action ref, normalized.</span>
+
+<span class="sd">    &gt;&gt;&gt; action_local_name(&#39;i2mint/wads/actions/run-tests@master&#39;)</span>
+<span class="sd">    &#39;run_tests&#39;</span>
+<span class="sd">    &gt;&gt;&gt; action_local_name(&#39;actions/checkout@v4&#39;)</span>
+<span class="sd">    &#39;checkout&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">without_tag</span> <span class="o">=</span> <span class="n">ref</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">last_segment</span> <span class="o">=</span> <span class="n">without_tag</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">last_segment</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

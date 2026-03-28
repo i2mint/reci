@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to reci’s documentation! &mdash; reci 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="reci" href="module_docs/reci.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            reci
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci.html">reci</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/__main__.html">reci.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/action_spec.html">reci.action_spec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters.html">reci.adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/base.html">reci.adapters.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/package_json.html">reci.adapters.package_json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/pyproject.html">reci.adapters.pyproject</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/wads.html">reci.adapters.wads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/yaml_adapter.html">reci.adapters.yaml_adapter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/compiler.html">reci.compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/config.html">reci.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/graph.html">reci.graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation.html">reci.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/report.html">reci.validation.report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules.html">reci.validation.rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/action.html">reci.validation.rules.action</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/config_rules.html">reci.validation.rules.config_rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/dag.html">reci.validation.rules.dag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/flow.html">reci.validation.rules.flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/purity.html">reci.validation.rules.purity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/yaml_gen.html">reci.yaml_gen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">reci</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to reci’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-reci-s-documentation">
+<h1>Welcome to reci’s documentation!<a class="headerlink" href="#welcome-to-reci-s-documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci.html">reci</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/__main__.html">reci.__main__</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/__main__.html#reci.__main__.compile"><code class="docutils literal notranslate"><span class="pre">compile()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/__main__.html#reci.__main__.inspect"><code class="docutils literal notranslate"><span class="pre">inspect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/__main__.html#reci.__main__.scaffold"><code class="docutils literal notranslate"><span class="pre">scaffold()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/__main__.html#reci.__main__.validate"><code class="docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/action_spec.html">reci.action_spec</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.ActionFetchError"><code class="docutils literal notranslate"><span class="pre">ActionFetchError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.ActionSpec"><code class="docutils literal notranslate"><span class="pre">ActionSpec</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.InputSpec"><code class="docutils literal notranslate"><span class="pre">InputSpec</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.OutputSpec"><code class="docutils literal notranslate"><span class="pre">OutputSpec</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.action_local_name"><code class="docutils literal notranslate"><span class="pre">action_local_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.action_spec_from_declaration"><code class="docutils literal notranslate"><span class="pre">action_spec_from_declaration()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.action_spec_from_ref"><code class="docutils literal notranslate"><span class="pre">action_spec_from_ref()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.fetch_action_yml"><code class="docutils literal notranslate"><span class="pre">fetch_action_yml()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.normalize_name"><code class="docutils literal notranslate"><span class="pre">normalize_name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/action_spec.html#reci.action_spec.parse_action_spec"><code class="docutils literal notranslate"><span class="pre">parse_action_spec()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters.html">reci.adapters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/adapters.html#reci.adapters.detect_adapter"><code class="docutils literal notranslate"><span class="pre">detect_adapter()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/adapters.html#reci.adapters.get_adapter"><code class="docutils literal notranslate"><span class="pre">get_adapter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/base.html">reci.adapters.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/adapters/base.html#reci.adapters.base.ConfigAdapter"><code class="docutils literal notranslate"><span class="pre">ConfigAdapter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/package_json.html">reci.adapters.package_json</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/adapters/package_json.html#reci.adapters.package_json.PackageJsonAdapter"><code class="docutils literal notranslate"><span class="pre">PackageJsonAdapter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/pyproject.html">reci.adapters.pyproject</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/adapters/pyproject.html#reci.adapters.pyproject.PyprojectTomlAdapter"><code class="docutils literal notranslate"><span class="pre">PyprojectTomlAdapter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/wads.html">reci.adapters.wads</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/adapters/wads.html#reci.adapters.wads.WadsAdapter"><code class="docutils literal notranslate"><span class="pre">WadsAdapter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/adapters/yaml_adapter.html">reci.adapters.yaml_adapter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/adapters/yaml_adapter.html#reci.adapters.yaml_adapter.YamlAdapter"><code class="docutils literal notranslate"><span class="pre">YamlAdapter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/compiler.html">reci.compiler</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/compiler.html#reci.compiler.CompilationError"><code class="docutils literal notranslate"><span class="pre">CompilationError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/compiler.html#reci.compiler.compile_recipe"><code class="docutils literal notranslate"><span class="pre">compile_recipe()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/config.html">reci.config</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/config.html#reci.config.collect_required_config_keys"><code class="docutils literal notranslate"><span class="pre">collect_required_config_keys()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/config.html#reci.config.flatten_config"><code class="docutils literal notranslate"><span class="pre">flatten_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/config.html#reci.config.resolve_config_for_input"><code class="docutils literal notranslate"><span class="pre">resolve_config_for_input()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/graph.html">reci.graph</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/graph.html#reci.graph.ActionNode"><code class="docutils literal notranslate"><span class="pre">ActionNode</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/graph.html#reci.graph.CrossJobEdge"><code class="docutils literal notranslate"><span class="pre">CrossJobEdge</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/graph.html#reci.graph.RecipeGraph"><code class="docutils literal notranslate"><span class="pre">RecipeGraph</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/recipe.html">reci.recipe</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/recipe.html#reci.recipe.JobSpec"><code class="docutils literal notranslate"><span class="pre">JobSpec</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/recipe.html#reci.recipe.Recipe"><code class="docutils literal notranslate"><span class="pre">Recipe</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/recipe.html#reci.recipe.RecipeParseError"><code class="docutils literal notranslate"><span class="pre">RecipeParseError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/recipe.html#reci.recipe.StepSpec"><code class="docutils literal notranslate"><span class="pre">StepSpec</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/recipe.html#reci.recipe.parse_recipe"><code class="docutils literal notranslate"><span class="pre">parse_recipe()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/recipe.html#reci.recipe.parse_recipe_string"><code class="docutils literal notranslate"><span class="pre">parse_recipe_string()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation.html">reci.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/formatters.html">reci.validation.formatters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/formatters.html#reci.validation.formatters.format_cli"><code class="docutils literal notranslate"><span class="pre">format_cli()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/formatters.html#reci.validation.formatters.format_github_annotations"><code class="docutils literal notranslate"><span class="pre">format_github_annotations()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/formatters.html#reci.validation.formatters.format_json"><code class="docutils literal notranslate"><span class="pre">format_json()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/report.html">reci.validation.report</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/report.html#reci.validation.report.Finding"><code class="docutils literal notranslate"><span class="pre">Finding</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/report.html#reci.validation.report.Severity"><code class="docutils literal notranslate"><span class="pre">Severity</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/report.html#reci.validation.report.ValidationReport"><code class="docutils literal notranslate"><span class="pre">ValidationReport</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules.html">reci.validation.rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules.html#reci.validation.rules.register_rule"><code class="docutils literal notranslate"><span class="pre">register_rule()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules.html#reci.validation.rules.run_all_rules"><code class="docutils literal notranslate"><span class="pre">run_all_rules()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/action.html">reci.validation.rules.action</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/action.html#reci.validation.rules.action.check_action_not_found"><code class="docutils literal notranslate"><span class="pre">check_action_not_found()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/config_rules.html">reci.validation.rules.config_rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/config_rules.html#reci.validation.rules.config_rules.check_missing_required_config"><code class="docutils literal notranslate"><span class="pre">check_missing_required_config()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/config_rules.html#reci.validation.rules.config_rules.check_unused_config"><code class="docutils literal notranslate"><span class="pre">check_unused_config()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/dag.html">reci.validation.rules.dag</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/dag.html#reci.validation.rules.dag.check_cycles"><code class="docutils literal notranslate"><span class="pre">check_cycles()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/dag.html#reci.validation.rules.dag.check_duplicate_outputs"><code class="docutils literal notranslate"><span class="pre">check_duplicate_outputs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/dag.html#reci.validation.rules.dag.check_isolated_nodes"><code class="docutils literal notranslate"><span class="pre">check_isolated_nodes()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/flow.html">reci.validation.rules.flow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_ambiguous_wiring"><code class="docutils literal notranslate"><span class="pre">check_ambiguous_wiring()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_boolean_coercion"><code class="docutils literal notranslate"><span class="pre">check_boolean_coercion()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_matrix_output"><code class="docutils literal notranslate"><span class="pre">check_matrix_output()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_unsourced_required_inputs"><code class="docutils literal notranslate"><span class="pre">check_unsourced_required_inputs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_unused_outputs"><code class="docutils literal notranslate"><span class="pre">check_unused_outputs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/validation/rules/purity.html">reci.validation.rules.purity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/purity.html#reci.validation.rules.purity.check_run_step_outputs"><code class="docutils literal notranslate"><span class="pre">check_run_step_outputs()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/validation/rules/purity.html#reci.validation.rules.purity.check_run_steps"><code class="docutils literal notranslate"><span class="pre">check_run_steps()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="module_docs/reci/yaml_gen.html">reci.yaml_gen</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/yaml_gen.html#reci.yaml_gen.dump_workflow"><code class="docutils literal notranslate"><span class="pre">dump_workflow()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/yaml_gen.html#reci.yaml_gen.load_yaml"><code class="docutils literal notranslate"><span class="pre">load_yaml()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="module_docs/reci/yaml_gen.html#reci.yaml_gen.load_yaml_string"><code class="docutils literal notranslate"><span class="pre">load_yaml_string()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<p>Release: 0.0.1</p>
+<p>Last change: Mar 28, 2026</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="module_docs/reci.html" class="btn btn-neutral float-right" title="reci" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

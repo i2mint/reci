@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>reci.validation.rules &mdash; reci 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            reci
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci.html">reci</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/__main__.html">reci.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/action_spec.html">reci.action_spec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/adapters.html">reci.adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/adapters/base.html">reci.adapters.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/adapters/package_json.html">reci.adapters.package_json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/adapters/pyproject.html">reci.adapters.pyproject</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/adapters/wads.html">reci.adapters.wads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/adapters/yaml_adapter.html">reci.adapters.yaml_adapter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/compiler.html">reci.compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/config.html">reci.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/graph.html">reci.graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation.html">reci.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/rules.html">reci.validation.rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/rules/action.html">reci.validation.rules.action</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/rules/config_rules.html">reci.validation.rules.config_rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/rules/dag.html">reci.validation.rules.dag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/rules/flow.html">reci.validation.rules.flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/rules/purity.html">reci.validation.rules.purity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/yaml_gen.html">reci.yaml_gen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">reci</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">reci.validation.rules</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for reci.validation.rules</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Validation rule registry and runner.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.validation.report</span><span class="w"> </span><span class="kn">import</span> <span class="n">Finding</span><span class="p">,</span> <span class="n">Severity</span><span class="p">,</span> <span class="n">ValidationReport</span>
+
+<span class="n">RuleFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]]</span>
+
+<span class="n">_RULES</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RuleFunc</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="register_rule">
+<a class="viewcode-back" href="../../../module_docs/reci/validation/rules.html#reci.validation.rules.register_rule">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_rule</span><span class="p">(</span><span class="n">rule_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to register a validation rule function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">RuleFunc</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuleFunc</span><span class="p">:</span>
+        <span class="n">_RULES</span><span class="p">[</span><span class="n">rule_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span>
+        <span class="k">return</span> <span class="n">fn</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+
+
+
+<span class="c1"># Import rule modules to trigger registration</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ensure_rules_loaded</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">reci.validation.rules</span><span class="w"> </span><span class="kn">import</span> <span class="n">dag</span><span class="p">,</span> <span class="n">flow</span><span class="p">,</span> <span class="n">config_rules</span><span class="p">,</span> <span class="n">purity</span><span class="p">,</span> <span class="n">action</span>  <span class="c1"># noqa: F401</span>
+
+
+<div class="viewcode-block" id="run_all_rules">
+<a class="viewcode-back" href="../../../module_docs/reci/validation/rules.html#reci.validation.rules.run_all_rules">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_all_rules</span><span class="p">(</span>
+    <span class="n">graph</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">severity_overrides</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">disabled_rules</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValidationReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run all registered rules and return a merged report.&quot;&quot;&quot;</span>
+    <span class="n">_ensure_rules_loaded</span><span class="p">()</span>
+    <span class="n">severity_overrides</span> <span class="o">=</span> <span class="n">severity_overrides</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">disabled_rules</span> <span class="o">=</span> <span class="n">disabled_rules</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="n">findings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Finding</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">rule_id</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">_RULES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">rule_id</span> <span class="ow">in</span> <span class="n">disabled_rules</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">finding</span> <span class="ow">in</span> <span class="n">fn</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+            <span class="c1"># Apply severity override</span>
+            <span class="k">if</span> <span class="n">finding</span><span class="o">.</span><span class="n">rule_id</span> <span class="ow">in</span> <span class="n">severity_overrides</span><span class="p">:</span>
+                <span class="n">override</span> <span class="o">=</span> <span class="n">severity_overrides</span><span class="p">[</span><span class="n">finding</span><span class="o">.</span><span class="n">rule_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">override</span> <span class="o">==</span> <span class="s1">&#39;off&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">finding</span> <span class="o">=</span> <span class="n">Finding</span><span class="p">(</span>
+                    <span class="n">rule_id</span><span class="o">=</span><span class="n">finding</span><span class="o">.</span><span class="n">rule_id</span><span class="p">,</span>
+                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="p">(</span><span class="n">override</span><span class="p">),</span>
+                    <span class="n">message</span><span class="o">=</span><span class="n">finding</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
+                    <span class="n">location</span><span class="o">=</span><span class="n">finding</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+                    <span class="n">suggestion</span><span class="o">=</span><span class="n">finding</span><span class="o">.</span><span class="n">suggestion</span><span class="p">,</span>
+                    <span class="n">fixable</span><span class="o">=</span><span class="n">finding</span><span class="o">.</span><span class="n">fixable</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">findings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">finding</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ValidationReport</span><span class="p">(</span><span class="n">findings</span><span class="o">=</span><span class="n">findings</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+reci.adapters.wads
+==================
+.. automodule:: reci.adapters.wads
+   :members:

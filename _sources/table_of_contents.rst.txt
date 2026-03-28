@@ -1,0 +1,27 @@
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+   module_docs/reci
+   module_docs/reci/__main__
+   module_docs/reci/action_spec
+   module_docs/reci/adapters
+   module_docs/reci/adapters/base
+   module_docs/reci/adapters/package_json
+   module_docs/reci/adapters/pyproject
+   module_docs/reci/adapters/wads
+   module_docs/reci/adapters/yaml_adapter
+   module_docs/reci/compiler
+   module_docs/reci/config
+   module_docs/reci/graph
+   module_docs/reci/recipe
+   module_docs/reci/validation
+   module_docs/reci/validation/formatters
+   module_docs/reci/validation/report
+   module_docs/reci/validation/rules
+   module_docs/reci/validation/rules/action
+   module_docs/reci/validation/rules/config_rules
+   module_docs/reci/validation/rules/dag
+   module_docs/reci/validation/rules/flow
+   module_docs/reci/validation/rules/purity
+   module_docs/reci/yaml_gen

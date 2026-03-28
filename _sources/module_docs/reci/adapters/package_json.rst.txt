@@ -1,0 +1,4 @@
+reci.adapters.package_json
+==========================
+.. automodule:: reci.adapters.package_json
+   :members:

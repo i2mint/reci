@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>reci.recipe &mdash; reci 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            reci
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci.html">reci</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/__main__.html">reci.__main__</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/action_spec.html">reci.action_spec</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters.html">reci.adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/base.html">reci.adapters.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/package_json.html">reci.adapters.package_json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/pyproject.html">reci.adapters.pyproject</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/wads.html">reci.adapters.wads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/adapters/yaml_adapter.html">reci.adapters.yaml_adapter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/compiler.html">reci.compiler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/config.html">reci.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/graph.html">reci.graph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation.html">reci.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules.html">reci.validation.rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/action.html">reci.validation.rules.action</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/config_rules.html">reci.validation.rules.config_rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/dag.html">reci.validation.rules.dag</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/flow.html">reci.validation.rules.flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/rules/purity.html">reci.validation.rules.purity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/yaml_gen.html">reci.yaml_gen</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">reci</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">reci.recipe</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for reci.recipe</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Recipe model — declarative CI pipeline description.</span>
+
+<span class="sd">A recipe is a YAML file that looks like a GitHub Actions workflow but with</span>
+<span class="sd">reci extensions: ``${{ config.* }}`` references, ``bind:`` mappings for</span>
+<span class="sd">input renaming, and ``outputs:`` annotations on ``run:`` steps.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.action_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_name</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reci.yaml_gen</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_yaml</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Data classes</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="StepSpec">
+<a class="viewcode-back" href="../../module_docs/reci/recipe.html#reci.recipe.StepSpec">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StepSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One step inside a job.&quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">uses</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">run</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">with_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">if_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">bind</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="JobSpec">
+<a class="viewcode-back" href="../../module_docs/reci/recipe.html#reci.recipe.JobSpec">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JobSpec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One job inside a recipe.&quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">needs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">if_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">runs_on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;ubuntu-latest&#39;</span>
+    <span class="n">strategy</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">permissions</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">continue_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Recipe">
+<a class="viewcode-back" href="../../module_docs/reci/recipe.html#reci.recipe.Recipe">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Recipe</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A complete reci recipe.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">on</span><span class="p">:</span> <span class="n">Any</span>  <span class="c1"># str | list | dict — GitHub Actions trigger spec</span>
+    <span class="n">jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">JobSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Parsing</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="RecipeParseError">
+<a class="viewcode-back" href="../../module_docs/reci/recipe.html#reci.recipe.RecipeParseError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RecipeParseError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a recipe YAML is structurally invalid.&quot;&quot;&quot;</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_auto_step_id</span><span class="p">(</span><span class="n">step_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Derive a step ID when the recipe doesn&#39;t provide one.</span>
+
+<span class="sd">    Uses the action&#39;s last path segment (normalized) or ``step_{index}``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">uses</span> <span class="o">:=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uses&#39;</span><span class="p">):</span>
+        <span class="n">last</span> <span class="o">=</span> <span class="n">uses</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;@&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;step_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">&#39;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_step</span><span class="p">(</span><span class="n">step_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepSpec</span><span class="p">:</span>
+    <span class="n">uses</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uses&#39;</span><span class="p">)</span>
+    <span class="n">run</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;run&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">uses</span> <span class="ow">and</span> <span class="n">run</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> in job &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39; has both &#39;uses&#39; and &#39;run&#39;.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">uses</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">run</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> in job &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39; has neither &#39;uses&#39; nor &#39;run&#39;.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">step_id</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_auto_step_id</span><span class="p">(</span>
+        <span class="n">step_data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span>
+    <span class="p">)</span>
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">outputs</span><span class="p">]</span>
+
+    <span class="n">bind</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bind&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">with_</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;with&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="c1"># Ensure string values in with_</span>
+    <span class="n">with_</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">with_</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">StepSpec</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+        <span class="n">uses</span><span class="o">=</span><span class="n">uses</span><span class="p">,</span>
+        <span class="n">run</span><span class="o">=</span><span class="n">run</span><span class="p">,</span>
+        <span class="n">with_</span><span class="o">=</span><span class="n">with_</span><span class="p">,</span>
+        <span class="n">if_</span><span class="o">=</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;if&#39;</span><span class="p">),</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
+        <span class="n">bind</span><span class="o">=</span><span class="n">bind</span><span class="p">,</span>
+        <span class="n">env</span><span class="o">=</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_ensure_unique_step_ids</span><span class="p">(</span><span class="n">steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deduplicate step IDs within a job by appending a numeric suffix.&quot;&quot;&quot;</span>
+    <span class="n">seen</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">seen</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">StepSpec</span><span class="p">(</span>
+                <span class="nb">id</span><span class="o">=</span><span class="n">new_id</span><span class="p">,</span>
+                <span class="n">uses</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">,</span>
+                <span class="n">run</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+                <span class="n">with_</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span>
+                <span class="n">if_</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">outputs</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">outputs</span><span class="p">,</span>
+                <span class="n">bind</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">bind</span><span class="p">,</span>
+                <span class="n">env</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">seen</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_job</span><span class="p">(</span><span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">job_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobSpec</span><span class="p">:</span>
+    <span class="n">raw_steps</span> <span class="o">=</span> <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;steps&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_steps</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39; has no steps.&quot;</span><span class="p">)</span>
+
+    <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_parse_step</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_steps</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="n">_ensure_unique_step_ids</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+
+    <span class="n">needs</span> <span class="o">=</span> <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;needs&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">needs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">needs</span> <span class="o">=</span> <span class="p">[</span><span class="n">needs</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">JobSpec</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+        <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+        <span class="n">needs</span><span class="o">=</span><span class="n">needs</span><span class="p">,</span>
+        <span class="n">if_</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;if&#39;</span><span class="p">),</span>
+        <span class="n">runs_on</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;runs-on&#39;</span><span class="p">,</span> <span class="s1">&#39;ubuntu-latest&#39;</span><span class="p">),</span>
+        <span class="n">strategy</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;strategy&#39;</span><span class="p">),</span>
+        <span class="n">permissions</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;permissions&#39;</span><span class="p">),</span>
+        <span class="n">continue_on_error</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;continue-on-error&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)),</span>
+        <span class="n">env</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="parse_recipe">
+<a class="viewcode-back" href="../../module_docs/reci/recipe.html#reci.recipe.parse_recipe">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_recipe</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Recipe</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a recipe YAML and return a :class:`Recipe`.&quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Recipe file &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39; is not a YAML mapping.&quot;</span><span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">on</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="p">[]))</span>  <span class="c1"># PyYAML compat: `on:` → True key</span>
+    <span class="n">jobs_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jobs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">jobs_data</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Recipe file &#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39; has no jobs.&quot;</span><span class="p">)</span>
+
+    <span class="n">jobs</span> <span class="o">=</span> <span class="p">{</span><span class="n">jid</span><span class="p">:</span> <span class="n">_parse_job</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span><span class="p">)</span> <span class="k">for</span> <span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span> <span class="ow">in</span> <span class="n">jobs_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">Recipe</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span>
+        <span class="n">jobs</span><span class="o">=</span><span class="n">jobs</span><span class="p">,</span>
+        <span class="n">env</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="n">defaults</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;defaults&#39;</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="parse_recipe_string">
+<a class="viewcode-back" href="../../module_docs/reci/recipe.html#reci.recipe.parse_recipe_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_recipe_string</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Recipe</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a recipe from a YAML string (useful for testing).&quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">reci.yaml_gen</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_yaml_string</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">load_yaml_string</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="s2">&quot;Recipe is not a YAML mapping.&quot;</span><span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">on</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;on&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="p">[]))</span>
+    <span class="n">jobs_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;jobs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">jobs_data</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="s2">&quot;Recipe has no jobs.&quot;</span><span class="p">)</span>
+
+    <span class="n">jobs</span> <span class="o">=</span> <span class="p">{</span><span class="n">jid</span><span class="p">:</span> <span class="n">_parse_job</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span><span class="p">)</span> <span class="k">for</span> <span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span> <span class="ow">in</span> <span class="n">jobs_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">Recipe</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span>
+        <span class="n">jobs</span><span class="o">=</span><span class="n">jobs</span><span class="p">,</span>
+        <span class="n">env</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;env&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="n">defaults</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;defaults&#39;</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright NO COPYRIGHT.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

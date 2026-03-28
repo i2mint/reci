@@ -1,0 +1,4 @@
+reci.adapters.yaml_adapter
+==========================
+.. automodule:: reci.adapters.yaml_adapter
+   :members:

@@ -1,0 +1,4 @@
+reci.validation.rules.action
+============================
+.. automodule:: reci.validation.rules.action
+   :members:

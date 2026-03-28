@@ -1,0 +1,4 @@
+reci.recipe
+===========
+.. automodule:: reci.recipe
+   :members:

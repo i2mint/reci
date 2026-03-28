@@ -1,0 +1,4 @@
+reci.validation.rules.purity
+============================
+.. automodule:: reci.validation.rules.purity
+   :members:
