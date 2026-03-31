@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.adapters &mdash; reci 0.0.1 documentation</title>
+  <title>reci.adapters &mdash; reci 0.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/documentation_options.js?v=e3a6060d"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -110,17 +110,21 @@
 <a class="viewcode-back" href="../../module_docs/reci/adapters.html#reci.adapters.get_adapter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_adapter</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigAdapter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a config adapter by name.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;pyproject&quot;</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters.pyproject</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyprojectTomlAdapter</span>
+
         <span class="k">return</span> <span class="n">PyprojectTomlAdapter</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;wads&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;wads&quot;</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters.wads</span><span class="w"> </span><span class="kn">import</span> <span class="n">WadsAdapter</span>
+
         <span class="k">return</span> <span class="n">WadsAdapter</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;package-json&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;package-json&quot;</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters.package_json</span><span class="w"> </span><span class="kn">import</span> <span class="n">PackageJsonAdapter</span>
+
         <span class="k">return</span> <span class="n">PackageJsonAdapter</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;yaml&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;yaml&quot;</span><span class="p">:</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters.yaml_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">YamlAdapter</span>
+
         <span class="k">return</span> <span class="n">YamlAdapter</span><span class="p">()</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown config adapter: &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
 
@@ -131,14 +135,17 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">detect_adapter</span><span class="p">(</span><span class="n">project_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigAdapter</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Auto-detect the config adapter from project files.&quot;&quot;&quot;</span>
     <span class="n">root</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">project_root</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="s1">&#39;pyproject.toml&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="s2">&quot;pyproject.toml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters.pyproject</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyprojectTomlAdapter</span>
+
         <span class="k">return</span> <span class="n">PyprojectTomlAdapter</span><span class="p">()</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="s1">&#39;package.json&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="s2">&quot;package.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters.package_json</span><span class="w"> </span><span class="kn">import</span> <span class="n">PackageJsonAdapter</span>
+
         <span class="k">return</span> <span class="n">PackageJsonAdapter</span><span class="p">()</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="s1">&#39;.ci.yml&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">root</span> <span class="o">/</span> <span class="s2">&quot;.ci.yml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.adapters.yaml_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">YamlAdapter</span>
+
         <span class="k">return</span> <span class="n">YamlAdapter</span><span class="p">()</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 

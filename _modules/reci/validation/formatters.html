@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.validation.formatters &mdash; reci 0.0.1 documentation</title>
+  <title>reci.validation.formatters &mdash; reci 0.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../../_static/documentation_options.js?v=e3a6060d"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -107,11 +107,11 @@
 
 <span class="c1"># ANSI color codes</span>
 <span class="n">_COLORS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="n">Severity</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[91m&#39;</span><span class="p">,</span>    <span class="c1"># red</span>
-    <span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[93m&#39;</span><span class="p">,</span>  <span class="c1"># yellow</span>
-    <span class="n">Severity</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[94m&#39;</span><span class="p">,</span>     <span class="c1"># blue</span>
+    <span class="n">Severity</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[91m&quot;</span><span class="p">,</span>  <span class="c1"># red</span>
+    <span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[93m&quot;</span><span class="p">,</span>  <span class="c1"># yellow</span>
+    <span class="n">Severity</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[94m&quot;</span><span class="p">,</span>  <span class="c1"># blue</span>
 <span class="p">}</span>
-<span class="n">_RESET</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span>
+<span class="n">_RESET</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span>
 
 
 <div class="viewcode-block" id="format_cli">
@@ -119,25 +119,25 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">format_cli</span><span class="p">(</span><span class="n">report</span><span class="p">:</span> <span class="n">ValidationReport</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Human-readable CLI output with color-coded severity.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">report</span><span class="o">.</span><span class="n">findings</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">&#39;No issues found.&#39;</span>
+        <span class="k">return</span> <span class="s2">&quot;No issues found.&quot;</span>
 
     <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">findings</span><span class="p">:</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">_COLORS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">severity</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">color</span><span class="si">}{</span><span class="n">f</span><span class="o">.</span><span class="n">severity</span><span class="o">.</span><span class="n">value</span><span class="si">}{</span><span class="n">_RESET</span><span class="si">}</span><span class="s1">&#39;</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">rule_id</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">_COLORS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">severity</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">color</span><span class="si">}{</span><span class="n">f</span><span class="o">.</span><span class="n">severity</span><span class="o">.</span><span class="n">value</span><span class="si">}{</span><span class="n">_RESET</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">rule_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  --&gt; </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  --&gt; </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">suggestion</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  = help: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">suggestion</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  = help: </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">suggestion</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
     <span class="c1"># Summary</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">error_count</span>
     <span class="n">w</span> <span class="o">=</span> <span class="n">report</span><span class="o">.</span><span class="n">warning_count</span>
-    <span class="n">summary</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1"> error(s), </span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s1"> warning(s), </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">findings</span><span class="p">)</span><span class="si">}</span><span class="s1"> total&#39;</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> error(s), </span><span class="si">{</span><span class="n">w</span><span class="si">}</span><span class="s2"> warning(s), </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">findings</span><span class="p">)</span><span class="si">}</span><span class="s2"> total&quot;</span>
     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
 
 
 
@@ -147,12 +147,12 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;JSON output: list of finding dicts.&quot;&quot;&quot;</span>
     <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
         <span class="p">{</span>
-            <span class="s1">&#39;rule_id&#39;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">rule_id</span><span class="p">,</span>
-            <span class="s1">&#39;severity&#39;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">severity</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-            <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
-            <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
-            <span class="s1">&#39;suggestion&#39;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">suggestion</span><span class="p">,</span>
-            <span class="s1">&#39;fixable&#39;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">fixable</span><span class="p">,</span>
+            <span class="s2">&quot;rule_id&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">rule_id</span><span class="p">,</span>
+            <span class="s2">&quot;severity&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">severity</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
+            <span class="s2">&quot;location&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+            <span class="s2">&quot;suggestion&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">suggestion</span><span class="p">,</span>
+            <span class="s2">&quot;fixable&quot;</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">fixable</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">findings</span>
     <span class="p">]</span>
@@ -166,15 +166,15 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;GitHub Actions annotation format.&quot;&quot;&quot;</span>
     <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">report</span><span class="o">.</span><span class="n">findings</span><span class="p">:</span>
-        <span class="n">level</span> <span class="o">=</span> <span class="s1">&#39;error&#39;</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">severity</span> <span class="ow">is</span> <span class="n">Severity</span><span class="o">.</span><span class="n">ERROR</span> <span class="k">else</span> <span class="s1">&#39;warning&#39;</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">severity</span> <span class="ow">is</span> <span class="n">Severity</span><span class="o">.</span><span class="n">ERROR</span> <span class="k">else</span> <span class="s2">&quot;warning&quot;</span>
         <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">severity</span> <span class="ow">is</span> <span class="n">Severity</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span>
-            <span class="n">level</span> <span class="o">=</span> <span class="s1">&#39;notice&#39;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">rule_id</span><span class="si">}</span><span class="s1">] </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">level</span> <span class="o">=</span> <span class="s2">&quot;notice&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">rule_id</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="p">:</span>
-            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;::</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s1"> file=</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s1">::</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;::</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2"> file=</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">location</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;::</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s1">::</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;::</span><span class="si">{</span><span class="n">level</span><span class="si">}</span><span class="s2">::</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
 
 </pre></div>
 

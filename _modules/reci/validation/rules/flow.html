@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.validation.rules.flow &mdash; reci 0.0.1 documentation</title>
+  <title>reci.validation.rules.flow &mdash; reci 0.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../../../_static/documentation_options.js?v=e3a6060d"></script>
       <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -113,7 +113,7 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">ref</span><span class="p">:</span>
         <span class="n">local</span> <span class="o">=</span> <span class="n">action_local_name</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-        <span class="n">scoped</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s1">__</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="n">scoped</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">scoped</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">scoped</span>
     <span class="k">if</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
@@ -134,10 +134,8 @@
 
 <div class="viewcode-block" id="check_unsourced_required_inputs">
 <a class="viewcode-back" href="../../../../module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_unsourced_required_inputs">[docs]</a>
-<span class="nd">@register_rule</span><span class="p">(</span><span class="s1">&#39;FLOW001&#39;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">check_unsourced_required_inputs</span><span class="p">(</span>
-    <span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
+<span class="nd">@register_rule</span><span class="p">(</span><span class="s2">&quot;FLOW001&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_unsourced_required_inputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Required input has no source at any level.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
         <span class="n">upstream</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
@@ -159,7 +157,7 @@
                 <span class="k">continue</span>
             <span class="c1"># Level 5: error</span>
             <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
-                <span class="n">rule_id</span><span class="o">=</span><span class="s1">&#39;FLOW001&#39;</span><span class="p">,</span>
+                <span class="n">rule_id</span><span class="o">=</span><span class="s2">&quot;FLOW001&quot;</span><span class="p">,</span>
                 <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
                 <span class="n">message</span><span class="o">=</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Required input &#39;</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; of &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
@@ -173,7 +171,7 @@
 
 <div class="viewcode-block" id="check_ambiguous_wiring">
 <a class="viewcode-back" href="../../../../module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_ambiguous_wiring">[docs]</a>
-<span class="nd">@register_rule</span><span class="p">(</span><span class="s1">&#39;FLOW002&#39;</span><span class="p">)</span>
+<span class="nd">@register_rule</span><span class="p">(</span><span class="s2">&quot;FLOW002&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_ambiguous_wiring</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An input name matches multiple upstream outputs.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
@@ -190,7 +188,7 @@
                     <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prev_node</span><span class="o">.</span><span class="n">step_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
-                    <span class="n">rule_id</span><span class="o">=</span><span class="s1">&#39;FLOW002&#39;</span><span class="p">,</span>
+                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">&quot;FLOW002&quot;</span><span class="p">,</span>
                     <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
                     <span class="n">message</span><span class="o">=</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; of &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; matches &quot;</span>
@@ -204,7 +202,7 @@
 
 <div class="viewcode-block" id="check_unused_outputs">
 <a class="viewcode-back" href="../../../../module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_unused_outputs">[docs]</a>
-<span class="nd">@register_rule</span><span class="p">(</span><span class="s1">&#39;FLOW004&#39;</span><span class="p">)</span>
+<span class="nd">@register_rule</span><span class="p">(</span><span class="s2">&quot;FLOW004&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_unused_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An output is declared but never consumed downstream.&quot;&quot;&quot;</span>
     <span class="n">consumed</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -214,14 +212,14 @@
             <span class="n">consumed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">search</span><span class="p">)</span>
         <span class="c1"># Also count explicit with: values that reference steps</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="s1">&#39;steps.&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;.outputs.&#39;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;steps.&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;.outputs.&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
                 <span class="n">consumed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">consumed</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
-                    <span class="n">rule_id</span><span class="o">=</span><span class="s1">&#39;FLOW004&#39;</span><span class="p">,</span>
+                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">&quot;FLOW004&quot;</span><span class="p">,</span>
                     <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
                     <span class="n">message</span><span class="o">=</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Output &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; of &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
@@ -234,15 +232,14 @@
 
 <div class="viewcode-block" id="check_boolean_coercion">
 <a class="viewcode-back" href="../../../../module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_boolean_coercion">[docs]</a>
-<span class="nd">@register_rule</span><span class="p">(</span><span class="s1">&#39;FLOW005&#39;</span><span class="p">)</span>
+<span class="nd">@register_rule</span><span class="p">(</span><span class="s2">&quot;FLOW005&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_boolean_coercion</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A string output is wired to a likely-boolean input.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
         <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">is_boolean</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_spec</span><span class="o">.</span><span class="n">default</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;false&#39;</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">is_boolean</span> <span class="o">=</span> <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span>
+                <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_boolean</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="c1"># Check if this input is wired from an upstream output</span>
@@ -252,7 +249,7 @@
             <span class="n">upstream</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">upstream</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
-                    <span class="n">rule_id</span><span class="o">=</span><span class="s1">&#39;FLOW005&#39;</span><span class="p">,</span>
+                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">&quot;FLOW005&quot;</span><span class="p">,</span>
                     <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
                     <span class="n">message</span><span class="o">=</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Input &#39;</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; of &#39;</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
@@ -268,7 +265,7 @@
 
 <div class="viewcode-block" id="check_matrix_output">
 <a class="viewcode-back" href="../../../../module_docs/reci/validation/rules/flow.html#reci.validation.rules.flow.check_matrix_output">[docs]</a>
-<span class="nd">@register_rule</span><span class="p">(</span><span class="s1">&#39;FLOW006&#39;</span><span class="p">)</span>
+<span class="nd">@register_rule</span><span class="p">(</span><span class="s2">&quot;FLOW006&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_matrix_output</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Matrix job outputs consumed by downstream are non-deterministic.&quot;&quot;&quot;</span>
     <span class="c1"># This requires knowing which jobs have matrix strategies.</span>

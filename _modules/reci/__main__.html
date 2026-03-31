@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.__main__ &mdash; reci 0.0.1 documentation</title>
+  <title>reci.__main__ &mdash; reci 0.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../_static/documentation_options.js?v=e3a6060d"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -122,7 +122,7 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_load_config</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pyproject&quot;</span><span class="p">,</span>
     <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">adapter</span> <span class="o">=</span> <span class="n">get_adapter</span><span class="p">(</span><span class="n">config_adapter</span><span class="p">)</span>
@@ -140,7 +140,7 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">specs</span><span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_spec_from_ref</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">)</span>
                 <span class="k">except</span> <span class="n">ActionFetchError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;warning: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;warning: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">specs</span>
 
 
@@ -149,9 +149,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">compile</span><span class="p">(</span>
     <span class="n">recipe</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pyproject&quot;</span><span class="p">,</span>
     <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.github/workflows/ci.yml&#39;</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.github/workflows/ci.yml&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compile a recipe into a GitHub Actions workflow YAML.&quot;&quot;&quot;</span>
     <span class="n">rec</span> <span class="o">=</span> <span class="n">parse_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
@@ -166,15 +166,15 @@
     <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">findings</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">format_cli</span><span class="p">(</span><span class="n">report</span><span class="p">),</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">report</span><span class="o">.</span><span class="n">has_errors</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Compilation aborted due to errors.&#39;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Compilation aborted due to errors.&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Write output</span>
     <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
     <span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">dump_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrote </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 
@@ -182,10 +182,10 @@
 <a class="viewcode-back" href="../../module_docs/reci/__main__.html#reci.__main__.validate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">recipe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;recipe.yml&#39;</span><span class="p">,</span>
-    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">recipe</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;recipe.yml&quot;</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pyproject&quot;</span><span class="p">,</span>
     <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cli&#39;</span><span class="p">,</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cli&quot;</span><span class="p">,</span>
     <span class="n">max_warnings</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate recipe and config for correctness.&quot;&quot;&quot;</span>
@@ -198,9 +198,9 @@
 
     <span class="c1"># Format output</span>
     <span class="n">formatter</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;cli&#39;</span><span class="p">:</span> <span class="n">format_cli</span><span class="p">,</span>
-        <span class="s1">&#39;json&#39;</span><span class="p">:</span> <span class="n">format_json</span><span class="p">,</span>
-        <span class="s1">&#39;github&#39;</span><span class="p">:</span> <span class="n">format_github_annotations</span><span class="p">,</span>
+        <span class="s2">&quot;cli&quot;</span><span class="p">:</span> <span class="n">format_cli</span><span class="p">,</span>
+        <span class="s2">&quot;json&quot;</span><span class="p">:</span> <span class="n">format_json</span><span class="p">,</span>
+        <span class="s2">&quot;github&quot;</span><span class="p">:</span> <span class="n">format_github_annotations</span><span class="p">,</span>
     <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="n">format_cli</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">formatter</span><span class="p">(</span><span class="n">report</span><span class="p">))</span>
 
@@ -209,8 +209,7 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">max_warnings</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">report</span><span class="o">.</span><span class="n">warning_count</span> <span class="o">&gt;</span> <span class="n">max_warnings</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;Too many warnings: </span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">warning_count</span><span class="si">}</span><span class="s1"> &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;(max </span><span class="si">{</span><span class="n">max_warnings</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Too many warnings: </span><span class="si">{</span><span class="n">report</span><span class="o">.</span><span class="n">warning_count</span><span class="si">}</span><span class="s2"> (max </span><span class="si">{</span><span class="n">max_warnings</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
             <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
@@ -222,9 +221,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">scaffold</span><span class="p">(</span>
     <span class="n">recipe</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pyproject&#39;</span><span class="p">,</span>
+    <span class="n">config_adapter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;pyproject&quot;</span><span class="p">,</span>
     <span class="n">config_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.github/workflows/ci.yml&#39;</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.github/workflows/ci.yml&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate workflow YAML and config skeleton.&quot;&quot;&quot;</span>
     <span class="n">rec</span> <span class="o">=</span> <span class="n">parse_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">)</span>
@@ -238,18 +237,18 @@
     <span class="n">existing</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">is_required</span> <span class="ow">in</span> <span class="n">required</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">existing</span><span class="p">:</span>
-            <span class="n">existing</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&lt;REQUIRED: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&gt;&#39;</span> <span class="k">if</span> <span class="n">is_required</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">existing</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;REQUIRED: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&gt;&quot;</span> <span class="k">if</span> <span class="n">is_required</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
 
     <span class="n">adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">existing</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Updated config: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updated config: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Compile with skeleton config</span>
     <span class="n">workflow</span> <span class="o">=</span> <span class="n">compile_recipe</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span> <span class="n">specs</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">existing</span><span class="p">)</span>
     <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
     <span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">dump_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrote </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 
@@ -258,28 +257,28 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">inspect</span><span class="p">(</span><span class="n">action_ref</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch and display an action&#39;s input/output contract.&quot;&quot;&quot;</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">action_spec_from_ref</span><span class="p">(</span><span class="n">action_ref</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Action: </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action: </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">inputs</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Inputs:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inputs:&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">req</span> <span class="o">=</span> <span class="s1">&#39; (required)&#39;</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-            <span class="n">default</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39; [default: </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s1">]&#39;</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">default</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="n">req</span><span class="si">}{</span><span class="n">default</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="s2">&quot; (required)&quot;</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">required</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">default</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; [default: </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">]&quot;</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">default</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">name</span><span class="si">}{</span><span class="n">req</span><span class="si">}{</span><span class="n">default</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">inp</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Inputs: none&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Inputs: none&quot;</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Outputs:&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outputs:&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">out</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">out</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">out</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;    </span><span class="si">{</span><span class="n">out</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">out</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Outputs: none&#39;</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Outputs: none&quot;</span><span class="p">)</span></div>
 
 
 
@@ -287,7 +286,7 @@
     <span class="n">argh</span><span class="o">.</span><span class="n">dispatch_commands</span><span class="p">([</span><span class="nb">compile</span><span class="p">,</span> <span class="n">validate</span><span class="p">,</span> <span class="n">scaffold</span><span class="p">,</span> <span class="n">inspect</span><span class="p">])</span>
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 
