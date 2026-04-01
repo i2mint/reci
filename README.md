@@ -5,13 +5,60 @@ Compile declarative CI recipes into fully-wired GitHub Actions workflows with ty
 
 To install:	```pip install reci```
 
-## What it does
+## Why reci
 
-Write a short recipe YAML describing your CI pipeline as a DAG of GitHub Actions.
-`reci` introspects each action's `action.yml` for typed input/output contracts,
-infers data-flow edges from variable names, injects config from `pyproject.toml`,
-and compiles the whole thing into a complete workflow YAML — with all the
-cross-job output wiring generated for you.
+Writing GitHub Actions workflows by hand means wading through hundreds of lines of
+boilerplate: forwarding step outputs to job outputs, threading `needs.X.outputs.Y`
+expressions across jobs, and copy-pasting config values that belong in one place.
+When something changes you touch a dozen lines across three jobs — and one typo
+silently breaks your pipeline.
+
+**reci** lets you write a short recipe that says *what* your CI does (which actions,
+in what order, with what config), and the compiler handles *how* — auto-wiring
+cross-job outputs, injecting config from `pyproject.toml`, and validating data-flow
+before you push.
+
+## Agent skills (recommended)
+
+reci ships with CLI and Python APIs (see [below](#cli)), but the best way to use it
+is through **AI agent skills** — structured instructions that let coding assistants
+operate reci on your behalf. Instead of memorizing CLI flags and YAML syntax, just
+say what you want:
+
+- *"Set up CI for this project"*
+- *"Migrate my existing workflow to reci"*
+- *"What CI actions make sense here?"*
+
+### Available skills
+
+| Skill | What it does |
+|-------|-------------|
+| [ci-setup](.claude/skills/ci-setup/) | Examines your project, proposes a CI plan, writes a recipe, compiles to a workflow |
+| [ci-migrate](.claude/skills/ci-migrate/) | Converts an existing GitHub Actions workflow into a reci recipe |
+| [ci-advisor](.claude/skills/ci-advisor/) | Interactive discussion about what CI pipeline makes sense for your project |
+| [reci-dev](.claude/skills/reci-dev/) | Guide for contributors — architecture, adding rules, adding adapters |
+
+### Using the skills
+
+**Claude Code** — symlink or copy the skills into your project or your personal skills directory:
+
+```bash
+# Make available to all your projects
+ln -s /path/to/reci/.claude/skills/ci-setup ~/.claude/skills/ci-setup
+ln -s /path/to/reci/.claude/skills/ci-migrate ~/.claude/skills/ci-migrate
+ln -s /path/to/reci/.claude/skills/ci-advisor ~/.claude/skills/ci-advisor
+
+# Or just for one project
+ln -s /path/to/reci/.claude/skills/ci-setup my-project/.claude/skills/ci-setup
+```
+
+Then invoke with `/ci-setup`, `/ci-migrate`, or `/ci-advisor` in Claude Code.
+See the [Claude Code skills docs](https://docs.anthropic.com/en/docs/claude-code/skills) for details.
+
+**Other agents** — the skills are plain Markdown files following the open
+[Agent Skills standard](https://agentskills.org). For Cursor, Copilot, Windsurf,
+and other tools, see the standard's
+[integration guide](https://agentskills.org/integrations).
 
 ## Quick start
 
