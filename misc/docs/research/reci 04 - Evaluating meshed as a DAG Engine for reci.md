@@ -53,12 +53,7 @@ Neither is clean. This is a real impedance mismatch.
 from meshed import topological_sort
 # or: from meshed.itools import topological_sort
 
-g = {
-    0: [4, 2],
-    4: [3, 1],
-    2: [3],
-    3: [1]
-}
+g = {0: [4, 2], 4: [3, 1], 2: [3], 3: [1]}
 list(topological_sort(g))  # [0, 4, 2, 3, 1]
 ```
 
@@ -172,15 +167,16 @@ Zero new dependencies. Build a ~200-line `RecipeGraph` class wrapping `graphlib.
 ```python
 @dataclass(frozen=True)
 class ActionSpec:
-    ref: str          # "i2mint/wads/actions/run-tests@master"
+    ref: str  # "i2mint/wads/actions/run-tests@master"
     step_id: str
     job: str
     inputs: dict
     outputs: list[str]
 
+
 class RecipeGraph:
     _deps: dict[ActionSpec, set[ActionSpec]]  # graphlib format
-    _edges: dict[tuple[str, str], str]        # (src_output, dst_input) metadata
+    _edges: dict[tuple[str, str], str]  # (src_output, dst_input) metadata
 
     def execution_waves(self):
         ts = TopologicalSorter(self._deps)

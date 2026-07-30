@@ -63,7 +63,14 @@ and other tools, see the standard's
 ## Quick start
 
 ```python
-from reci import parse_recipe_string, compile_recipe, dump_workflow, ActionSpec, InputSpec, OutputSpec
+from reci import (
+    parse_recipe_string,
+    compile_recipe,
+    dump_workflow,
+    ActionSpec,
+    InputSpec,
+    OutputSpec,
+)
 
 recipe = parse_recipe_string("""
 name: CI

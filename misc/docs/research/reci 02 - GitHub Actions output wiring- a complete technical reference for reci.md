@@ -33,7 +33,8 @@ The `value:` field is **required and unique to composite actions**—it is the e
 ```python
 # Python inside a Docker action
 import os
-with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+
+with open(os.environ["GITHUB_OUTPUT"], "a") as f:
     f.write("result=some-value\n")
 ```
 

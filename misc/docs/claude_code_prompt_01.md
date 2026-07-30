@@ -80,6 +80,7 @@ class Severity(Enum):
     WARNING = "warning"
     INFO = "info"
 
+
 @dataclass
 class Finding:
     rule_id: str

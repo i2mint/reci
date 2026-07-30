@@ -181,12 +181,13 @@ The recommended architecture: `graphlib.TopologicalSorter` + a custom `RecipeGra
 ```python
 @dataclass(frozen=True)
 class ActionNode:
-    ref: str                           # "i2mint/wads/actions/run-tests@master"
+    ref: str  # "i2mint/wads/actions/run-tests@master"
     step_id: str
     job: str
-    inputs: dict[str, InputSpec]       # from action.yml
-    outputs: list[str]                 # from action.yml
-    bind: dict[str, str] | None = None # input renaming: {action_input: dag_variable}
+    inputs: dict[str, InputSpec]  # from action.yml
+    outputs: list[str]  # from action.yml
+    bind: dict[str, str] | None = None  # input renaming: {action_input: dag_variable}
+
 
 class RecipeGraph:
     _deps: dict[ActionNode, set[ActionNode]]
@@ -270,6 +271,7 @@ class Severity(Enum):
     WARNING = "warning"
     INFO = "info"
 
+
 @dataclass
 class Finding:
     rule_id: str
@@ -278,6 +280,7 @@ class Finding:
     location: str | None = None
     suggestion: str | None = None
     fixable: bool = False
+
 
 @dataclass
 class ValidationReport:
