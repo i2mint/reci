@@ -106,7 +106,7 @@ convention = "google"
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = [
-    "tests",
+    "reci",
 ]
 doctest_optionflags = [
     "NORMALIZE_WHITESPACE",
