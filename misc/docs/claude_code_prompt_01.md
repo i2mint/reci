@@ -1,5 +1,11 @@
 # Claude Code Prompt: Build `reci` — Typed DAG Compilation for GitHub Actions
 
+
+> **Note (updated):** this document originally prescribed `argh` for CLI dispatch.
+> `reci` now uses [`cw`](https://github.com/i2mint/cw), which reproduces argh's
+> grammar on plain `argparse` under MIT with no runtime dependencies. The mentions
+> below have been updated so this document does not re-seed the old choice.
+
 ## Context Documents
 
 You have the following reference documents in `misc/docs/`:
@@ -112,7 +118,7 @@ Key rules:
 
 ### CLI Interface
 
-Use `argh` for CLI dispatch:
+Use `cw` for CLI dispatch:
 
 ```
 reci compile <recipe> [--config-adapter pyproject] [--output .github/workflows/ci.yml]
@@ -127,7 +133,7 @@ reci inspect <action-ref>
 |---------|---------|-----|
 | `ruamel.yaml` | Parse action.yml, generate CI YAML | YAML 1.2 (handles `on:` key), preserves style |
 | `tomlkit` | Round-trip edit pyproject.toml | Only TOML library preserving comments |
-| `argh` | CLI dispatch | Author's preferred pattern |
+| `cw` | CLI dispatch | Author's preferred pattern (argparse-native, MIT, zero runtime deps) |
 | `httpx` | Fetch action.yml from GitHub | HTTP client |
 
 ### YAML Generation
@@ -165,7 +171,7 @@ reci/
 └── yaml_gen.py
 ```
 
-Follow the python-package-architecture and python-coding-standards skills for conventions (pyproject.toml with hatchling/setuptools, argh CLI dispatch, Mapping/Protocol patterns, doctests).
+Follow the python-package-architecture and python-coding-standards skills for conventions (pyproject.toml with hatchling/setuptools, `cw` CLI dispatch, Mapping/Protocol patterns, doctests).
 
 ### Development Phases
 

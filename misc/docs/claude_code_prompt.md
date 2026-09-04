@@ -1,5 +1,11 @@
 # Claude Code Prompt: Build `reci` — the CI Recipe Tool
 
+
+> **Note (updated):** this document originally prescribed `argh` for CLI dispatch.
+> `reci` now uses [`cw`](https://github.com/i2mint/cw), which reproduces argh's
+> grammar on plain `argparse` under MIT with no runtime dependencies. The mentions
+> below have been updated so this document does not re-seed the old choice.
+
 ## Context
 
 You have two reference documents in this project:
@@ -33,7 +39,7 @@ config file + config schema → validation report
 
 ### CLI Interface
 
-Use `argh` for CLI dispatch. Core commands:
+Use `cw` for CLI dispatch. Core commands:
 
 ```
 reci compile <recipe> [--config-adapter pyproject] [--output .github/workflows/ci.yml]
@@ -64,7 +70,7 @@ reci inspect <action-ref>
 
 Follow the python-package-architecture and python-coding-standards skills. The package should use:
 - `pyproject.toml` with hatchling or setuptools
-- `argh` for CLI dispatch from `__main__.py`
+- `cw` for CLI dispatch from `__main__.py`
 - Mapping/Protocol patterns for the config adapter
 - Doctests for core functions
 - Progressive disclosure in the API (simple things simple)

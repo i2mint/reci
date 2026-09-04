@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import argh
+import cw
 
 from reci.action_spec import action_spec_from_ref, ActionSpec, ActionFetchError
 from reci.recipe import parse_recipe, RecipeParseError
@@ -172,9 +172,14 @@ def inspect(action_ref: str) -> None:
         print("Outputs: none")
 
 
-def main():
-    argh.dispatch_commands([compile, validate, scaffold, inspect])
+#: SSOT list of dispatchable commands (``_`` in names becomes ``-`` on the CLI).
+COMMANDS = [compile, validate, scaffold, inspect]
+
+
+def main() -> int:
+    """Dispatch a CLI command and return its exit code."""
+    return cw.dispatch(COMMANDS)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

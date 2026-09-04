@@ -1,5 +1,11 @@
 # `reci`: Typed DAG Compilation for GitHub Actions
 
+
+> **Note (updated):** this document originally prescribed `argh` for CLI dispatch.
+> `reci` now uses [`cw`](https://github.com/i2mint/cw), which reproduces argh's
+> grammar on plain `argparse` under MIT with no runtime dependencies. The mentions
+> below have been updated so this document does not re-seed the old choice.
+
 _A survey of CI pipeline modeling, a gap analysis, and the design of a recipe-based CI compiler_
 
 **Author:** Thor Whalen
@@ -355,7 +361,7 @@ reci scaffold <recipe> [--config-adapter pyproject]
 reci inspect <action-ref>
 ```
 
-Uses `argh` for dispatch.
+Uses `cw` for dispatch.
 
 ---
 
@@ -383,7 +389,7 @@ Uses `argh` for dispatch.
 ```
 reci/
 ├── __init__.py
-├── __main__.py          # CLI dispatch via argh
+├── __main__.py          # CLI dispatch via cw
 ├── action_spec.py       # ActionSpec: parse action.yml, fetch from GitHub
 ├── recipe.py            # Recipe: parse recipe YAML, build RecipeGraph
 ├── graph.py             # RecipeGraph: DAG structure, validation, wave computation
@@ -415,7 +421,7 @@ reci/
 |---------|---------|
 | `ruamel.yaml` | Parse action.yml, generate CI YAML (YAML 1.2, handles `on:`) |
 | `tomlkit` | Round-trip edit pyproject.toml (comment preservation) |
-| `argh` | CLI dispatch |
+| `cw` | CLI dispatch |
 | `httpx` | Fetch action.yml from GitHub |
 
 ### 6.3 Phases
