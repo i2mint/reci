@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.adapters.base &mdash; reci 0.0.5 documentation</title>
+  <title>reci.adapters.base &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -59,6 +59,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
@@ -97,7 +99,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for reci.adapters.base</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;ConfigAdapter protocol — interface for reading/writing CI config.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""ConfigAdapter protocol — interface for reading/writing CI config."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -108,26 +110,26 @@
 <a class="viewcode-back" href="../../../module_docs/reci/adapters/base.html#reci.adapters.base.ConfigAdapter">[docs]</a>
 <span class="nd">@runtime_checkable</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ConfigAdapter</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Protocol for pluggable CI config I/O.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Protocol for pluggable CI config I/O."""</span>
 
 <div class="viewcode-block" id="ConfigAdapter.read">
 <a class="viewcode-back" href="../../../module_docs/reci/adapters/base.html#reci.adapters.base.ConfigAdapter.read">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read config from a file and return a flat dict.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Read config from a file and return a flat dict."""</span>
         <span class="o">...</span></div>
 
 
 <div class="viewcode-block" id="ConfigAdapter.write">
 <a class="viewcode-back" href="../../../module_docs/reci/adapters/base.html#reci.adapters.base.ConfigAdapter.write">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write config to a file, preserving existing content.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Write config to a file, preserving existing content."""</span>
         <span class="o">...</span></div>
 
 
 <div class="viewcode-block" id="ConfigAdapter.default_path">
 <a class="viewcode-back" href="../../../module_docs/reci/adapters/base.html#reci.adapters.base.ConfigAdapter.default_path">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">default_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the default filename for this adapter.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the default filename for this adapter."""</span>
         <span class="o">...</span></div>
 </div>
 

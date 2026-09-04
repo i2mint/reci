@@ -1,0 +1,4 @@
+reci.tests.test_cli_surface
+===========================
+.. automodule:: reci.tests.test_cli_surface
+   :members:

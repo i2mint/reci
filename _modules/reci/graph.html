@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.graph &mdash; reci 0.0.5 documentation</title>
+  <title>reci.graph &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -59,6 +59,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
@@ -96,13 +98,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for reci.graph</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Recipe DAG — computational graph built on :mod:`graphlib`.</span>
+<span></span><span class="sd">"""Recipe DAG — computational graph built on :mod:`graphlib`.</span>
 
 <span class="sd">:class:`RecipeGraph` wraps :class:`graphlib.TopologicalSorter` to model</span>
 <span class="sd">the two-level structure of GitHub Actions workflows: jobs containing</span>
 <span class="sd">sequential steps, with inter-job parallelism governed by ``needs:``</span>
 <span class="sd">edges and data-flow dependencies.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -123,11 +125,11 @@
 <a class="viewcode-back" href="../../module_docs/reci/graph.html#reci.graph.ActionNode">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ActionNode</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single step in the recipe graph.</span>
+<span class="w">    </span><span class="sd">"""A single step in the recipe graph.</span>
 
 <span class="sd">    Uses ``step_id`` + ``job`` as its identity (the graph keys these as</span>
-<span class="sd">    ``&quot;{job}.{step_id}&quot;`` strings for :class:`TopologicalSorter`).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    ``"{job}.{step_id}"`` strings for :class:`TopologicalSorter`).</span>
+<span class="sd">    """</span>
 
     <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">job</span><span class="p">:</span> <span class="nb">str</span>
@@ -143,11 +145,11 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">"</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">output_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;All normalized output names this node produces.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""All normalized output names this node produces."""</span>
         <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">declared_outputs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_spec</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_spec</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
@@ -157,7 +159,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">input_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InputSpec</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Input specs from the action, or empty for run: steps.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Input specs from the action, or empty for run: steps."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_spec</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_spec</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{}</span></div>
@@ -173,7 +175,7 @@
 <a class="viewcode-back" href="../../module_docs/reci/graph.html#reci.graph.CrossJobEdge">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CrossJobEdge</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data-flow edge between steps in different jobs.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Data-flow edge between steps in different jobs."""</span>
 
     <span class="n">source_job</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">source_step_id</span><span class="p">:</span> <span class="nb">str</span>
@@ -192,11 +194,11 @@
 <div class="viewcode-block" id="RecipeGraph">
 <a class="viewcode-back" href="../../module_docs/reci/graph.html#reci.graph.RecipeGraph">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RecipeGraph</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The computational DAG of a recipe.</span>
+<span class="w">    </span><span class="sd">"""The computational DAG of a recipe.</span>
 
-<span class="sd">    Nodes are identified by ``&quot;{job}.{step_id}&quot;`` strings.  The actual</span>
+<span class="sd">    Nodes are identified by ``"{job}.{step_id}"`` strings.  The actual</span>
 <span class="sd">    :class:`ActionNode` objects are stored in :attr:`_nodes`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionNode</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -219,10 +221,10 @@
         <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span>
         <span class="n">action_specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecipeGraph</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a graph from a parsed recipe and fetched action specs.</span>
+<span class="w">        </span><span class="sd">"""Build a graph from a parsed recipe and fetched action specs.</span>
 
-<span class="sd">        *action_specs* is keyed by action ref (e.g. ``&quot;actions/checkout@v4&quot;``).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        *action_specs* is keyed by action ref (e.g. ``"actions/checkout@v4"``).</span>
+<span class="sd">        """</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -290,11 +292,11 @@
 <div class="viewcode-block" id="RecipeGraph.execution_waves">
 <a class="viewcode-back" href="../../module_docs/reci/graph.html#reci.graph.RecipeGraph.execution_waves">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">execution_waves</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return parallel execution waves (topological generations).</span>
+<span class="w">        </span><span class="sd">"""Return parallel execution waves (topological generations).</span>
 
 <span class="sd">        Each wave is a tuple of node keys that can execute concurrently.</span>
 <span class="sd">        Raises :class:`CycleError` if the graph has cycles.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">ts</span> <span class="o">=</span> <span class="n">TopologicalSorter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="p">)</span>
         <span class="n">ts</span><span class="o">.</span><span class="n">prepare</span><span class="p">()</span>
         <span class="n">waves</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -308,10 +310,10 @@
 <div class="viewcode-block" id="RecipeGraph.validate">
 <a class="viewcode-back" href="../../module_docs/reci/graph.html#reci.graph.RecipeGraph.validate">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run all validation rules and return a ValidationReport.</span>
+<span class="w">        </span><span class="sd">"""Run all validation rules and return a ValidationReport.</span>
 
 <span class="sd">        Imported lazily to avoid circular imports (validation depends on graph).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">reci.validation.rules</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_all_rules</span>
 
         <span class="k">return</span> <span class="n">run_all_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{})</span></div>

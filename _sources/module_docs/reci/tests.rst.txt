@@ -1,0 +1,4 @@
+reci.tests
+==========
+.. automodule:: reci.tests
+   :members:

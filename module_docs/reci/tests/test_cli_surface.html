@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.adapters.wads &mdash; reci 0.0.6 documentation</title>
+  <title>reci.tests.test_cli_surface &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -24,8 +24,8 @@
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="reci.adapters.yaml_adapter" href="yaml_adapter.html" />
-    <link rel="prev" title="reci.adapters.pyproject" href="pyproject.html" /> 
+    <link rel="next" title="reci.validation" href="../validation.html" />
+    <link rel="prev" title="reci.tests" href="../tests.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,20 +53,17 @@
 <li class="toctree-l1"><a class="reference internal" href="../__main__.html">reci.__main__</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../action_spec.html">reci.action_spec</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../adapters.html">reci.adapters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="base.html">reci.adapters.base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="package_json.html">reci.adapters.package_json</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyproject.html">reci.adapters.pyproject</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">reci.adapters.wads</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#reci.adapters.wads.WadsAdapter"><code class="docutils literal notranslate"><span class="pre">WadsAdapter</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="yaml_adapter.html">reci.adapters.yaml_adapter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adapters/base.html">reci.adapters.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adapters/package_json.html">reci.adapters.package_json</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adapters/pyproject.html">reci.adapters.pyproject</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adapters/wads.html">reci.adapters.wads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../adapters/yaml_adapter.html">reci.adapters.yaml_adapter</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../compiler.html">reci.compiler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../recipe.html">reci.recipe</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tests.html">reci.tests</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../validation/report.html">reci.validation.report</a></li>
@@ -93,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">reci.adapters.wads</li>
+      <li class="breadcrumb-item active">reci.tests.test_cli_surface</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../../_sources/module_docs/reci/adapters/wads.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/module_docs/reci/tests/test_cli_surface.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -103,23 +100,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-reci.adapters.wads">
-<span id="reci-adapters-wads"></span><h1>reci.adapters.wads<a class="headerlink" href="#module-reci.adapters.wads" title="Link to this heading"></a></h1>
-<p>WadsAdapter — reads <code class="docutils literal notranslate"><span class="pre">[tool.wads.ci]</span></code> for backward compatibility.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="reci.adapters.wads.WadsAdapter">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">reci.adapters.wads.</span></span><span class="sig-name descname"><span class="pre">WadsAdapter</span></span><a class="reference internal" href="../../../_modules/reci/adapters/wads.html#WadsAdapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.adapters.wads.WadsAdapter" title="Link to this definition"></a></dt>
-<dd><p>Read/write CI config from <code class="docutils literal notranslate"><span class="pre">[tool.wads.ci]</span></code> in pyproject.toml.</p>
-</dd></dl>
-
+  <section id="reci-tests-test-cli-surface">
+<h1>reci.tests.test_cli_surface<a class="headerlink" href="#reci-tests-test-cli-surface" title="Link to this heading"></a></h1>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyproject.html" class="btn btn-neutral float-left" title="reci.adapters.pyproject" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="yaml_adapter.html" class="btn btn-neutral float-right" title="reci.adapters.yaml_adapter" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../tests.html" class="btn btn-neutral float-left" title="reci.tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../validation.html" class="btn btn-neutral float-right" title="reci.validation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

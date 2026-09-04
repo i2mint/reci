@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.adapters.yaml_adapter &mdash; reci 0.0.5 documentation</title>
+  <title>reci.adapters.yaml_adapter &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -59,6 +59,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
@@ -97,7 +99,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for reci.adapters.yaml_adapter</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;YamlAdapter — reads ``.ci.yml`` via ruamel.yaml.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""YamlAdapter — reads ``.ci.yml`` via ruamel.yaml."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -110,7 +112,7 @@
 <div class="viewcode-block" id="YamlAdapter">
 <a class="viewcode-back" href="../../../module_docs/reci/adapters/yaml_adapter.html#reci.adapters.yaml_adapter.YamlAdapter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">YamlAdapter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read/write CI config from a ``.ci.yml`` file.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Read/write CI config from a ``.ci.yml`` file."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -120,11 +122,11 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">_make_yaml</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">y</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">default_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;.ci.yml&quot;</span></div>
+        <span class="k">return</span> <span class="s2">".ci.yml"</span></div>
 
 </pre></div>
 

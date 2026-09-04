@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.config &mdash; reci 0.0.5 documentation</title>
+  <title>reci.config &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -67,6 +67,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation/report.html">reci.validation.report</a></li>
@@ -125,8 +127,8 @@ has <code class="docutils literal notranslate"><span class="pre">required=True</
 <dt class="sig sig-object py" id="reci.config.flatten_config">
 <span class="sig-prename descclassname"><span class="pre">reci.config.</span></span><span class="sig-name descname"><span class="pre">flatten_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nested</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/reci/config.html#flatten_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.config.flatten_config" title="Link to this definition"></a></dt>
 <dd><p>Convert a nested dict to a flat dict with <code class="docutils literal notranslate"><span class="pre">__</span></code> separators.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_config</span><span class="p">({</span><span class="s1">&#39;testing&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;python_versions&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;3.10&#39;</span><span class="p">]}})</span>
-<span class="go">{&#39;testing__python_versions&#39;: [&#39;3.10&#39;]}</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_config</span><span class="p">({</span><span class="s1">'testing'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'python_versions'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'3.10'</span><span class="p">]}})</span>
+<span class="go">{'testing__python_versions': ['3.10']}</span>
 </pre></div>
 </div>
 </dd></dl>

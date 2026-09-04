@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.compiler &mdash; reci 0.0.5 documentation</title>
+  <title>reci.compiler &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -59,6 +59,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
@@ -96,13 +98,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for reci.compiler</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Compiler — recipe + action specs + config → GitHub Actions workflow YAML.</span>
+<span></span><span class="sd">"""Compiler — recipe + action specs + config → GitHub Actions workflow YAML.</span>
 
 <span class="sd">The compiler resolves data-flow wiring using a five-level precedence, injects</span>
 <span class="sd">a ``setup`` job that exports config values as job outputs, auto-generates the</span>
 <span class="sd">cross-job output forwarding ceremony, and adds ``needs:`` edges from data-flow</span>
 <span class="sd">dependencies.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -118,20 +120,20 @@
 <span class="c1"># Config reference rewriting</span>
 <span class="c1"># ---------------------------------------------------------------------------</span>
 
-<span class="n">_CONFIG_REF_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\$\{\{\s*config\.(\w+)\s*\}\}&quot;</span><span class="p">)</span>
+<span class="n">_CONFIG_REF_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\$\{\{\s*config\.(\w+)\s*\}\}"</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_rewrite_config_refs</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Replace ``${{ config.X }}`` with ``${{ needs.setup.outputs.X }}``.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Replace ``${{ config.X }}`` with ``${{ needs.setup.outputs.X }}``.</span>
 
-<span class="sd">    &gt;&gt;&gt; _rewrite_config_refs(&#39;${{ config.python_versions }}&#39;)</span>
-<span class="sd">    &#39;${{ needs.setup.outputs.python_versions }}&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_CONFIG_REF_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;${{ needs.setup.outputs.\1 }}&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<span class="sd">    &gt;&gt;&gt; _rewrite_config_refs('${{ config.python_versions }}')</span>
+<span class="sd">    '${{ needs.setup.outputs.python_versions }}'</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">_CONFIG_REF_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"${{ needs.setup.outputs.\1 }}"</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_rewrite_all_config_refs</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively rewrite config references in strings, dicts, and lists.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Recursively rewrite config references in strings, dicts, and lists."""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -147,35 +149,35 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_serialize_config_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Serialize a config value for GITHUB_OUTPUT.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Serialize a config value for GITHUB_OUTPUT."""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;true&quot;</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">&quot;false&quot;</span>
+        <span class="k">return</span> <span class="s2">"true"</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">"false"</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_setup_job</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the setup job that exports config values as job outputs.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Generate the setup job that exports config values as job outputs."""</span>
     <span class="n">lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">serialized</span> <span class="o">=</span> <span class="n">_serialize_config_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;echo &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">serialized</span><span class="si">}</span><span class="s1">&quot; &gt;&gt; $GITHUB_OUTPUT&#39;</span><span class="p">)</span>
-        <span class="n">outputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="se">{{{{</span><span class="s2"> steps.config.outputs.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">&quot;</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">'echo "</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">serialized</span><span class="si">}</span><span class="s1">" &gt;&gt; $GITHUB_OUTPUT'</span><span class="p">)</span>
+        <span class="n">outputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> steps.config.outputs.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
 
-    <span class="n">run_script</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">lines</span> <span class="k">else</span> <span class="s1">&#39;echo &quot;No config values&quot;&#39;</span>
+    <span class="n">run_script</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">lines</span> <span class="k">else</span> <span class="s1">'echo "No config values"'</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Setup&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;runs-on&quot;</span><span class="p">:</span> <span class="s2">&quot;ubuntu-latest&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="n">outputs</span><span class="p">,</span>
-        <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Setup"</span><span class="p">,</span>
+        <span class="s2">"runs-on"</span><span class="p">:</span> <span class="s2">"ubuntu-latest"</span><span class="p">,</span>
+        <span class="s2">"outputs"</span><span class="p">:</span> <span class="n">outputs</span><span class="p">,</span>
+        <span class="s2">"steps"</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Export config&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;config&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;run&quot;</span><span class="p">:</span> <span class="n">run_script</span><span class="p">,</span>
+                <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Export config"</span><span class="p">,</span>
+                <span class="s2">"id"</span><span class="p">:</span> <span class="s2">"config"</span><span class="p">,</span>
+                <span class="s2">"run"</span><span class="p">:</span> <span class="n">run_script</span><span class="p">,</span>
             <span class="p">}</span>
         <span class="p">],</span>
     <span class="p">}</span>
@@ -187,26 +189,26 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_step</span><span class="p">(</span><span class="n">step</span><span class="p">:</span> <span class="n">StepSpec</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">action_spec</span><span class="p">:</span> <span class="n">ActionSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a StepSpec to a GitHub Actions step dict.</span>
+<span class="w">    </span><span class="sd">"""Convert a StepSpec to a GitHub Actions step dict.</span>
 
 <span class="sd">    In Phase 1 this passes through ``with:`` values verbatim (after</span>
 <span class="sd">    config ref rewriting).  Auto-wiring is layered on in Phase 2.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">name</span>
-    <span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">d</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">id</span>
 
     <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;uses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"uses"</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span>
     <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;run&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"run"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;if&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"if"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;with&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"with"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
     <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"env"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
     <span class="k">return</span> <span class="n">d</span>
 
@@ -225,32 +227,32 @@
     <span class="n">cross_job_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">wired_inputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a JobSpec to a GitHub Actions job dict.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert a JobSpec to a GitHub Actions job dict."""</span>
     <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">if</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">if_</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;if&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">job_spec</span><span class="o">.</span><span class="n">if_</span><span class="p">)</span>
-    <span class="n">d</span><span class="p">[</span><span class="s2">&quot;runs-on&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">runs_on</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"if"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">job_spec</span><span class="o">.</span><span class="n">if_</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">[</span><span class="s2">"runs-on"</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">runs_on</span>
 
     <span class="c1"># needs: explicit + setup + data-flow driven</span>
     <span class="n">needs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">job_spec</span><span class="o">.</span><span class="n">needs</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;setup&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">needs</span><span class="p">:</span>
-        <span class="n">needs</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;setup&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"setup"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">needs</span><span class="p">:</span>
+        <span class="n">needs</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"setup"</span><span class="p">)</span>
     <span class="c1"># Add cross-job needs</span>
     <span class="k">if</span> <span class="n">cross_job_edges</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">cross_job_edges</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">target_job</span> <span class="o">==</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">edge</span><span class="o">.</span><span class="n">source_job</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">needs</span><span class="p">:</span>
                 <span class="n">needs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="p">)</span>
-    <span class="n">d</span><span class="p">[</span><span class="s2">&quot;needs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">needs</span>
+    <span class="n">d</span><span class="p">[</span><span class="s2">"needs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">needs</span>
 
     <span class="k">if</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">strategy</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;strategy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_all_config_refs</span><span class="p">(</span><span class="n">job_spec</span><span class="o">.</span><span class="n">strategy</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"strategy"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rewrite_all_config_refs</span><span class="p">(</span><span class="n">job_spec</span><span class="o">.</span><span class="n">strategy</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">permissions</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;permissions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">permissions</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"permissions"</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">permissions</span>
     <span class="k">if</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">continue_on_error</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;continue-on-error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"continue-on-error"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">if</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">env</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">d</span><span class="p">[</span><span class="s2">"env"</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_rewrite_config_refs</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">job_spec</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
     <span class="c1"># Job-level outputs for cross-job forwarding</span>
     <span class="k">if</span> <span class="n">cross_job_edges</span><span class="p">:</span>
@@ -258,7 +260,7 @@
             <span class="n">job_spec</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_spec</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="n">cross_job_edges</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">job_outputs</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_outputs</span>
+            <span class="n">d</span><span class="p">[</span><span class="s2">"outputs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_outputs</span>
 
     <span class="c1"># Steps</span>
     <span class="n">steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -267,18 +269,18 @@
         <span class="n">step_dict</span> <span class="o">=</span> <span class="n">_build_step</span><span class="p">(</span><span class="n">step_spec</span><span class="p">,</span> <span class="n">action_spec</span><span class="o">=</span><span class="n">spec</span><span class="p">)</span>
 
         <span class="c1"># Apply wired inputs (from Phase 2+)</span>
-        <span class="n">node_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">step_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">node_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">step_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="n">wired_inputs</span> <span class="ow">and</span> <span class="n">node_key</span> <span class="ow">in</span> <span class="n">wired_inputs</span><span class="p">:</span>
             <span class="n">wired</span> <span class="o">=</span> <span class="n">wired_inputs</span><span class="p">[</span><span class="n">node_key</span><span class="p">]</span>
-            <span class="n">existing_with</span> <span class="o">=</span> <span class="n">step_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;with&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">existing_with</span> <span class="o">=</span> <span class="n">step_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"with"</span><span class="p">,</span> <span class="p">{})</span>
             <span class="c1"># Wired inputs fill in gaps; explicit with: takes precedence</span>
             <span class="n">merged</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">wired</span><span class="p">,</span> <span class="o">**</span><span class="n">existing_with</span><span class="p">}</span>
             <span class="k">if</span> <span class="n">merged</span><span class="p">:</span>
-                <span class="n">step_dict</span><span class="p">[</span><span class="s2">&quot;with&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span>
+                <span class="n">step_dict</span><span class="p">[</span><span class="s2">"with"</span><span class="p">]</span> <span class="o">=</span> <span class="n">merged</span>
 
         <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_dict</span><span class="p">)</span>
 
-    <span class="n">d</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps</span>
+    <span class="n">d</span><span class="p">[</span><span class="s2">"steps"</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps</span>
     <span class="k">return</span> <span class="n">d</span>
 
 
@@ -292,13 +294,13 @@
     <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ActionNode</span><span class="p">],</span>
     <span class="n">cross_job_edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Auto-generate job-level outputs for cross-job consumption.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Auto-generate job-level outputs for cross-job consumption."""</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">cross_job_edges</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">source_job</span> <span class="o">==</span> <span class="n">job_id</span><span class="p">:</span>
             <span class="n">output_key</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span>
             <span class="n">outputs</span><span class="p">[</span><span class="n">output_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;$</span><span class="se">{{{{</span><span class="s2"> steps.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.outputs.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> steps.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">.outputs.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
             <span class="p">)</span>
     <span class="k">return</span> <span class="n">outputs</span>
 
@@ -313,14 +315,14 @@
     <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find a config key for an action input.</span>
+<span class="w">    </span><span class="sd">"""Find a config key for an action input.</span>
 
 <span class="sd">    Checks scoped ``action_local_name__input_name`` first, then shared</span>
 <span class="sd">    ``input_name``.  Returns the config key name or ``None``.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">ref</span><span class="p">:</span>
         <span class="n">local</span> <span class="o">=</span> <span class="n">action_local_name</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-        <span class="n">scoped</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">scoped</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">"</span>
         <span class="k">if</span> <span class="n">scoped</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">scoped</span>
     <span class="k">if</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
@@ -334,15 +336,15 @@
     <span class="n">upstream_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
     <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resolve each input using the five-level precedence.</span>
+<span class="w">    </span><span class="sd">"""Resolve each input using the five-level precedence.</span>
 
 <span class="sd">    Returns a dict of ``{original_input_name: expression}`` for the ``with:``</span>
 <span class="sd">    block.  Only includes inputs that need wiring (levels 2 and 3); level 1</span>
-<span class="sd">    (explicit) is handled by the recipe&#39;s ``with_:``, and level 4 (defaults)</span>
+<span class="sd">    (explicit) is handled by the recipe's ``with_:``, and level 4 (defaults)</span>
 <span class="sd">    means we omit.</span>
 
 <span class="sd">    *upstream_outputs*: ``{normalized_output_name: (step_id, original_output_name)}``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">wired</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">specs</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span>
 
@@ -357,13 +359,13 @@
         <span class="c1"># Level 2: upstream output name match</span>
         <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">upstream_outputs</span><span class="p">:</span>
             <span class="n">step_id</span><span class="p">,</span> <span class="n">out_name</span> <span class="o">=</span> <span class="n">upstream_outputs</span><span class="p">[</span><span class="n">search_name</span><span class="p">]</span>
-            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="se">{{{{</span><span class="s2"> steps.</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.outputs.</span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">&quot;</span>
+            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> steps.</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.outputs.</span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
             <span class="k">continue</span>
 
         <span class="c1"># Level 3: config (scoped then shared)</span>
         <span class="n">config_key</span> <span class="o">=</span> <span class="n">_resolve_config_key</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">config_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;$</span><span class="se">{{{{</span><span class="s2"> needs.setup.outputs.</span><span class="si">{</span><span class="n">config_key</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">&quot;</span>
+            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> needs.setup.outputs.</span><span class="si">{</span><span class="n">config_key</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
             <span class="k">continue</span>
 
         <span class="c1"># Level 4: default exists → omit (GitHub Actions uses the default)</span>
@@ -378,11 +380,11 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">up_to_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect all output names from steps preceding *up_to_key* in the same job.</span>
+<span class="w">    </span><span class="sd">"""Collect all output names from steps preceding *up_to_key* in the same job.</span>
 
 <span class="sd">    Returns ``{normalized_name: (step_id, normalized_name)}``.</span>
 <span class="sd">    Nearest predecessor wins (later entries overwrite earlier).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">up_to_key</span><span class="p">:</span>
@@ -401,7 +403,7 @@
     <span class="n">graph</span><span class="p">:</span> <span class="n">RecipeGraph</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find data-flow edges between steps in different jobs.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Find data-flow edges between steps in different jobs."""</span>
     <span class="n">edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Build a map of all outputs per job</span>
@@ -459,7 +461,7 @@
 <div class="viewcode-block" id="CompilationError">
 <a class="viewcode-back" href="../../module_docs/reci/compiler.html#reci.compiler.CompilationError">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">CompilationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when compilation fails.&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">"""Raised when compilation fails."""</span></div>
 
 
 
@@ -471,7 +473,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compile a recipe into a GitHub Actions workflow dict.</span>
+<span class="w">    </span><span class="sd">"""Compile a recipe into a GitHub Actions workflow dict.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -482,7 +484,7 @@
 <span class="sd">    config:</span>
 <span class="sd">        Flat config dict (optional).  If provided, a ``setup`` job is</span>
 <span class="sd">        injected and config references are wired.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">graph</span> <span class="o">=</span> <span class="n">RecipeGraph</span><span class="o">.</span><span class="n">from_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">action_specs</span><span class="p">)</span>
 
@@ -499,7 +501,7 @@
             <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">cross_job_edges</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">target_job</span> <span class="o">==</span> <span class="n">job_id</span> <span class="ow">and</span> <span class="n">edge</span><span class="o">.</span><span class="n">target_step_id</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="p">:</span>
                     <span class="n">upstream</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;needs.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">.outputs&quot;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s2">"needs.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">.outputs"</span><span class="p">,</span>
                         <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">,</span>
                     <span class="p">)</span>
 
@@ -513,17 +515,17 @@
 
     <span class="c1"># Build workflow</span>
     <span class="n">workflow</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">workflow</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">&quot;CI&quot;</span>
-    <span class="n">workflow</span><span class="p">[</span><span class="s2">&quot;on&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">on</span>
+    <span class="n">workflow</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">"CI"</span>
+    <span class="n">workflow</span><span class="p">[</span><span class="s2">"on"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">on</span>
 
     <span class="k">if</span> <span class="n">recipe</span><span class="o">.</span><span class="n">env</span><span class="p">:</span>
-        <span class="n">workflow</span><span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">env</span>
+        <span class="n">workflow</span><span class="p">[</span><span class="s2">"env"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">env</span>
 
     <span class="n">jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="c1"># Setup job (always present when config is provided)</span>
     <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
-        <span class="n">jobs</span><span class="p">[</span><span class="s2">&quot;setup&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_setup_job</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">jobs</span><span class="p">[</span><span class="s2">"setup"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_setup_job</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
     <span class="c1"># Recipe jobs</span>
     <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job_spec</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -536,7 +538,7 @@
             <span class="n">wired_inputs</span><span class="o">=</span><span class="n">all_wired</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">workflow</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jobs</span>
+    <span class="n">workflow</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">jobs</span>
     <span class="k">return</span> <span class="n">workflow</span></div>
 
 </pre></div>

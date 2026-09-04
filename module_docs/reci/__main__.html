@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.__main__ &mdash; reci 0.0.5 documentation</title>
+  <title>reci.__main__ &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -51,8 +51,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../reci.html">reci</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">reci.__main__</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reci.__main__.COMMANDS"><code class="docutils literal notranslate"><span class="pre">COMMANDS</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reci.__main__.compile"><code class="docutils literal notranslate"><span class="pre">compile()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reci.__main__.inspect"><code class="docutils literal notranslate"><span class="pre">inspect()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reci.__main__.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reci.__main__.scaffold"><code class="docutils literal notranslate"><span class="pre">scaffold()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reci.__main__.validate"><code class="docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
 </ul>
@@ -68,6 +70,8 @@
 <li class="toctree-l1"><a class="reference internal" href="config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation/report.html">reci.validation.report</a></li>
@@ -107,6 +111,12 @@
   <section id="module-reci.__main__">
 <span id="reci-main"></span><h1>reci.__main__<a class="headerlink" href="#module-reci.__main__" title="Link to this heading"></a></h1>
 <p>CLI entry point — <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">reci</span></code> or <code class="docutils literal notranslate"><span class="pre">reci</span></code> command.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="reci.__main__.COMMANDS">
+<span class="sig-prename descclassname"><span class="pre">reci.__main__.</span></span><span class="sig-name descname"><span class="pre">COMMANDS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;function</span> <span class="pre">compile&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">validate&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">scaffold&gt;,</span> <span class="pre">&lt;function</span> <span class="pre">inspect&gt;]</span></span><a class="headerlink" href="#reci.__main__.COMMANDS" title="Link to this definition"></a></dt>
+<dd><p>SSOT list of dispatchable commands (<code class="docutils literal notranslate"><span class="pre">_</span></code> in names becomes <code class="docutils literal notranslate"><span class="pre">-</span></code> on the CLI).</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="reci.__main__.compile">
 <span class="sig-prename descclassname"><span class="pre">reci.__main__.</span></span><span class="sig-name descname"><span class="pre">compile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recipe</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_adapter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pyproject'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.github/workflows/ci.yml'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/reci/__main__.html#compile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.__main__.compile" title="Link to this definition"></a></dt>
@@ -117,6 +127,12 @@
 <dt class="sig sig-object py" id="reci.__main__.inspect">
 <span class="sig-prename descclassname"><span class="pre">reci.__main__.</span></span><span class="sig-name descname"><span class="pre">inspect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action_ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/reci/__main__.html#inspect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.__main__.inspect" title="Link to this definition"></a></dt>
 <dd><p>Fetch and display an action’s input/output contract.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.__main__.main">
+<span class="sig-prename descclassname"><span class="pre">reci.__main__.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/reci/__main__.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.__main__.main" title="Link to this definition"></a></dt>
+<dd><p>Dispatch a CLI command and return its exit code.</p>
 </dd></dl>
 
 <dl class="py function">

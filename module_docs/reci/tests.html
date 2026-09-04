@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.adapters &mdash; reci 0.0.6 documentation</title>
+  <title>reci.tests &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -24,8 +24,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="reci.adapters.base" href="adapters/base.html" />
-    <link rel="prev" title="reci.action_spec" href="action_spec.html" /> 
+    <link rel="next" title="reci.tests.test_cli_surface" href="tests/test_cli_surface.html" />
+    <link rel="prev" title="reci.recipe" href="recipe.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,11 +52,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../reci.html">reci</a></li>
 <li class="toctree-l1"><a class="reference internal" href="__main__.html">reci.__main__</a></li>
 <li class="toctree-l1"><a class="reference internal" href="action_spec.html">reci.action_spec</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">reci.adapters</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#reci.adapters.detect_adapter"><code class="docutils literal notranslate"><span class="pre">detect_adapter()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#reci.adapters.get_adapter"><code class="docutils literal notranslate"><span class="pre">get_adapter()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="adapters.html">reci.adapters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="adapters/base.html">reci.adapters.base</a></li>
 <li class="toctree-l1"><a class="reference internal" href="adapters/package_json.html">reci.adapters.package_json</a></li>
 <li class="toctree-l1"><a class="reference internal" href="adapters/pyproject.html">reci.adapters.pyproject</a></li>
@@ -66,7 +62,7 @@
 <li class="toctree-l1"><a class="reference internal" href="config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipe.html">reci.recipe</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tests.html">reci.tests</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">reci.tests</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation/formatters.html">reci.validation.formatters</a></li>
@@ -94,9 +90,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">reci.adapters</li>
+      <li class="breadcrumb-item active">reci.tests</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/module_docs/reci/adapters.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../../_sources/module_docs/reci/tests.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -104,29 +100,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-reci.adapters">
-<span id="reci-adapters"></span><h1>reci.adapters<a class="headerlink" href="#module-reci.adapters" title="Link to this heading"></a></h1>
-<p>Config adapter registry.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="reci.adapters.detect_adapter">
-<span class="sig-prename descclassname"><span class="pre">reci.adapters.</span></span><span class="sig-name descname"><span class="pre">detect_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="adapters/base.html#reci.adapters.base.ConfigAdapter" title="reci.adapters.base.ConfigAdapter"><span class="pre">ConfigAdapter</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/reci/adapters.html#detect_adapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.adapters.detect_adapter" title="Link to this definition"></a></dt>
-<dd><p>Auto-detect the config adapter from project files.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="reci.adapters.get_adapter">
-<span class="sig-prename descclassname"><span class="pre">reci.adapters.</span></span><span class="sig-name descname"><span class="pre">get_adapter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="adapters/base.html#reci.adapters.base.ConfigAdapter" title="reci.adapters.base.ConfigAdapter"><span class="pre">ConfigAdapter</span></a></span></span><a class="reference internal" href="../../_modules/reci/adapters.html#get_adapter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.adapters.get_adapter" title="Link to this definition"></a></dt>
-<dd><p>Get a config adapter by name.</p>
-</dd></dl>
-
+  <section id="module-reci.tests">
+<span id="reci-tests"></span><h1>reci.tests<a class="headerlink" href="#module-reci.tests" title="Link to this heading"></a></h1>
+<p>Tests for <a class="reference internal" href="../reci.html#module-reci" title="reci"><code class="xref py py-mod docutils literal notranslate"><span class="pre">reci</span></code></a> (kept inside the package so <code class="docutils literal notranslate"><span class="pre">testpaths</span> <span class="pre">=</span> <span class="pre">[&quot;reci&quot;]</span></code> finds them).</p>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="action_spec.html" class="btn btn-neutral float-left" title="reci.action_spec" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="adapters/base.html" class="btn btn-neutral float-right" title="reci.adapters.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="recipe.html" class="btn btn-neutral float-left" title="reci.recipe" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tests/test_cli_surface.html" class="btn btn-neutral float-right" title="reci.tests.test_cli_surface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.action_spec &mdash; reci 0.0.5 documentation</title>
+  <title>reci.action_spec &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -74,6 +74,8 @@
 <li class="toctree-l1"><a class="reference internal" href="config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validation/report.html">reci.validation.report</a></li>
@@ -145,10 +147,10 @@ about data flow without fetching YAML at every step.</p>
 <dt class="sig sig-object py" id="reci.action_spec.action_local_name">
 <span class="sig-prename descclassname"><span class="pre">reci.action_spec.</span></span><span class="sig-name descname"><span class="pre">action_local_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/reci/action_spec.html#action_local_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.action_spec.action_local_name" title="Link to this definition"></a></dt>
 <dd><p>Extract the last path segment of an action ref, normalized.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">action_local_name</span><span class="p">(</span><span class="s1">&#39;i2mint/wads/actions/run-tests@master&#39;</span><span class="p">)</span>
-<span class="go">&#39;run_tests&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">action_local_name</span><span class="p">(</span><span class="s1">&#39;actions/checkout@v4&#39;</span><span class="p">)</span>
-<span class="go">&#39;checkout&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">action_local_name</span><span class="p">(</span><span class="s1">'i2mint/wads/actions/run-tests@master'</span><span class="p">)</span>
+<span class="go">'run_tests'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action_local_name</span><span class="p">(</span><span class="s1">'actions/checkout@v4'</span><span class="p">)</span>
+<span class="go">'checkout'</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -178,10 +180,10 @@ step or overrides the fetched metadata.</p>
 <dt class="sig sig-object py" id="reci.action_spec.normalize_name">
 <span class="sig-prename descclassname"><span class="pre">reci.action_spec.</span></span><span class="sig-name descname"><span class="pre">normalize_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/reci/action_spec.html#normalize_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#reci.action_spec.normalize_name" title="Link to this definition"></a></dt>
 <dd><p>Canonical form: lowercase, hyphens/spaces → underscores.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_name</span><span class="p">(</span><span class="s1">&#39;python-version&#39;</span><span class="p">)</span>
-<span class="go">&#39;python_version&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_name</span><span class="p">(</span><span class="s1">&#39;Root Dir&#39;</span><span class="p">)</span>
-<span class="go">&#39;root_dir&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_name</span><span class="p">(</span><span class="s1">'python-version'</span><span class="p">)</span>
+<span class="go">'python_version'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_name</span><span class="p">(</span><span class="s1">'Root Dir'</span><span class="p">)</span>
+<span class="go">'root_dir'</span>
 </pre></div>
 </div>
 </dd></dl>

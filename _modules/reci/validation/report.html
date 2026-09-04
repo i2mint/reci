@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>reci.validation.report &mdash; reci 0.0.5 documentation</title>
+  <title>reci.validation.report &mdash; reci 0.0.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=282f96c0"></script>
+      <script src="../../../_static/documentation_options.js?v=1fd71caa"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../../_static/toggleprompt.js?v=d7ede5d2"></script>
@@ -59,6 +59,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/config.html">reci.config</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/graph.html">reci.graph</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/recipe.html">reci.recipe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/tests.html">reci.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/tests/test_cli_surface.html">reci.tests.test_cli_surface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation.html">reci.validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/formatters.html">reci.validation.formatters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../module_docs/reci/validation/report.html">reci.validation.report</a></li>
@@ -96,7 +98,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for reci.validation.report</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Core validation data structures.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Core validation data structures."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -107,11 +109,11 @@
 <div class="viewcode-block" id="Severity">
 <a class="viewcode-back" href="../../../module_docs/reci/validation/report.html#reci.validation.report.Severity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Severity</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;ESLint-style three-level severity.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""ESLint-style three-level severity."""</span>
 
-    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
-    <span class="n">WARNING</span> <span class="o">=</span> <span class="s2">&quot;warning&quot;</span>
-    <span class="n">INFO</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span></div>
+    <span class="n">ERROR</span> <span class="o">=</span> <span class="s2">"error"</span>
+    <span class="n">WARNING</span> <span class="o">=</span> <span class="s2">"warning"</span>
+    <span class="n">INFO</span> <span class="o">=</span> <span class="s2">"info"</span></div>
 
 
 
@@ -119,7 +121,7 @@
 <a class="viewcode-back" href="../../../module_docs/reci/validation/report.html#reci.validation.report.Finding">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Finding</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;One validation finding.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""One validation finding."""</span>
 
     <span class="n">rule_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">severity</span><span class="p">:</span> <span class="n">Severity</span>
@@ -134,7 +136,7 @@
 <a class="viewcode-back" href="../../../module_docs/reci/validation/report.html#reci.validation.report.ValidationReport">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ValidationReport</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collection of validation findings.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Collection of validation findings."""</span>
 
     <span class="n">findings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Finding</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
