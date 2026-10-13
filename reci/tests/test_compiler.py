@@ -214,6 +214,20 @@ jobs:
         ("${{ format('{0}', 'config.x') }}", "${{ format('{0}', 'config.x') }}"),
         ("cat config.json ${{ github.sha }}", "cat config.json ${{ github.sha }}"),
         ("${{ myconfig.x }} ${{ secrets.config.y }}", "${{ myconfig.x }} ${{ secrets.config.y }}"),
+        ("${{ steps.my-config.outputs.x }}", "${{ steps.my-config.outputs.x }}"),
+        ("${{ config.x.y }} ${{ config.z[0] }}", "${{ config.x.y }} ${{ config.z[0] }}"),
+        ("${{ config.1x }}", "${{ config.1x }}"),
+        # untouched expressions stay verbatim (spacing included)
+        ("${{  github.sha  }} ${{ config.a }}", "${{  github.sha  }} ${{ needs.setup.outputs.a }}"),
+        # a `}}` inside a string literal does not end the expression
+        (
+            "${{ format('{{{0}}}', config.x) }}",
+            "${{ format('{{{0}}}', needs.setup.outputs.x) }}",
+        ),
+        ("${{ format('{0} }}', config.y) }}", "${{ format('{0} }}', needs.setup.outputs.y) }}"),
+        # multiline expression
+        ("${{\n  config.a ||\n  config.b\n}}", "${{ needs.setup.outputs.a ||\n  needs.setup.outputs.b }}"),
+        ("${{ unterminated config.a", "${{ unterminated config.a"),
     ],
 )
 def test_config_refs_are_rewritten_wherever_they_are_expression_code(text, expected):

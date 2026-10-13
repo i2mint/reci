@@ -547,3 +547,9 @@ def test_CONF004_sees_config_refs_inside_expressions_and_hyphenated_keys():
     assert [f.message for f in found] == [
         "'j.r' references config.test-on-windows, which is not a config key."
     ]
+
+
+def test_CONF004_sees_a_ref_after_a_braces_string_literal():
+    recipe = _steps("{id: r, if: \"${{ format('{0} }}', config.nokey) }}\", run: e}")
+    (f,) = _only("CONF004", mk_graph(recipe))
+    assert "config.nokey" in f.message

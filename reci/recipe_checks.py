@@ -17,11 +17,34 @@ from reci.recipe import Recipe
 #: when config is supplied.
 SETUP_JOB_ID = "setup"
 
-_EXPRESSION_RE = re.compile(r"\$\{\{(.*?)\}\}", re.DOTALL)
 _STRING_LITERAL_RE = re.compile(r"'(?:[^']|'')*'")  # GitHub strings: '...' with ''
 # ``config.key`` as a whole reference: not a suffix of another path
-# (``github.event.config.x``) or word (``myconfig.x``); keys may contain hyphens.
-_CONFIG_NAME_RE = re.compile(r"(?<![\w.\-])config\.([A-Za-z_][\w\-]*)")
+# (``github.event.config.x``) or word (``myconfig.x``), and not a nested access
+# (``config.x.y`` / ``config.x[0]``: outputs are strings, left for actionlint);
+# keys may contain hyphens.
+_CONFIG_NAME_RE = re.compile(r"(?<![\w.\-])config\.([A-Za-z_][\w\-]*)(?![\w\-]*[.\[])")
+
+
+def _expression_spans(text: str) -> Iterator[tuple[int, int]]:
+    """``(body_start, body_end)`` of each ``${{ body }}`` in *text*.
+
+    A ``}}`` inside a single-quoted string literal does not end the expression.
+    """
+    pos = 0
+    while (start := text.find("${{", pos)) != -1:
+        i = start + 3
+        while i < len(text):
+            if text[i] == "'":
+                literal = _STRING_LITERAL_RE.match(text, i)
+                i = literal.end() if literal else i + 1
+            elif text.startswith("}}", i):
+                yield start + 3, i
+                pos = i + 2
+                break
+            else:
+                i += 1
+        else:
+            return  # unterminated: leave the rest alone
 
 
 def sub_config_refs(text: str, repl: Callable[[re.Match], str]) -> str:
@@ -37,17 +60,25 @@ def sub_config_refs(text: str, repl: Callable[[re.Match], str]) -> str:
     '${{ fromJson(NEEDS.v) }} cat config.json'
     """
 
-    def in_expression(match: re.Match) -> str:
-        body, pieces, pos = match.group(1), [], 0
+    def rewrite_code(body: str) -> str:
+        pieces, pos = [], 0
         for literal in _STRING_LITERAL_RE.finditer(body):
             pieces.append(_CONFIG_NAME_RE.sub(repl, body[pos : literal.start()]))
             pieces.append(literal.group())
             pos = literal.end()
         pieces.append(_CONFIG_NAME_RE.sub(repl, body[pos:]))
-        new_body = "".join(pieces)
-        return match.group(0) if new_body == body else "${{ " + new_body.strip() + " }}"
+        return "".join(pieces)
 
-    return _EXPRESSION_RE.sub(in_expression, text)
+    out, last = [], 0
+    for body_start, body_end in _expression_spans(text):
+        body = text[body_start:body_end]
+        new_body = rewrite_code(body)
+        if new_body != body:
+            out.append(text[last : body_start - 3])
+            out.append("${{ " + new_body.strip() + " }}")
+            last = body_end + 2
+    out.append(text[last:])
+    return "".join(out)
 
 
 def config_names(text: str) -> list[str]:
