@@ -1,0 +1,165 @@
+"""CLI command bodies end to end (grammar is pinned in ``test_cli_surface``).
+
+Action metadata is served from an in-memory table instead of GitHub.
+"""
+
+import json
+
+import pytest
+
+from reci import __main__ as cli
+from reci.action_spec import ActionFetchError
+from reci.tests._helpers import mk_spec
+
+SPECS = {
+    "x/build@v1": mk_spec(
+        "x/build@v1", inputs={"python_version": {"required": True}}, outputs=["wheel"]
+    ),
+    "x/test@v1": mk_spec("x/test@v1", inputs={"wheel": {"required": True}}),
+}
+RECIPE = """\
+name: demo
+on: push
+jobs:
+  t:
+    steps:
+      - {id: build, uses: x/build@v1}
+      - {id: test, uses: x/test@v1}
+"""
+
+
+@pytest.fixture(autouse=True)
+def offline(monkeypatch):
+    def fake(ref):
+        if ref in SPECS:
+            return SPECS[ref]
+        raise ActionFetchError(f"no such action {ref}")
+
+    monkeypatch.setattr(cli, "action_spec_from_ref", fake)
+
+
+@pytest.fixture
+def project(tmp_path):
+    (tmp_path / "recipe.yml").write_text(RECIPE)
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "p"\n\n[tool.ci]\npython_version = "3.12"\n'
+    )
+    return tmp_path
+
+
+def test_compile_writes_the_workflow(project, capsys):
+    out = project / "out" / "ci.yml"
+    cli.compile(
+        str(project / "recipe.yml"),
+        config_path=str(project / "pyproject.toml"),
+        output=str(out),
+    )
+    text = out.read_text()
+    assert "python_version: '${{ needs.setup.outputs.python_version }}'" in text
+    assert "wheel: '${{ steps.build.outputs.wheel }}'" in text
+    assert f"Wrote {out}" in capsys.readouterr().out
+
+
+def test_compile_aborts_on_validation_errors_and_writes_nothing(project, capsys):
+    out = project / "ci.yml"
+    with pytest.raises(SystemExit) as e:  # config lacks the required python_version
+        cli.compile(
+            str(project / "recipe.yml"),
+            config_path=str(project / "missing.toml"),
+            output=str(out),
+        )
+    assert e.value.code == 1 and not out.exists()
+    err = capsys.readouterr().err
+    assert "CONF001" in err and "Compilation aborted" in err
+
+
+def test_unfetchable_action_warns_then_fails_validation(project, capsys):
+    (project / "bad.yml").write_text(
+        "on: push\njobs:\n  j:\n    steps:\n      - {uses: ghost/action@v1}\n"
+    )
+    with pytest.raises(SystemExit) as e:
+        cli.validate(recipe=str(project / "bad.yml"))
+    assert e.value.code == 1
+    cap = capsys.readouterr()
+    assert "no such action ghost/action@v1" in cap.err and "ACT002" in cap.out
+
+
+def test_validate_formats_and_exit_codes(project, capsys):
+    cfg = str(project / "pyproject.toml")
+    recipe = str(project / "recipe.yml")
+    cli.validate(recipe=recipe, config_path=cfg, format="json")  # no errors: returns
+    items = json.loads(capsys.readouterr().out)
+    assert not any(i["severity"] == "error" for i in items)
+
+    cli.validate(recipe=recipe, config_path=cfg, format="github")
+    assert capsys.readouterr().out.strip() == ""  # a clean recipe annotates nothing
+
+    (project / "w.yml").write_text(
+        "on: push\njobs:\n  j:\n    steps:\n      - {id: r, run: make}\n"
+    )
+    cli.validate(recipe=str(project / "w.yml"), format="github")
+    assert capsys.readouterr().out.startswith("::warning file=j.r::[PURE001]")
+
+
+def test_validate_max_warnings_gate(project, capsys):
+    (project / "w.yml").write_text(
+        "on: push\njobs:\n  j:\n    steps:\n      - {id: r, run: make}\n"
+    )
+    cli.validate(recipe=str(project / "w.yml"), max_warnings=1)  # 1 warning, allowed 1
+    with pytest.raises(SystemExit) as e:
+        cli.validate(recipe=str(project / "w.yml"), max_warnings=0)
+    assert e.value.code == 1
+    assert "Too many warnings: 1 (max 0)" in capsys.readouterr().err
+
+
+def test_scaffold_fills_missing_keys_without_clobbering_existing(project, capsys):
+    cfg = project / "pyproject.toml"
+    cli.scaffold(
+        str(project / "recipe.yml"),
+        config_path=str(cfg),
+        output=str(project / "ci.yml"),
+    )
+    text = cfg.read_text()
+    assert 'python_version = "3.12"' in text  # existing value kept
+    assert "<REQUIRED: python_version>" not in text  # present: not overwritten
+    assert (project / "ci.yml").exists()
+    assert "Updated config" in capsys.readouterr().out
+
+
+def test_load_config_missing_file_is_empty(tmp_path):
+    assert cli._load_config(config_path=str(tmp_path / "nope.toml")) == {}
+
+
+def test_inspect_prints_the_contract(capsys):
+    cli.inspect("x/build@v1")
+    out = capsys.readouterr().out
+    assert "Action: x/build@v1" in out
+    assert "python_version (required)" in out and "Outputs:\n  wheel" in out
+    cli.inspect("x/test@v1")
+    assert "Outputs: none" in capsys.readouterr().out
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#15: upstream outputs ignored",
+)
+def test_scaffold_does_not_ask_for_inputs_an_upstream_step_supplies(project):
+    cfg = project / "pyproject.toml"
+    cli.scaffold(
+        str(project / "recipe.yml"),
+        config_path=str(cfg),
+        output=str(project / "ci.yml"),
+    )
+    assert "<REQUIRED: wheel>" not in cfg.read_text()
+
+
+def test_scaffold_writes_a_placeholder_for_a_truly_missing_required_input(project):
+    cfg = project / "empty.toml"
+    cfg.write_text("")
+    cli.scaffold(
+        str(project / "recipe.yml"),
+        config_path=str(cfg),
+        output=str(project / "ci.yml"),
+    )
+    assert "<REQUIRED: python_version>" in cfg.read_text()
