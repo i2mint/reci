@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.206484317779541,
+  "collection_duration_seconds": 4.572527885437012,
   "commit_message": "fix: FLOW001/CONF001 count cross-job producers as sources (#21) (#46)\n\n* fix: FLOW001/CONF001 count outputs of steps in other jobs as sources (#21)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* test: producer jobs with several steps; bind to a name nobody produces\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "6c0306cd030f5b697a55c5b6f0e869d813121824",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15034,
-      "comment_lines_ratio": 0.05152353241554685,
-      "docs_lines": 21405,
-      "empty_lines": 34500,
-      "empty_lines_ratio": 0.11823612267768834,
-      "files_analyzed": 737,
-      "function_lines": 114823,
-      "function_lines_ratio": 0.3935138062092814,
-      "mean_lines_per_function": 14.595525613321469,
-      "num_classes": 1982,
-      "num_functions": 7867,
+      "comment_lines": 14888,
+      "comment_lines_ratio": 0.051403514829264925,
+      "docs_lines": 21372,
+      "empty_lines": 34167,
+      "empty_lines_ratio": 0.11796775195939647,
+      "files_analyzed": 727,
+      "function_lines": 113264,
+      "function_lines_ratio": 0.391064461554397,
+      "mean_lines_per_function": 14.575215544974906,
+      "num_classes": 1971,
+      "num_functions": 7771,
       "pypi_version": "0.0.20",
-      "total_lines": 291789
+      "total_lines": 289630
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T18:22:56.892837Z",
+  "timestamp": "2026-10-13T18:23:13.661496Z",
   "workflow_status": {}
 }
