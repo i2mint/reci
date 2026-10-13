@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.9756832122802734,
+  "collection_duration_seconds": 4.262767553329468,
   "commit_message": "fix: DAG005 finds data-flow cycles beside explicit ones and names alternatives; FLOW002 across jobs; FLOW006 implemented (#41, #47)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "3b99afe6978e9e457be32a3f001304b5a733de3c",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14901,
-      "comment_lines_ratio": 0.0513301894266906,
-      "docs_lines": 21504,
-      "empty_lines": 34251,
-      "empty_lines_ratio": 0.11798606254973355,
-      "files_analyzed": 727,
-      "function_lines": 113821,
-      "function_lines_ratio": 0.3920846581259882,
-      "mean_lines_per_function": 14.603669489350782,
-      "num_classes": 1971,
-      "num_functions": 7794,
+      "comment_lines": 15047,
+      "comment_lines_ratio": 0.05145047460130755,
+      "docs_lines": 21537,
+      "empty_lines": 34584,
+      "empty_lines_ratio": 0.11825368602456438,
+      "files_analyzed": 737,
+      "function_lines": 115380,
+      "function_lines_ratio": 0.3945208851929863,
+      "mean_lines_per_function": 14.623574144486692,
+      "num_classes": 1982,
+      "num_functions": 7890,
       "pypi_version": "0.0.30",
-      "total_lines": 290297
+      "total_lines": 292456
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:10:23.113947Z",
+  "timestamp": "2026-10-13T23:10:26.118207Z",
   "workflow_status": {}
 }
