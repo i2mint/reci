@@ -75,3 +75,39 @@ def _prepare_workflow_dict(d: Any) -> Any:
         if _EXPRESSION_RE.search(d):
             return SingleQuotedScalarString(d)
     return d
+
+
+def _reads_back_as(text: str, value: int | float) -> bool:
+    """Whether YAML reads *text* back as the number *value*."""
+    back = load_yaml_string(f"v: {text}")["v"]
+    both_nan = back != back and value != value
+    return isinstance(back, (int, float)) and (back == value or both_nan)
+
+
+_PADDED_FLOAT_RE = re.compile(r"[+-]?0\d")
+
+
+def scalar_source_text(value: int | float) -> str:
+    """A YAML number as written in the source, not as Python renders it.
+
+    ruamel keeps the spelling of what it loads, so ``3.10`` stays ``3.10``
+    (``str()`` gives ``3.1``), ``0x1F`` stays ``0x1F`` and ``1e3`` stays ``1e3``.
+    Anchors and tags are not part of the spelling.  When ruamel's text would be
+    a different number (negative hex, underscored floats), ``str()`` is used.
+
+    >>> scalar_source_text(load_yaml_string("v: 3.10")["v"])
+    '3.10'
+    >>> scalar_source_text(load_yaml_string("v: &a 0x1F")["v"])
+    '0x1F'
+    >>> scalar_source_text(7)
+    '7'
+    """
+    try:
+        text = str(_make_yaml().representer.represent_data(value).value)
+    except (ValueError, IndexError):  # ruamel cannot spell e.g. signed-zero 0e3
+        return str(value)
+    if isinstance(value, float) and _PADDED_FLOAT_RE.match(text):
+        return str(value)  # ruamel pads underscored floats: 1_000.5 -> 01000.5
+    if not _reads_back_as(text, value):
+        return str(value)  # e.g. ruamel spells -0x1F as 0x-1F
+    return text

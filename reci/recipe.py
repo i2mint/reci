@@ -14,7 +14,7 @@ from typing import Any
 from ruamel.yaml.scalarbool import ScalarBoolean
 
 from reci.action_spec import normalize_name
-from reci.yaml_gen import load_yaml
+from reci.yaml_gen import load_yaml, load_yaml_string, scalar_source_text
 
 
 # ---------------------------------------------------------------------------
@@ -92,12 +92,17 @@ def _scalar_to_str(value: Any) -> str:
     ('true', 'false', '')
     >>> _scalar_to_str(3), _scalar_to_str("x")
     ('3', 'x')
+    >>> _scalar_to_str(load_yaml_string("v: 3.10")["v"])
+    '3.10'
     """
     # ruamel returns an anchored/aliased boolean as ScalarBoolean (an int subclass)
     if isinstance(value, (bool, ScalarBoolean)):
         return "true" if value else "false"
     if value is None:
         return ""
+    if isinstance(value, (int, float)):
+        # Keep the spelling the author wrote: str() turns 3.10 into 3.1
+        return scalar_source_text(value)
     return str(value)
 
 
