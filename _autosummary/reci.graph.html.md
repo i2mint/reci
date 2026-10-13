@@ -7,6 +7,11 @@ the two-level structure of GitHub Actions workflows: jobs containing
 sequential steps, with inter-job parallelism governed by `needs:`
 edges and data-flow dependencies.
 
+### Functions
+
+| [`find_cycle`](#reci.graph.find_cycle)(deps)   | A dependency cycle in `{node: nodes it depends on}`, or `None`.   |
+|---------------------------------------------------------------------|-------------------------------------------------------------------|
+
 ### Classes
 
 | [`ActionNode`](#reci.graph.ActionNode)(step_id, job[, ref, action_spec, ...])   | A single step in the recipe graph.              |
@@ -75,6 +80,13 @@ Build a graph from a parsed recipe and fetched action specs.
 * **Return type:**
   [`RecipeGraph`](#reci.graph.RecipeGraph)
 
+#### job_needs(job_id)
+
+The job ids *job_id* lists in its explicit `needs:`.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
 #### upstream_output_names(node, , other_jobs=True)
 
 Normalized output names *node* can be fed from.
@@ -91,3 +103,22 @@ through `needs`.
 Run all validation rules and return a ValidationReport.
 
 Imported lazily to avoid circular imports (validation depends on graph).
+
+### reci.graph.find_cycle(deps)
+
+A dependency cycle in `{node: nodes it depends on}`, or `None`.
+
+The cycle is returned as a closed path following the dependency direction:
+each node depends on the next, and the first node is repeated at the end.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
+```pycon
+>>> find_cycle({'a': ['b'], 'b': ['a']})
+['a', 'b', 'a']
+>>> find_cycle({'a': ['b'], 'b': ['c'], 'c': ['a']})
+['a', 'b', 'c', 'a']
+>>> find_cycle({'a': ['b'], 'b': []}) is None
+True
+```

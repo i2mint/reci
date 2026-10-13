@@ -9,6 +9,8 @@ reci.compiler
    .. autosummary::
    
       compile_recipe
+      describe_cycle_edges
+      detect_cross_job_edges
    
    .. rubric:: Exceptions
 

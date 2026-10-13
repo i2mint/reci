@@ -133,6 +133,12 @@ dependencies.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#reci.compiler.compile_recipe" title="reci.compiler.compile_recipe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compile_recipe</span></code></a>(recipe, action_specs, *[, config])</p></td>
 <td><p>Compile a recipe into a GitHub Actions workflow dict.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.compiler.describe_cycle_edges" title="reci.compiler.describe_cycle_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">describe_cycle_edges</span></code></a>(cycle, edges)</p></td>
+<td><p>The data-flow reads that justify each <code class="docutils literal notranslate"><span class="pre">consumer</span> <span class="pre">-&gt;</span> <span class="pre">producer</span></code> hop of <em>cycle</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.compiler.detect_cross_job_edges" title="reci.compiler.detect_cross_job_edges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">detect_cross_job_edges</span></code></a>(graph, config)</p></td>
+<td><p>Find data-flow edges between steps in different jobs.</p></td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Exceptions</p>
@@ -168,12 +174,35 @@ Cross-job data-flow wiring happens either way.</p></li>
 </dd>
 </dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.compiler.describe_cycle_edges">
+<span class="sig-prename descclassname"><span class="pre">reci.compiler.</span></span><span class="sig-name descname"><span class="pre">describe_cycle_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cycle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/compiler.html#describe_cycle_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.compiler.describe_cycle_edges" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.compiler.describe_cycle_edges'">¶</a></dt>
+<dd><p>The data-flow reads that justify each <code class="docutils literal notranslate"><span class="pre">consumer</span> <span class="pre">-&gt;</span> <span class="pre">producer</span></code> hop of <em>cycle</em>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.compiler.detect_cross_job_edges">
+<span class="sig-prename descclassname"><span class="pre">reci.compiler.</span></span><span class="sig-name descname"><span class="pre">detect_cross_job_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/compiler.html#detect_cross_job_edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.compiler.detect_cross_job_edges" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.compiler.detect_cross_job_edges'">¶</a></dt>
+<dd><p>Find data-flow edges between steps in different jobs.</p>
+<p>Public: the validation rules use the same detection as the compiler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.graph.html#reci.graph.CrossJobEdge" title="reci.graph.CrossJobEdge"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossJobEdge</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
 <li><a :data-current="activeSection === '#reci.compiler.CompilationError'" class="reference internal" href="#reci.compiler.CompilationError"><code class="docutils literal notranslate"><span class="pre">CompilationError</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.compiler.compile_recipe'" class="reference internal" href="#reci.compiler.compile_recipe"><code class="docutils literal notranslate"><span class="pre">compile_recipe()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.compiler.describe_cycle_edges'" class="reference internal" href="#reci.compiler.describe_cycle_edges"><code class="docutils literal notranslate"><span class="pre">describe_cycle_edges()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.compiler.detect_cross_job_edges'" class="reference internal" href="#reci.compiler.detect_cross_job_edges"><code class="docutils literal notranslate"><span class="pre">detect_cross_job_edges()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -187,7 +216,7 @@ Cross-job data-flow wiring happens either way.</p></li>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=63b572e7"></script>
+<script src="../_static/documentation_options.js?v=8bafd125"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

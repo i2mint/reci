@@ -4,6 +4,12 @@ reci.graph
 .. automodule:: reci.graph
 
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      find_cycle
+   
    .. rubric:: Classes
 
    .. autosummary::

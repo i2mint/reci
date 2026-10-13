@@ -5,21 +5,19 @@ orphan: true
 
 # About this build
 
-This documentation was built on **2026-10-13 17:55 UTC** from commit <a href="https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042"><code>098050d</code></a> on branch <code>main</code>, for **reci 0.0.17** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 18:02 UTC** from commit <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e"><code>131e5a0</code></a> on branch <code>main</code>, for **reci 0.0.18** (from <code>pyproject.toml</code>).
 
-:::{warning}
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.17) is ahead of the latest release on PyPI (0.0.16): these docs describe unreleased code.
+:::{note}
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 :::
 
 ## Source
 
 | | |
 |---|---|
-| Commit | <a href="https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042"><code>098050d19575feb18e507065db3f3c15a6886042</code></a> |
+| Commit | <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e"><code>131e5a0bbf0136ed1a198c3897b92492864b816e</code></a> |
 | Branch | <code>main</code> |
-| Tags at this commit | <code>0.0.17</code> |
+| Tags at this commit | <code>0.0.18</code> |
 | Working tree | clean |
 | Remote | <code>https://github.com/i2mint/reci</code> |
 
@@ -28,9 +26,9 @@ The documentation and the package may be misaligned:
 | | |
 |---|---|
 | Repository | <code>i2mint/reci</code> |
-| Run | <a href="https://github.com/i2mint/reci/actions/runs/38442351744">38442351744</a> |
+| Run | <a href="https://github.com/i2mint/reci/actions/runs/38443216969">38443216969</a> |
 | Ref | <code>refs/heads/main</code> |
-| Event commit | <code>9413584e24094bd4fe1429bd5b9a0dfbd53e8f4f</code> (in the history of the built commit) |
+| Event commit | <code>b520dae13052613e4d923eb56b5dc45a19b99b47</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -55,13 +53,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.16/">0.0.16</a>, older than the documented version (0.0.17).
+Latest release: <a href="https://pypi.org/project/reci/0.0.18/">0.0.18</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 098050d19575feb18e507065db3f3c15a6886042
+git checkout 131e5a0bbf0136ed1a198c3897b92492864b816e
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

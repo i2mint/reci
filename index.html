@@ -280,27 +280,31 @@ and other tools, see the standard’s
 <td><p>Structure</p></td>
 <td><p>Duplicate output name in a job</p></td>
 </tr>
-<tr class="row-even"><td><p>FLOW001</p></td>
+<tr class="row-even"><td><p>DAG005</p></td>
+<td><p>Structure</p></td>
+<td><p>Data flow between jobs makes their <code class="docutils literal notranslate"><span class="pre">needs</span></code> form a cycle</p></td>
+</tr>
+<tr class="row-odd"><td><p>FLOW001</p></td>
 <td><p>Data flow</p></td>
 <td><p>Required input has no source</p></td>
 </tr>
-<tr class="row-odd"><td><p>FLOW002</p></td>
+<tr class="row-even"><td><p>FLOW002</p></td>
 <td><p>Data flow</p></td>
 <td><p>Ambiguous wiring (multiple upstream matches)</p></td>
 </tr>
-<tr class="row-even"><td><p>FLOW006</p></td>
+<tr class="row-odd"><td><p>FLOW006</p></td>
 <td><p>Data flow</p></td>
 <td><p>Matrix job output consumed downstream (non-deterministic)</p></td>
 </tr>
-<tr class="row-odd"><td><p>CONF001</p></td>
+<tr class="row-even"><td><p>CONF001</p></td>
 <td><p>Config</p></td>
 <td><p>Required config key missing</p></td>
 </tr>
-<tr class="row-even"><td><p>PURE001</p></td>
+<tr class="row-odd"><td><p>PURE001</p></td>
 <td><p>Purity</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">run:</span></code> step breaks typed contract</p></td>
 </tr>
-<tr class="row-odd"><td><p>ACT002</p></td>
+<tr class="row-even"><td><p>ACT002</p></td>
 <td><p>Action</p></td>
 <td><p>Referenced action not found</p></td>
 </tr>
@@ -372,7 +376,7 @@ and other tools, see the standard’s
 
 </section>
 </section>
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 17:55 UTC from <a href="https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042">098050d</a> (main) · reci 0.0.17 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 18:02 UTC from <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e">131e5a0</a> (main) · reci 0.0.18 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
@@ -401,7 +405,7 @@ and other tools, see the standard’s
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=63b572e7"></script>
+<script src="_static/documentation_options.js?v=8bafd125"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>

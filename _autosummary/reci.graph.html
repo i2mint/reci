@@ -127,6 +127,14 @@
 the two-level structure of GitHub Actions workflows: jobs containing
 sequential steps, with inter-job parallelism governed by <code class="docutils literal notranslate"><span class="pre">needs:</span></code>
 edges and data-flow dependencies.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.graph.find_cycle" title="reci.graph.find_cycle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_cycle</span></code></a>(deps)</p></td>
+<td><p>A dependency cycle in <code class="docutils literal notranslate"><span class="pre">{node:</span> <span class="pre">nodes</span> <span class="pre">it</span> <span class="pre">depends</span> <span class="pre">on}</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -214,6 +222,16 @@ Raises <code class="xref py py-class docutils literal notranslate"><span class="
 </dl>
 </dd></dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="reci.graph.RecipeGraph.job_needs">
+<span class="sig-name descname"><span class="pre">job_needs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/graph.html#RecipeGraph.job_needs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.graph.RecipeGraph.job_needs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.graph.RecipeGraph.job_needs'">¶</a></dt>
+<dd><p>The job ids <em>job_id</em> lists in its explicit <code class="docutils literal notranslate"><span class="pre">needs:</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
 <dt class="sig sig-object py" id="reci.graph.RecipeGraph.upstream_output_names">
 <span class="sig-name descname"><span class="pre">upstream_output_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/graph.html#RecipeGraph.upstream_output_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.graph.RecipeGraph.upstream_output_names" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.graph.RecipeGraph.upstream_output_names'">¶</a></dt>
 <dd><p>Normalized output names <em>node</em> can be fed from.</p>
@@ -235,6 +253,26 @@ through <code class="docutils literal notranslate"><span class="pre">needs</span
 </dl>
 </dd></dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.graph.find_cycle">
+<span class="sig-prename descclassname"><span class="pre">reci.graph.</span></span><span class="sig-name descname"><span class="pre">find_cycle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">deps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/graph.html#find_cycle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.graph.find_cycle" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.graph.find_cycle'">¶</a></dt>
+<dd><p>A dependency cycle in <code class="docutils literal notranslate"><span class="pre">{node:</span> <span class="pre">nodes</span> <span class="pre">it</span> <span class="pre">depends</span> <span class="pre">on}</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>The cycle is returned as a closed path following the dependency direction:
+each node depends on the next, and the first node is repeated at the end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>] | <a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">find_cycle</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'b'</span><span class="p">],</span> <span class="s1">'b'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">]})</span>
+</span><span id="line-2"><span class="go">['a', 'b', 'a']</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">find_cycle</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'b'</span><span class="p">],</span> <span class="s1">'b'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'c'</span><span class="p">],</span> <span class="s1">'c'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'a'</span><span class="p">]})</span>
+</span><span id="line-4"><span class="go">['a', 'b', 'c', 'a']</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">find_cycle</span><span class="p">({</span><span class="s1">'a'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'b'</span><span class="p">],</span> <span class="s1">'b'</span><span class="p">:</span> <span class="p">[]})</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span id="line-6"><span class="go">True</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
@@ -249,10 +287,12 @@ through <code class="docutils literal notranslate"><span class="pre">needs</span
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph'" class="reference internal" href="#reci.graph.RecipeGraph"><code class="docutils literal notranslate"><span class="pre">RecipeGraph</span></code></a><ul>
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph.execution_waves'" class="reference internal" href="#reci.graph.RecipeGraph.execution_waves"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.execution_waves()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph.from_recipe'" class="reference internal" href="#reci.graph.RecipeGraph.from_recipe"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.from_recipe()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.graph.RecipeGraph.job_needs'" class="reference internal" href="#reci.graph.RecipeGraph.job_needs"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.job_needs()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph.upstream_output_names'" class="reference internal" href="#reci.graph.RecipeGraph.upstream_output_names"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.upstream_output_names()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph.validate'" class="reference internal" href="#reci.graph.RecipeGraph.validate"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.validate()</span></code></a></li>
 </ul>
 </li>
+<li><a :data-current="activeSection === '#reci.graph.find_cycle'" class="reference internal" href="#reci.graph.find_cycle"><code class="docutils literal notranslate"><span class="pre">find_cycle()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -266,7 +306,7 @@ through <code class="docutils literal notranslate"><span class="pre">needs</span
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=63b572e7"></script>
+<script src="../_static/documentation_options.js?v=8bafd125"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

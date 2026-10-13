@@ -9,8 +9,10 @@ dependencies.
 
 ### Functions
 
-| [`compile_recipe`](#reci.compiler.compile_recipe)(recipe, action_specs, \*[, config])   | Compile a recipe into a GitHub Actions workflow dict.   |
-|-------------------------------------------------------------------------------------------------------|---------------------------------------------------------|
+| [`compile_recipe`](#reci.compiler.compile_recipe)(recipe, action_specs, \*[, config])   | Compile a recipe into a GitHub Actions workflow dict.                        |
+|-------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| [`describe_cycle_edges`](#reci.compiler.describe_cycle_edges)(cycle, edges)                   | The data-flow reads that justify each `consumer -> producer` hop of *cycle*. |
+| [`detect_cross_job_edges`](#reci.compiler.detect_cross_job_edges)(graph, config)                | Find data-flow edges between steps in different jobs.                        |
 
 ### Exceptions
 
@@ -35,3 +37,19 @@ Compile a recipe into a GitHub Actions workflow dict.
     Cross-job data-flow wiring happens either way.
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
+
+### reci.compiler.describe_cycle_edges(cycle, edges)
+
+The data-flow reads that justify each `consumer -> producer` hop of *cycle*.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+### reci.compiler.detect_cross_job_edges(graph, config)
+
+Find data-flow edges between steps in different jobs.
+
+Public: the validation rules use the same detection as the compiler.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`CrossJobEdge`](reci.graph.html.md#reci.graph.CrossJobEdge)]

@@ -9,6 +9,7 @@ reci.validation.rules.dag
    .. autosummary::
    
       check_cycles
+      check_data_flow_needs_cycles
       check_duplicate_outputs
       check_isolated_nodes
    

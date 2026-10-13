@@ -1,4 +1,4 @@
-> built 2026-10-13 17:55 UTC from 098050d (main) · reci 0.0.17. Details: build_info.json
+> built 2026-10-13 18:02 UTC from 131e5a0 (main) · reci 0.0.18. Details: build_info.json
 
 # index.html.md
 
@@ -155,6 +155,7 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 |---------|------------|-----------------------------------------------------------|
 | DAG001  | Structure  | Cycle detected                                            |
 | DAG002  | Structure  | Duplicate output name in a job                            |
+| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle   |
 | FLOW001 | Data flow  | Required input has no source                              |
 | FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)              |
 | FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic) |
@@ -500,8 +501,10 @@ dependencies.
 
 ### Functions
 
-| [`compile_recipe`](_autosummary/reci.compiler.html.md#reci.compiler.compile_recipe)(recipe, action_specs, \*[, config])   | Compile a recipe into a GitHub Actions workflow dict.   |
-|-------------------------------------------------------------------------------------------------------|---------------------------------------------------------|
+| [`compile_recipe`](_autosummary/reci.compiler.html.md#reci.compiler.compile_recipe)(recipe, action_specs, \*[, config])   | Compile a recipe into a GitHub Actions workflow dict.                        |
+|-------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| [`describe_cycle_edges`](_autosummary/reci.compiler.html.md#reci.compiler.describe_cycle_edges)(cycle, edges)                   | The data-flow reads that justify each `consumer -> producer` hop of *cycle*. |
+| [`detect_cross_job_edges`](_autosummary/reci.compiler.html.md#reci.compiler.detect_cross_job_edges)(graph, config)                | Find data-flow edges between steps in different jobs.                        |
 
 ### Exceptions
 
@@ -526,6 +529,22 @@ Compile a recipe into a GitHub Actions workflow dict.
     Cross-job data-flow wiring happens either way.
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
+
+### reci.compiler.describe_cycle_edges(cycle, edges)
+
+The data-flow reads that justify each `consumer -> producer` hop of *cycle*.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+### reci.compiler.detect_cross_job_edges(graph, config)
+
+Find data-flow edges between steps in different jobs.
+
+Public: the validation rules use the same detection as the compiler.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`CrossJobEdge`](_autosummary/reci.graph.html.md#reci.graph.CrossJobEdge)]
 
 
 # _autosummary/reci.config.html.md
@@ -595,6 +614,11 @@ the two-level structure of GitHub Actions workflows: jobs containing
 sequential steps, with inter-job parallelism governed by `needs:`
 edges and data-flow dependencies.
 
+### Functions
+
+| [`find_cycle`](_autosummary/reci.graph.html.md#reci.graph.find_cycle)(deps)   | A dependency cycle in `{node: nodes it depends on}`, or `None`.   |
+|---------------------------------------------------------------------|-------------------------------------------------------------------|
+
 ### Classes
 
 | [`ActionNode`](_autosummary/reci.graph.html.md#reci.graph.ActionNode)(step_id, job[, ref, action_spec, ...])   | A single step in the recipe graph.              |
@@ -663,6 +687,13 @@ Build a graph from a parsed recipe and fetched action specs.
 * **Return type:**
   [`RecipeGraph`](_autosummary/reci.graph.html.md#reci.graph.RecipeGraph)
 
+#### job_needs(job_id)
+
+The job ids *job_id* lists in its explicit `needs:`.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
 #### upstream_output_names(node, , other_jobs=True)
 
 Normalized output names *node* can be fed from.
@@ -679,6 +710,25 @@ through `needs`.
 Run all validation rules and return a ValidationReport.
 
 Imported lazily to avoid circular imports (validation depends on graph).
+
+### reci.graph.find_cycle(deps)
+
+A dependency cycle in `{node: nodes it depends on}`, or `None`.
+
+The cycle is returned as a closed path following the dependency direction:
+each node depends on the next, and the first node is repeated at the end.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
+```pycon
+>>> find_cycle({'a': ['b'], 'b': ['a']})
+['a', 'b', 'a']
+>>> find_cycle({'a': ['b'], 'b': ['c'], 'c': ['a']})
+['a', 'b', 'c', 'a']
+>>> find_cycle({'a': ['b'], 'b': []}) is None
+True
+```
 
 
 # _autosummary/reci.html.md
@@ -902,14 +952,27 @@ DAG structure validation rules (DAG001–DAG004).
 
 ### Functions
 
-| [`check_cycles`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_cycles)(graph, config)            | Detect cycles in the dependency graph.                                           |
-|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| [`check_duplicate_outputs`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_duplicate_outputs)(graph, config) | Flag duplicate output names within a job (at the job output level).              |
-| [`check_isolated_nodes`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_isolated_nodes)(graph, config)    | Flag nodes with no data connections (no outputs consumed, no inputs from graph). |
+| [`check_cycles`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_cycles)(graph, config)                 | Detect cycles in the dependency graph.                                           |
+|----------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| [`check_data_flow_needs_cycles`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_data_flow_needs_cycles)(graph, config) | Data flow between jobs must not make their `needs` form a cycle.                 |
+| [`check_duplicate_outputs`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_duplicate_outputs)(graph, config)      | Flag duplicate output names within a job (at the job output level).              |
+| [`check_isolated_nodes`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_isolated_nodes)(graph, config)         | Flag nodes with no data connections (no outputs consumed, no inputs from graph). |
 
 ### reci.validation.rules.dag.check_cycles(graph, config)
 
 Detect cycles in the dependency graph.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
+
+### reci.validation.rules.dag.check_data_flow_needs_cycles(graph, config)
+
+Data flow between jobs must not make their `needs` form a cycle.
+
+The compiler adds a `needs` edge from every consumer job to the job that
+produces an output it reads.  Combined with explicit `needs:` (or with the
+reverse flow) that can close a loop, which GitHub rejects.  A cycle made of
+explicit `needs:` alone is DAG001’s.
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
@@ -1094,20 +1157,18 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 17:55 UTC** from commit <a href="https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042"><code>098050d</code></a> on branch <code>main</code>, for **reci 0.0.17** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 18:02 UTC** from commit <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e"><code>131e5a0</code></a> on branch <code>main</code>, for **reci 0.0.18** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.17) is ahead of the latest release on PyPI (0.0.16): these docs describe unreleased code.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042"><code>098050d19575feb18e507065db3f3c15a6886042</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e"><code>131e5a0bbf0136ed1a198c3897b92492864b816e</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.17</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.18</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1116,9 +1177,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38442351744">38442351744</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38443216969">38443216969</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>9413584e24094bd4fe1429bd5b9a0dfbd53e8f4f</code> (in the history of the built commit) |
+| Event commit | <code>b520dae13052613e4d923eb56b5dc45a19b99b47</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1143,13 +1204,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.16/">0.0.16</a>, older than the documented version (0.0.17).
+Latest release: <a href="https://pypi.org/project/reci/0.0.18/">0.0.18</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 098050d19575feb18e507065db3f3c15a6886042
+git checkout 131e5a0bbf0136ed1a198c3897b92492864b816e
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T17:55:40Z",
+  "built_at": "2026-10-13T18:02:11Z",
   "package": {
     "name": "reci",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "display_name": "reci",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "098050d19575feb18e507065db3f3c15a6886042",
-    "short_commit": "098050d",
+    "commit": "131e5a0bbf0136ed1a198c3897b92492864b816e",
+    "short_commit": "131e5a0",
     "branch": "main",
     "tags": [
-      "0.0.17"
+      "0.0.18"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/reci",
-    "commit_url": "https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042",
+    "commit_url": "https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/reci",
-    "sha": "9413584e24094bd4fe1429bd5b9a0dfbd53e8f4f",
+    "sha": "b520dae13052613e4d923eb56b5dc45a19b99b47",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "38442351744",
-    "run_url": "https://github.com/i2mint/reci/actions/runs/38442351744",
+    "run_id": "38443216969",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/38443216969",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -58,20 +58,18 @@
   },
   "site": {
     "modules_documented": 22,
-    "objects_documented": 67
+    "objects_documented": 72
   },
   "pypi": {
     "checked": true,
-    "latest": "0.0.16",
-    "relation": "ahead",
+    "latest": "0.0.18",
+    "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 098050d19575feb18e507065db3f3c15a6886042\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 131e5a0bbf0136ed1a198c3897b92492864b816e\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": false,
-    "notes": [
-      "The documented version (0.0.17) is ahead of the latest release on PyPI (0.0.16): these docs describe unreleased code."
-    ]
+    "aligned": true,
+    "notes": []
   }
 }
