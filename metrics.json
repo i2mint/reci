@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.356671094894409,
-  "commit_message": "Merge 94a371749c2b97e15e54657a5dc2b69614217a41 into 5bc3dcb1c9d0f1fe2fdf523fd0518f4f49fae546",
-  "commit_sha": "30b3aaf41e3e3d12e16e5ad7060be5b9b4df9176",
+  "collection_duration_seconds": 2.586332321166992,
+  "commit_message": "fix: no dangling needs:[setup] without config; cross-job wiring without config (#8, #17) (#20)\n\n* fix: no dangling needs:[setup] without config; cross-job wiring independent of config (#8, #17)\n\nLint every compiled workflow in the compiler tests with actionlint.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* test: actionlint helper fails on any non-zero exit\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: shellcheck-clean setup script (quoted, grouped GITHUB_OUTPUT redirect); lint helper finds shellcheck\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "06731d08030a2dd98b107afbefc0a6e3cf64fa49",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15019,
-      "comment_lines_ratio": 0.05158208176063908,
-      "docs_lines": 21258,
-      "empty_lines": 34386,
-      "empty_lines_ratio": 0.11809717447375562,
-      "files_analyzed": 735,
-      "function_lines": 114325,
-      "function_lines_ratio": 0.3926440839792971,
-      "mean_lines_per_function": 14.58971413986728,
-      "num_classes": 1981,
-      "num_functions": 7836,
+      "comment_lines": 14873,
+      "comment_lines_ratio": 0.05146224325970215,
+      "docs_lines": 21225,
+      "empty_lines": 34053,
+      "empty_lines_ratio": 0.1178271881747218,
+      "files_analyzed": 725,
+      "function_lines": 112766,
+      "function_lines_ratio": 0.39018297071361346,
+      "mean_lines_per_function": 14.569250645994831,
+      "num_classes": 1970,
+      "num_functions": 7740,
       "pypi_version": "0.0.9",
-      "total_lines": 291167
+      "total_lines": 289008
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -33,15 +33,15 @@
       "total_loc": 0
     },
     "workflow_status": {
-      "last_run_status": "failure",
-      "last_success_timestamp": "2026-10-13T17:07:33Z",
+      "last_run_status": "success",
+      "last_success_timestamp": "2026-10-13T17:12:42Z",
       "recent_failure_count": 4,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38436385589",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38436650645",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:12:38.422309Z",
+  "timestamp": "2026-10-13T17:14:06.451538Z",
   "workflow_status": {}
 }
