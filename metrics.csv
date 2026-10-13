@@ -1,33 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:33:57.034170Z
-commit_sha,b41be8c31bb91020580b692002a7ba043775399f
-commit_message,"fix: scaffold writes placeholders only for required inputs (#34) (#57)
+timestamp,2026-10-13T22:34:19.061457Z
+commit_sha,4da7e2261ddaed7fb692510e25b173cc75ebfc94
+commit_message,"fix: adapters add a new scoped key inside its existing table (#36)
 
-* fix: scaffold writes placeholders only for required inputs (#34)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
-* fix: drop the cross-job requiredness merge now that scaffold writes only required keys (#34)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7778
-metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,289818
-metrics.umpyre_stats.empty_lines,34193
-metrics.umpyre_stats.comment_lines,14895
-metrics.umpyre_stats.docs_lines,21416
-metrics.umpyre_stats.function_lines,113423
-metrics.umpyre_stats.empty_lines_ratio,0.11798093976219559
-metrics.umpyre_stats.comment_lines_ratio,0.05139432333395441
-metrics.umpyre_stats.function_lines_ratio,0.3913594048678826
-metrics.umpyre_stats.mean_lines_per_function,14.58254049884289
-metrics.umpyre_stats.files_analyzed,727
+metrics.umpyre_stats.num_functions,7875
+metrics.umpyre_stats.num_classes,1982
+metrics.umpyre_stats.total_lines,291995
+metrics.umpyre_stats.empty_lines,34529
+metrics.umpyre_stats.comment_lines,15041
+metrics.umpyre_stats.docs_lines,21454
+metrics.umpyre_stats.function_lines,114998
+metrics.umpyre_stats.empty_lines_ratio,0.11825202486343944
+metrics.umpyre_stats.comment_lines_ratio,0.051511156012945425
+metrics.umpyre_stats.function_lines_ratio,0.39383551088203567
+metrics.umpyre_stats.mean_lines_per_function,14.602920634920634
+metrics.umpyre_stats.files_analyzed,737
 metrics.umpyre_stats.pypi_version,0.0.26
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T22:32:41Z
@@ -48,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.253571271896362
+collection_duration_seconds,2.690700054168701

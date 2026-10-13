@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.253571271896362,
-  "commit_message": "fix: scaffold writes placeholders only for required inputs (#34) (#57)\n\n* fix: scaffold writes placeholders only for required inputs (#34)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: drop the cross-job requiredness merge now that scaffold writes only required keys (#34)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "b41be8c31bb91020580b692002a7ba043775399f",
+  "collection_duration_seconds": 2.690700054168701,
+  "commit_message": "fix: adapters add a new scoped key inside its existing table (#36)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "4da7e2261ddaed7fb692510e25b173cc75ebfc94",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14895,
-      "comment_lines_ratio": 0.05139432333395441,
-      "docs_lines": 21416,
-      "empty_lines": 34193,
-      "empty_lines_ratio": 0.11798093976219559,
-      "files_analyzed": 727,
-      "function_lines": 113423,
-      "function_lines_ratio": 0.3913594048678826,
-      "mean_lines_per_function": 14.58254049884289,
-      "num_classes": 1971,
-      "num_functions": 7778,
+      "comment_lines": 15041,
+      "comment_lines_ratio": 0.051511156012945425,
+      "docs_lines": 21454,
+      "empty_lines": 34529,
+      "empty_lines_ratio": 0.11825202486343944,
+      "files_analyzed": 737,
+      "function_lines": 114998,
+      "function_lines_ratio": 0.39383551088203567,
+      "mean_lines_per_function": 14.602920634920634,
+      "num_classes": 1982,
+      "num_functions": 7875,
       "pypi_version": "0.0.26",
-      "total_lines": 289818
+      "total_lines": 291995
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:33:57.034170Z",
+  "timestamp": "2026-10-13T22:34:19.061457Z",
   "workflow_status": {}
 }
