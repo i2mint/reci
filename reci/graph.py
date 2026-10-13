@@ -34,7 +34,9 @@ class ActionNode:
     ref: str | None = None
     action_spec: ActionSpec | None = None
     with_: dict[str, str] = field(default_factory=dict, hash=False, compare=False)
-    bind: dict[str, str] = field(default_factory=dict, hash=False, compare=False)
+    bind: dict[str, str] = field(
+        default_factory=dict, hash=False, compare=False
+    )  # normalized input -> normalized output
     if_: str | None = field(default=None, hash=False, compare=False)
     declared_outputs: list[str] = field(default_factory=list, hash=False, compare=False)
     run: str | None = field(default=None, hash=False, compare=False)
@@ -137,7 +139,10 @@ class RecipeGraph:
                     ref=step.uses,
                     action_spec=spec,
                     with_=dict(step.with_),
-                    bind=dict(step.bind),
+                    bind={
+                        normalize_name(k): normalize_name(v)
+                        for k, v in step.bind.items()
+                    },
                     if_=step.if_,
                     declared_outputs=list(step.outputs),
                     run=step.run,

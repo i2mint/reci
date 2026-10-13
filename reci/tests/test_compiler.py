@@ -540,3 +540,29 @@ def test_serialize_config_value_types():
 
     assert ser({"a": [1]}) == '{"a": [1]}' and ser(["x"]) == '["x"]'
     assert (ser(True), ser(False), ser(3), ser("s")) == ("true", "false", "3", "s")
+
+
+def test_bind_matches_hyphenated_names_on_either_side():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"root-dir": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n      - {id: p, uses: x/p@v1}\n"
+        "      - {id: s, uses: x/s@v1, bind: {root-dir: wheel-path}}\n"
+    )
+    w = _compile(recipe, specs)["jobs"]["j"]["steps"][1]["with"]
+    assert w == {"root-dir": "${{ steps.p.outputs.wheel-path }}"}
+    # the normalized spelling in bind: is the same thing
+    recipe2 = recipe.replace("{root-dir: wheel-path}", "{root_dir: wheel_path}")
+    assert _compile(recipe2, specs)["jobs"]["j"]["steps"][1]["with"] == w
+
+
+def test_declared_specs_keep_original_spelling():
+    from reci.action_spec import action_spec_from_declaration
+
+    spec = action_spec_from_declaration(
+        "x/r@v1", inputs={"root-dir": {"required": True}}, outputs=["wheel-path"]
+    )
+    assert spec.inputs["root_dir"].emitted_name == "root-dir"
+    assert spec.outputs["wheel_path"].emitted_name == "wheel-path"
