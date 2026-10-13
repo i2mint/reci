@@ -244,6 +244,7 @@ def test_setup_script_does_not_expand_shell_syntax_in_values(tmp_path):
     assert got == {"s": "cost $5 `echo X`"}
 
 
+@needs_posix_bash
 @pytest.mark.xfail(
     strict=True,
     raises=(AssertionError, ValueError),
