@@ -271,13 +271,15 @@ def _wire_step_inputs(
         # Level 2: upstream output name match
         if search_name in upstream_outputs:
             outputs_path, out_name = upstream_outputs[search_name]
-            wired[input_spec.name] = f"${{{{ {outputs_path}.{out_name} }}}}"
+            wired[input_spec.emitted_name] = f"${{{{ {outputs_path}.{out_name} }}}}"
             continue
 
         # Level 3: config (scoped then shared)
         config_key = _resolve_config_key(norm_name, node.ref, config)
         if config_key is not None:
-            wired[input_spec.name] = f"${{{{ needs.setup.outputs.{config_key} }}}}"
+            wired[input_spec.emitted_name] = (
+                f"${{{{ needs.setup.outputs.{config_key} }}}}"
+            )
             continue
 
         # Level 4: default exists → omit (GitHub Actions uses the default)
@@ -294,16 +296,17 @@ def _build_upstream_outputs(
 ) -> dict[str, tuple[str, str]]:
     """Collect all output names from steps preceding *up_to_key* in the same job.
 
-    Returns ``{normalized_name: (outputs_path, normalized_name)}`` with
-    *outputs_path* ``steps.<step_id>.outputs``.
+    Returns ``{normalized_name: (outputs_path, spelling)}`` with
+    *outputs_path* ``steps.<step_id>.outputs`` and *spelling* the output id as
+    the action declares it (GitHub does not equate ``_`` and ``-``).
     Nearest predecessor wins (later entries overwrite earlier).
     """
     outputs: dict[str, tuple[str, str]] = {}
     for node in graph.job_nodes(job_id):
         if node.key == up_to_key:
             break
-        for name in node.output_names:
-            outputs[name] = (f"steps.{node.step_id}.outputs", name)
+        for name, spelling in node.output_spellings.items():
+            outputs[name] = (f"steps.{node.step_id}.outputs", spelling)
     return outputs
 
 
@@ -324,8 +327,8 @@ def _detect_cross_job_edges(
     for job_id in graph.job_ids():
         outs: dict[str, tuple[str, str]] = {}
         for node in graph.job_nodes(job_id):
-            for name in node.output_names:
-                outs[name] = (node.step_id, name)
+            for name, spelling in node.output_spellings.items():
+                outs[name] = (node.step_id, spelling)
         job_outputs[job_id] = outs
 
     for job_id in graph.job_ids():
@@ -410,7 +413,7 @@ def compile_recipe(
             # Add cross-job sources
             for edge in cross_job_edges:
                 if edge.target_job == job_id and edge.target_step_id == node.step_id:
-                    upstream[edge.source_output] = (
+                    upstream[normalize_name(edge.source_output)] = (
                         f"needs.{edge.source_job}.outputs",  # job-level outputs
                         edge.source_output,
                     )

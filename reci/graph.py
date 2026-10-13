@@ -34,7 +34,9 @@ class ActionNode:
     ref: str | None = None
     action_spec: ActionSpec | None = None
     with_: dict[str, str] = field(default_factory=dict, hash=False, compare=False)
-    bind: dict[str, str] = field(default_factory=dict, hash=False, compare=False)
+    bind: dict[str, str] = field(
+        default_factory=dict, hash=False, compare=False
+    )  # normalized input -> normalized output
     if_: str | None = field(default=None, hash=False, compare=False)
     declared_outputs: list[str] = field(default_factory=list, hash=False, compare=False)
     run: str | None = field(default=None, hash=False, compare=False)
@@ -46,14 +48,24 @@ class ActionNode:
         return f"{self.job}.{self.step_id}"
 
     @property
+    def output_spellings(self) -> dict[str, str]:
+        """``{normalized output name: spelling to emit}`` for this node.
+
+        Declared (recipe) outputs come first; the action's own ``action.yml``
+        spelling wins when both name the same output.
+        """
+        spellings: dict[str, str] = {}
+        for name in self.declared_outputs:
+            spellings.setdefault(normalize_name(name), name)
+        if self.action_spec:
+            for norm, out in self.action_spec.outputs.items():
+                spellings[norm] = out.emitted_name
+        return spellings
+
+    @property
     def output_names(self) -> list[str]:
         """All normalized output names this node produces."""
-        names: list[str] = list(self.declared_outputs)
-        if self.action_spec:
-            for n in self.action_spec.outputs:
-                if n not in names:
-                    names.append(n)
-        return names
+        return list(self.output_spellings)
 
     @property
     def input_specs(self) -> dict[str, InputSpec]:
@@ -127,7 +139,10 @@ class RecipeGraph:
                     ref=step.uses,
                     action_spec=spec,
                     with_=dict(step.with_),
-                    bind=dict(step.bind),
+                    bind={
+                        normalize_name(k): normalize_name(v)
+                        for k, v in step.bind.items()
+                    },
                     if_=step.if_,
                     declared_outputs=list(step.outputs),
                     run=step.run,

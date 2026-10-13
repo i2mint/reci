@@ -59,7 +59,7 @@ def check_unsourced_required_inputs(graph, config: dict[str, Any]) -> Iterable[F
                 rule_id="FLOW001",
                 severity=Severity.ERROR,
                 message=(
-                    f"Required input '{input_spec.name}' of '{node.key}' "
+                    f"Required input '{input_spec.emitted_name}' of '{node.key}' "
                     f"has no source (no explicit with:, upstream output, "
                     f"config value, or default)."
                 ),
@@ -87,7 +87,7 @@ def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
                     rule_id="FLOW002",
                     severity=Severity.WARNING,
                     message=(
-                        f"Input '{input_spec.name}' of '{node.key}' matches "
+                        f"Input '{input_spec.emitted_name}' of '{node.key}' matches "
                         f"outputs from multiple upstream steps: "
                         f"{', '.join(matches)}. Using nearest predecessor."
                     ),
@@ -142,7 +142,7 @@ def check_boolean_coercion(graph, config: dict[str, Any]) -> Iterable[Finding]:
                     rule_id="FLOW005",
                     severity=Severity.WARNING,
                     message=(
-                        f"Input '{input_spec.name}' of '{node.key}' "
+                        f"Input '{input_spec.emitted_name}' of '{node.key}' "
                         f"appears boolean (default='{input_spec.default}') "
                         f"but will receive a string from upstream output. "
                         f"Use == 'true' comparison."

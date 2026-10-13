@@ -4,6 +4,7 @@ import httpx
 import pytest
 
 from reci.action_spec import (
+    InputSpec,
     ActionFetchError,
     _parse_ref,
     action_local_name,
@@ -233,3 +234,12 @@ def test_fetch_failure_lists_urls_and_survives_http_errors(monkeypatch):
     monkeypatch.setattr(httpx, "get", boom)
     with pytest.raises(ActionFetchError, match=r"action\.yml.*\n.*action\.yaml"):
         action_spec_from_ref("o/r@v1")
+
+
+def test_specs_keep_the_original_spelling_next_to_the_normalized_name():
+    spec = mk_spec("x/a@v1", inputs={"Root-Dir": {}}, outputs=["wheel-path"])
+    assert spec.inputs["root_dir"].original_name == "Root-Dir"
+    assert spec.inputs["root_dir"].emitted_name == "Root-Dir"
+    assert spec.outputs["wheel_path"].emitted_name == "wheel-path"
+    # hand-built specs without an original fall back to the normalized name
+    assert InputSpec(name="a_b").emitted_name == "a_b"

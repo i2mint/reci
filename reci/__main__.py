@@ -155,7 +155,7 @@ def inspect(action_ref: str) -> None:
         for inp in spec.inputs.values():
             req = " (required)" if inp.required else ""
             default = f" [default: {inp.default}]" if inp.default else ""
-            print(f"  {inp.name}{req}{default}")
+            print(f"  {inp.emitted_name}{req}{default}")
             if inp.description:
                 print(f"    {inp.description}")
     else:
@@ -165,7 +165,7 @@ def inspect(action_ref: str) -> None:
     if spec.outputs:
         print("Outputs:")
         for out in spec.outputs.values():
-            print(f"  {out.name}")
+            print(f"  {out.emitted_name}")
             if out.description:
                 print(f"    {out.description}")
     else:
