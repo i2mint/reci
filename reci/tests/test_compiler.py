@@ -304,11 +304,6 @@ def test_no_config_means_no_dangling_needs_setup():
     assert "needs" not in wf["jobs"]["j"]  # not even an empty list
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#9: cross-job expression is garbled",
-)
 def test_cross_job_input_is_wired_through_needs_outputs():
     specs = {
         "x/a@v1": mk_spec("x/a@v1", outputs=["wheel_path"]),
@@ -324,8 +319,61 @@ def test_cross_job_input_is_wired_through_needs_outputs():
     }
 
 
+def test_cross_job_wiring_honours_bind_and_prefers_same_job_producer():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["artifact", "v"]),
+        "x/b@v1": mk_spec(
+            "x/b@v1", inputs={"path": {"required": True}, "v": {"required": True}}
+        ),
+    }
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
+        "  test:\n    steps:\n      - {id: loc, uses: x/a@v1}\n"
+        "      - {id: t, uses: x/b@v1, bind: {path: artifact}}\n"
+    )
+    wf = _compile(recipe, specs)
+    # ``path`` is bound to ``artifact``, which the same job already produces
+    # (loc); the build job is not needed at all.
+    assert wf["jobs"]["test"]["steps"][1]["with"] == {
+        "path": "${{ steps.loc.outputs.artifact }}",
+        "v": "${{ steps.loc.outputs.v }}",
+    }
+    assert "needs" not in wf["jobs"]["test"]
+
+
+def test_cross_job_edge_applies_only_to_the_step_that_needs_it():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  p:\n    steps: [{id: prod, uses: x/a@v1}]\n"
+        "  c:\n    steps:\n      - {id: t, uses: x/b@v1}\n"
+        "      - {id: s, uses: x/a@v1}\n      - {id: u, uses: x/b@v1}\n"
+    )
+    steps = _compile(recipe, specs)["jobs"]["c"]["steps"]
+    assert steps[0]["with"] == {"v": "${{ needs.p.outputs.v }}"}  # nothing earlier
+    assert steps[2]["with"] == {"v": "${{ steps.s.outputs.v }}"}  # same job wins
+
+
+def test_cross_job_wiring_honours_bind():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["artifact"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"path": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
+        "  test:\n    steps: [{id: t, uses: x/b@v1, bind: {path: artifact}}]\n"
+    )
+    wf = _compile(recipe, specs)
+    assert wf["jobs"]["test"]["needs"] == ["build"]
+    assert wf["jobs"]["test"]["steps"][0]["with"] == {
+        "path": "${{ needs.build.outputs.artifact }}"
+    }
+
+
 def test_cross_job_forwarding_adds_needs_and_job_outputs():
-    """The parts of cross-job wiring that do work today (the expression is #9)."""
+    """The parts of cross-job wiring that do work today (the expression: see the test above)."""
     specs = {
         "x/a@v1": mk_spec("x/a@v1", outputs=["wheel_path"]),
         "x/b@v1": mk_spec("x/b@v1", inputs={"wheel_path": {"required": True}}),
@@ -334,7 +382,7 @@ def test_cross_job_forwarding_adds_needs_and_job_outputs():
         "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
         "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
     )
-    wf = _compile(recipe, specs, config={"k": "v"}, lint=False)  # garbled until #9
+    wf = _compile(recipe, specs, config={"k": "v"})
     assert wf["jobs"]["build"]["outputs"] == {
         "wheel_path": "${{ steps.bld.outputs.wheel_path }}"
     }
@@ -384,12 +432,14 @@ def test_cross_job_edges_are_found_without_config():
         "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
         "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
     )
-    wf = _compile(recipe, specs, lint=False)  # expression garbled until #9
+    wf = _compile(recipe, specs)
     assert wf["jobs"]["test"]["needs"] == ["build"]
     assert wf["jobs"]["build"]["outputs"] == {
         "wheel_path": "${{ steps.bld.outputs.wheel_path }}"
     }
-    assert "wheel_path" in wf["jobs"]["test"]["steps"][0]["with"]
+    assert wf["jobs"]["test"]["steps"][0]["with"] == {
+        "wheel_path": "${{ needs.build.outputs.wheel_path }}"
+    }
 
 
 # -- mutation-hardening: behaviours the cases above do not distinguish --------
@@ -432,7 +482,7 @@ def test_cross_job_first_matching_job_wins_and_job_outputs_use_source_names():
         "  two:\n    steps: [{id: w, uses: x/a@v1}]\n"
         "  use:\n    steps: [{id: t, uses: x/b@v1, bind: {target: v}}]\n"
     )
-    wf = _compile(recipe, specs, config={"k": 1}, lint=False)  # garbled until #9
+    wf = _compile(recipe, specs, config={"k": 1})
     assert wf["jobs"]["use"]["needs"] == ["setup", "one"]
     assert "two" not in wf["jobs"]["use"]["needs"]
     assert wf["jobs"]["one"]["outputs"] == {

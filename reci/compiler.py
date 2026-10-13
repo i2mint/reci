@@ -253,7 +253,9 @@ def _wire_step_inputs(
     (explicit) is handled by the recipe's ``with_:``, and level 4 (defaults)
     means we omit.
 
-    *upstream_outputs*: ``{normalized_output_name: (step_id, original_output_name)}``
+    *upstream_outputs*: ``{normalized_output_name: (outputs_path, output_name)}``
+    where *outputs_path* is the context holding the output: ``steps.<id>.outputs``
+    for a step in the same job, ``needs.<job>.outputs`` for another job.
     """
     wired: dict[str, str] = {}
     specs = node.input_specs
@@ -268,8 +270,8 @@ def _wire_step_inputs(
 
         # Level 2: upstream output name match
         if search_name in upstream_outputs:
-            step_id, out_name = upstream_outputs[search_name]
-            wired[input_spec.name] = f"${{{{ steps.{step_id}.outputs.{out_name} }}}}"
+            outputs_path, out_name = upstream_outputs[search_name]
+            wired[input_spec.name] = f"${{{{ {outputs_path}.{out_name} }}}}"
             continue
 
         # Level 3: config (scoped then shared)
@@ -292,7 +294,8 @@ def _build_upstream_outputs(
 ) -> dict[str, tuple[str, str]]:
     """Collect all output names from steps preceding *up_to_key* in the same job.
 
-    Returns ``{normalized_name: (step_id, normalized_name)}``.
+    Returns ``{normalized_name: (outputs_path, normalized_name)}`` with
+    *outputs_path* ``steps.<step_id>.outputs``.
     Nearest predecessor wins (later entries overwrite earlier).
     """
     outputs: dict[str, tuple[str, str]] = {}
@@ -300,7 +303,7 @@ def _build_upstream_outputs(
         if node.key == up_to_key:
             break
         for name in node.output_names:
-            outputs[name] = (node.step_id, name)
+            outputs[name] = (f"steps.{node.step_id}.outputs", name)
     return outputs
 
 
@@ -408,7 +411,7 @@ def compile_recipe(
             for edge in cross_job_edges:
                 if edge.target_job == job_id and edge.target_step_id == node.step_id:
                     upstream[edge.source_output] = (
-                        f"needs.{edge.source_job}.outputs",
+                        f"needs.{edge.source_job}.outputs",  # job-level outputs
                         edge.source_output,
                     )
 
