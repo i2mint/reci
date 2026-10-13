@@ -1,26 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:07:21.290244Z
-commit_sha,59f7fb2a860401893503df66974075e729c0515a
-commit_message,Merge cd715e43a7a2d3896f3efae464bcaef7ee920022 into 7cff011c0ac06cf83e15244d249b4f28e4ae4d30
+timestamp,2026-10-13T22:11:17.981692Z
+commit_sha,ae9812489c341638384fda39cafbeb11aae96d68
+commit_message,"fix: CONF005 also refuses case-colliding and non-string keys and lone surrogates (#29)
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7871
 metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,291887
+metrics.umpyre_stats.total_lines,291899
 metrics.umpyre_stats.empty_lines,34514
 metrics.umpyre_stats.comment_lines,15040
 metrics.umpyre_stats.docs_lines,21422
-metrics.umpyre_stats.function_lines,114901
-metrics.umpyre_stats.empty_lines_ratio,0.11824438909578022
-metrics.umpyre_stats.comment_lines_ratio,0.05152678947674957
-metrics.umpyre_stats.function_lines_ratio,0.3936489120789895
-metrics.umpyre_stats.mean_lines_per_function,14.598018040909668
+metrics.umpyre_stats.function_lines,114913
+metrics.umpyre_stats.empty_lines_ratio,0.11823952805593715
+metrics.umpyre_stats.comment_lines_ratio,0.05152467120476603
+metrics.umpyre_stats.function_lines_ratio,0.39367383923891486
+metrics.umpyre_stats.mean_lines_per_function,14.599542624825308
 metrics.umpyre_stats.files_analyzed,737
-metrics.umpyre_stats.pypi_version,0.0.22
+metrics.umpyre_stats.pypi_version,0.0.21
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T22:07:15Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T22:07:27Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38475443580
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38475450713
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.153238773345947
+collection_duration_seconds,2.6032590866088867

@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.153238773345947,
-  "commit_message": "Merge cd715e43a7a2d3896f3efae464bcaef7ee920022 into 7cff011c0ac06cf83e15244d249b4f28e4ae4d30",
-  "commit_sha": "59f7fb2a860401893503df66974075e729c0515a",
+  "collection_duration_seconds": 2.6032590866088867,
+  "commit_message": "fix: CONF005 also refuses case-colliding and non-string keys and lone surrogates (#29)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "ae9812489c341638384fda39cafbeb11aae96d68",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -12,18 +12,18 @@
     },
     "umpyre_stats": {
       "comment_lines": 15040,
-      "comment_lines_ratio": 0.05152678947674957,
+      "comment_lines_ratio": 0.05152467120476603,
       "docs_lines": 21422,
       "empty_lines": 34514,
-      "empty_lines_ratio": 0.11824438909578022,
+      "empty_lines_ratio": 0.11823952805593715,
       "files_analyzed": 737,
-      "function_lines": 114901,
-      "function_lines_ratio": 0.3936489120789895,
-      "mean_lines_per_function": 14.598018040909668,
+      "function_lines": 114913,
+      "function_lines_ratio": 0.39367383923891486,
+      "mean_lines_per_function": 14.599542624825308,
       "num_classes": 1982,
       "num_functions": 7871,
-      "pypi_version": "0.0.22",
-      "total_lines": 291887
+      "pypi_version": "0.0.21",
+      "total_lines": 291899
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T22:07:15Z",
+      "last_success_timestamp": "2026-10-13T22:07:27Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38475443580",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38475450713",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:07:21.290244Z",
+  "timestamp": "2026-10-13T22:11:17.981692Z",
   "workflow_status": {}
 }
