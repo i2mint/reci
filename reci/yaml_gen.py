@@ -77,17 +77,25 @@ def _prepare_workflow_dict(d: Any) -> Any:
     return d
 
 
+_PADDED_FLOAT_RE = re.compile(r"[+-]?0\d")
+
+
 def scalar_source_text(value: int | float) -> str:
     """A YAML number as written in the source, not as Python renders it.
 
     ruamel keeps the spelling of what it loads, so ``3.10`` stays ``3.10``
     (``str()`` gives ``3.1``), ``0x1F`` stays ``0x1F`` and ``1e3`` stays ``1e3``.
+    Anchors and tags are not part of the spelling.  When ruamel's text would be
+    a different number (underscored floats), ``str()`` is used.
 
     >>> scalar_source_text(load_yaml_string("v: 3.10")["v"])
     '3.10'
+    >>> scalar_source_text(load_yaml_string("v: &a 0x1F")["v"])
+    '0x1F'
     >>> scalar_source_text(7)
     '7'
     """
-    buf = io.StringIO()
-    _make_yaml().dump({"v": value}, buf)
-    return buf.getvalue().split(":", 1)[1].strip()
+    text = str(_make_yaml().representer.represent_data(value).value)
+    if isinstance(value, float) and _PADDED_FLOAT_RE.match(text):
+        return str(value)  # ruamel pads underscored floats: 1_000.5 -> 01000.5
+    return text

@@ -870,3 +870,15 @@ def test_numeric_scalars_keep_the_spelling_the_author_wrote():
     # and the dumped YAML hands the action those strings, not numbers
     again = load_yaml_string(dump_workflow({"jobs": {"j": {"steps": [step]}}}))
     assert again["jobs"]["j"]["steps"][0]["with"]["a"] == "3.10"
+
+
+def test_numeric_scalar_spelling_ignores_anchors_and_tags():
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n"
+        "      - {id: s, uses: x/s@v1, with: {a: &pv 3.10, b: *pv, c: !!float 3, "
+        "d: 1_000.5}, env: {E: *pv}}\n"
+    )
+    specs = {"x/s@v1": mk_spec("x/s@v1", inputs={k: {} for k in "abcd"})}
+    step = _compile(recipe, specs)["jobs"]["j"]["steps"][0]
+    assert step["with"] == {"a": "3.10", "b": "3.10", "c": "3", "d": "1000.5"}
+    assert step["env"] == {"E": "3.10"}
