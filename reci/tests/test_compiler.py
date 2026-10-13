@@ -104,6 +104,26 @@ def test_explicit_with_beats_upstream_and_config():
     assert w == {"v": "explicit"}
 
 
+def test_explicit_with_key_is_emitted_in_the_declared_spelling():
+    w = _step_with(
+        {},
+        extra="\n        with: {root_dir: x, other_key: y}",
+        s_inputs={"root-dir": {"required": True}},
+        up_outputs=(),
+    )
+    assert w == {"root-dir": "x", "other_key": "y"}
+
+
+def test_explicit_with_keeps_both_spellings_when_the_recipe_writes_both():
+    w = _step_with(
+        {},
+        extra="\n        with: {root_dir: x, root-dir: y}",
+        s_inputs={"root-dir": {"required": True}},
+        up_outputs=(),
+    )
+    assert w == {"root_dir": "x", "root-dir": "y"}
+
+
 def test_upstream_output_beats_config():
     assert _step_with({"v": "cfg"}) == {"v": "${{ steps.up.outputs.v }}"}
 

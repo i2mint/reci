@@ -116,6 +116,22 @@ def _build_setup_job(config: dict[str, Any]) -> dict:
 # ---------------------------------------------------------------------------
 
 
+def _declared_input_name(
+    key: str, with_: dict[str, Any], action_spec: ActionSpec | None
+) -> str:
+    """The spelling GitHub will match for explicit ``with:`` key *key*.
+
+    Matching is normalized (``root_dir`` satisfies input ``root-dir``) but GitHub
+    only maps the declared spelling, so a key that names a declared input is
+    rewritten to it.  Keys that match nothing, or whose declared spelling the
+    recipe also writes itself, are left as written.
+    """
+    spec = action_spec.inputs.get(normalize_name(key)) if action_spec else None
+    if spec is None or spec.emitted_name in with_:
+        return key
+    return spec.emitted_name
+
+
 def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dict:
     """Convert a StepSpec to a GitHub Actions step dict.
 
@@ -134,7 +150,10 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
     if step.if_:
         d["if"] = _rewrite_config_refs(step.if_)
     if step.with_:
-        d["with"] = {k: _rewrite_config_refs(v) for k, v in step.with_.items()}
+        d["with"] = {
+            _declared_input_name(k, step.with_, action_spec): _rewrite_config_refs(v)
+            for k, v in step.with_.items()
+        }
     if step.env:
         d["env"] = {k: _rewrite_config_refs(v) for k, v in step.env.items()}
 
