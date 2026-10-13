@@ -1,38 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T18:01:17.462008Z
-commit_sha,b520dae13052613e4d923eb56b5dc45a19b99b47
-commit_message,"fix: needs cycles from data flow: DAG005 + CompilationError (#23) (#40)
+timestamp,2026-10-13T18:02:38.410315Z
+commit_sha,66b5096024f045eea67f24a7ea2bfc75ad51626c
+commit_message,"fix: refuse recipes that compile to an invalid workflow: undefined config refs, needs on missing jobs, job named setup (#22)
 
-* fix: needs cycles from data flow are a DAG005 finding and a CompilationError (#23)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
-* fix: validate before compiling in the CLI; clean exit on CompilationError; cycle message names the reads
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7758
-metrics.umpyre_stats.num_classes,1970
-metrics.umpyre_stats.total_lines,289373
-metrics.umpyre_stats.empty_lines,34120
-metrics.umpyre_stats.comment_lines,14880
-metrics.umpyre_stats.docs_lines,21332
-metrics.umpyre_stats.function_lines,113056
-metrics.umpyre_stats.empty_lines_ratio,0.1179101021864514
-metrics.umpyre_stats.comment_lines_ratio,0.051421521703821714
-metrics.umpyre_stats.function_lines_ratio,0.3906929810314024
-metrics.umpyre_stats.mean_lines_per_function,14.5728280484661
-metrics.umpyre_stats.files_analyzed,726
+metrics.umpyre_stats.num_functions,7765
+metrics.umpyre_stats.num_classes,1971
+metrics.umpyre_stats.total_lines,289546
+metrics.umpyre_stats.empty_lines,34150
+metrics.umpyre_stats.comment_lines,14882
+metrics.umpyre_stats.docs_lines,21352
+metrics.umpyre_stats.function_lines,113180
+metrics.umpyre_stats.empty_lines_ratio,0.11794326290123158
+metrics.umpyre_stats.comment_lines_ratio,0.05139770537323948
+metrics.umpyre_stats.function_lines_ratio,0.39088780366504805
+metrics.umpyre_stats.mean_lines_per_function,14.5756600128783
+metrics.umpyre_stats.files_analyzed,727
 metrics.umpyre_stats.pypi_version,0.0.17
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T18:00:01Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T18:02:26Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38443019429
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38443216969
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -48,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.351208686828613
+collection_duration_seconds,2.679068088531494
