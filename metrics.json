@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 4.220224380493164,
+  "collection_duration_seconds": 4.247425556182861,
   "commit_message": "fix: render YAML booleans/null in with: and env: as GitHub sees them (#14)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "f7f1c5ff2b3a23a7b1ae5cc998bbd48cc980a421",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14874,
-      "comment_lines_ratio": 0.05144327543630289,
-      "docs_lines": 21274,
-      "empty_lines": 34077,
-      "empty_lines_ratio": 0.11785884745481334,
-      "files_analyzed": 725,
-      "function_lines": 112863,
-      "function_lines_ratio": 0.39034841976384654,
-      "mean_lines_per_function": 14.568607202788176,
-      "num_classes": 1970,
-      "num_functions": 7747,
+      "comment_lines": 15020,
+      "comment_lines_ratio": 0.05156320268595538,
+      "docs_lines": 21307,
+      "empty_lines": 34410,
+      "empty_lines_ratio": 0.11812848231849031,
+      "files_analyzed": 735,
+      "function_lines": 114422,
+      "function_lines_ratio": 0.392807242192569,
+      "mean_lines_per_function": 14.5890603085554,
+      "num_classes": 1981,
+      "num_functions": 7843,
       "pypi_version": "0.0.12",
-      "total_lines": 289134
+      "total_lines": 291293
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:33:54.782049Z",
+  "timestamp": "2026-10-13T17:33:57.778201Z",
   "workflow_status": {}
 }
