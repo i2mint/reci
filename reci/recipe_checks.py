@@ -104,7 +104,7 @@ _OUTPUT_ID_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_\-]*")
 # Unicode line/paragraph separators, NUL and other C0 controls are YAML line
 # breaks or invalid, so they would be altered or break the file.
 _UNEXPORTABLE_CHAR_RE = re.compile(
-    "[\x00-\x08\x0b-\x1f\x7f\x80-\x9f\u2028\u2029\ufeff\ufffe\uffff]"
+    "[\x00-\x08\x0b-\x1f\x7f\x80-\x9f\u2028\u2029\ud800-\udfff\ufeff\ufffe\uffff]"
 )
 
 
@@ -220,17 +220,29 @@ def find_recipe_problems(
                     )
                 )
 
+    seen_keys: dict[str, str] = {}
     for key, value in config.items():
-        if not _OUTPUT_ID_RE.fullmatch(str(key)):
+        if not isinstance(key, str) or not _OUTPUT_ID_RE.fullmatch(key):
             problems.append(
                 RecipeProblem(
                     "CONF005",
-                    f"Config key '{key}' is not a valid job-output id (letters, "
-                    f"digits, '_' and '-'; not starting with a digit), so the "
-                    f"setup job cannot export it.",
+                    f"Config key {key!r} is not a valid job-output id (a string of "
+                    f"letters, digits, '_' and '-'; not starting with a digit), so "
+                    f"the setup job cannot export it.",
                     "config",
                 )
             )
+        elif key.casefold() in seen_keys:
+            problems.append(
+                RecipeProblem(
+                    "CONF005",
+                    f"Config keys '{seen_keys[key.casefold()]}' and '{key}' differ "
+                    f"only in case; job outputs are case-insensitive.",
+                    "config",
+                )
+            )
+        else:
+            seen_keys[key.casefold()] = key
         if isinstance(value, (dict, list)):
             continue  # exported as JSON, which escapes control characters
         bad = _UNEXPORTABLE_CHAR_RE.search(str(value))

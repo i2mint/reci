@@ -346,7 +346,7 @@ def test_setup_script_roundtrips_awkward_values_verbatim(tmp_path):
 
 @needs_posix_bash
 def test_a_sample_of_allowed_characters_survives_yaml_and_the_shell(tmp_path):
-    value = "é日\t😀\x85"[:-1] + "\u00a0\u2013 ~ ` $ \\ ' \""
+    value = "é日\t😀\u00a0\u2013 ~ ` $ \\ ' \""
     assert _run_setup_script(tmp_path, {"chars": value}) == {"chars": value}
 
 
@@ -794,6 +794,10 @@ def test_continue_on_error_expression_gets_config_refs_rewritten():
         ({"ok": "a\x00b"}, "'\\x00'"),
         ({"ok": "a\u2028b"}, "'\\u2028'"),
         ({"ok": "a\x85b"}, "'\\x85'"),
+        ({"ok": "a\ud800b"}, "'\\ud800'"),
+        ({"Foo": "a", "foo": "b"}, "differ only in case"),
+        ({True: "x"}, "True is not a valid job-output id"),
+        ({None: "x"}, "None is not a valid job-output id"),
     ],
 )
 def test_config_the_setup_job_cannot_export_is_refused(config, fragment):
