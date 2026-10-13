@@ -1,6 +1,6 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:17:08.179471Z
+timestamp,2026-10-13T22:17:11.374390Z
 commit_sha,89854112f544a5b7901d9fa033eacd358ed7987e
 commit_message,"fix: emit explicit with: keys in the declared input spelling (#27) (#52)
 
@@ -16,18 +16,18 @@ Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
 
 Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7776
-metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,289769
-metrics.umpyre_stats.empty_lines,34184
-metrics.umpyre_stats.comment_lines,14894
-metrics.umpyre_stats.docs_lines,21395
-metrics.umpyre_stats.function_lines,113381
-metrics.umpyre_stats.empty_lines_ratio,0.11796983114135742
-metrics.umpyre_stats.comment_lines_ratio,0.05139956310026262
-metrics.umpyre_stats.function_lines_ratio,0.3912806407862815
-metrics.umpyre_stats.mean_lines_per_function,14.580889917695472
-metrics.umpyre_stats.files_analyzed,727
+metrics.umpyre_stats.num_functions,7872
+metrics.umpyre_stats.num_classes,1982
+metrics.umpyre_stats.total_lines,291928
+metrics.umpyre_stats.empty_lines,34517
+metrics.umpyre_stats.comment_lines,15040
+metrics.umpyre_stats.docs_lines,21428
+metrics.umpyre_stats.function_lines,114940
+metrics.umpyre_stats.empty_lines_ratio,0.11823805869940533
+metrics.umpyre_stats.comment_lines_ratio,0.05151955276643556
+metrics.umpyre_stats.function_lines_ratio,0.39372722041051217
+metrics.umpyre_stats.mean_lines_per_function,14.601117886178862
+metrics.umpyre_stats.files_analyzed,737
 metrics.umpyre_stats.pypi_version,0.0.23
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T22:15:47Z
@@ -48,4 +48,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.0666797161102295
+collection_duration_seconds,4.307587623596191
