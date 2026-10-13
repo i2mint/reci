@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import shlex
 from typing import Any
 
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
@@ -57,19 +58,43 @@ def _serialize_config_value(value: Any) -> str:
     return str(value)
 
 
+_OUTPUT_DELIMITER = "RECI_EOF"
+
+
+def _output_command(key: str, serialized: str) -> str:
+    r"""Shell command appending one ``key``/value pair to ``$GITHUB_OUTPUT``.
+
+    The value is passed through ``printf '%s'`` as a single-quoted shell word, so
+    quotes, ``$VAR`` and backticks arrive verbatim.  A value with a newline uses
+    the ``key<<DELIM`` multiline form (the delimiter is lengthened until it does
+    not occur in the value).
+    """
+    if "\n" not in serialized:
+        return f"printf '%s=%s\\n' {shlex.quote(key)} {shlex.quote(serialized)}"
+    delimiter = _OUTPUT_DELIMITER
+    while delimiter in serialized:
+        delimiter += "_"
+    return (
+        f"printf '%s<<%s\\n%s\\n%s\\n' "
+        f"{shlex.quote(key)} {delimiter} {shlex.quote(serialized)} {delimiter}"
+    )
+
+
 def _build_setup_job(config: dict[str, Any]) -> dict:
     """Generate the setup job that exports config values as job outputs."""
     lines: list[str] = []
     outputs: dict[str, str] = {}
 
     for key, value in config.items():
-        serialized = _serialize_config_value(value)
-        lines.append(f'  echo "{key}={serialized}"')
+        lines.append("  " + _output_command(key, _serialize_config_value(value)))
         outputs[key] = f"${{{{ steps.config.outputs.{key} }}}}"
 
-    # One grouped, quoted redirect: shellcheck-clean (SC2086, SC2129)
+    # One grouped, quoted redirect: shellcheck-clean (SC2086, SC2129).  Values are
+    # single-quoted and meant literally, so the "this won't expand" hints do not
+    # apply: `$`/backtick (SC2016), leading `~` (SC2088), trailing `\` (SC1003).
+    header = "# shellcheck disable=SC2016,SC2088,SC1003\n"
     run_script = (
-        "{\n" + "\n".join(lines) + '\n} >> "$GITHUB_OUTPUT"'
+        header + "{\n" + "\n".join(lines) + '\n} >> "$GITHUB_OUTPUT"'
         if lines
         else 'echo "No config values"'
     )
