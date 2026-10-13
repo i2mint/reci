@@ -207,3 +207,26 @@ def test_runs_on_may_be_a_list_or_mapping_with_config_refs():
         config={"os": "linux"},
     )
     assert wf["jobs"]["j"]["runs-on"] == ["self-hosted", "${{ needs.setup.outputs.os }}"]
+
+
+def test_typed_keys_keep_numbers_and_matrix_hex_and_exponents_keep_their_value():
+    wf = _compile(
+        "on: push\njobs:\n  j:\n    timeout-minutes: 0x10\n"
+        "    strategy: {matrix: {n: [0x10, 1e3, 1.50]}}\n"
+        "    steps: [{run: x, timeout-minutes: 1.50}]\n"
+    )
+    job = wf["jobs"]["j"]
+    assert job["timeout-minutes"] == 16 and job["steps"][0]["timeout-minutes"] == 1.5
+    assert job["strategy"]["matrix"]["n"] == [16, 1000.0, "1.50"]
+
+
+def test_anchors_in_workflow_level_keys_do_not_survive_unused():
+    from reci.yaml_gen import dump_workflow
+
+    wf = _compile(
+        "on: push\nx-g: &g grp\nconcurrency: {group: *g, cancel-in-progress: &c true}\n"
+        "defaults: {run: {shell: &s bash}}\npermissions: {contents: read}\n"
+        "jobs:\n  j:\n    concurrency: {group: h, cancel-in-progress: *c}\n"
+        "    defaults: {run: {shell: *s}}\n    steps: [{run: x}]\n"
+    )
+    assert "&" not in dump_workflow(wf)

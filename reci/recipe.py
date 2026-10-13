@@ -8,6 +8,7 @@ input renaming, and ``outputs:`` annotations on ``run:`` steps.
 from __future__ import annotations
 
 import itertools
+import re
 from dataclasses import dataclass, field, replace
 from typing import Any
 
@@ -153,29 +154,54 @@ def _continue_on_error(value: Any, *, where: str) -> bool | str:
     return bool(value)
 
 
-def _spell_numbers(obj: Any) -> Any:
+_DECIMAL_RE = re.compile(r"[+-]?\d*\.\d+")
+
+
+def _spell_numbers(obj: Any, *, decimals_only: bool = False) -> Any:
     """*obj* with each number whose source spelling ``str()`` loses kept as text.
 
     GitHub reads an unquoted ``3.10`` in a matrix as the number 3.1; quoting the
-    author's spelling keeps ``3.10``.  Other numbers are left alone.
+    author's spelling keeps ``3.10``.  Other numbers are left alone.  With
+    *decimals_only*, only decimal spellings (``3.10``, ``1.50``) count: hex or
+    exponent numbers keep meaning what YAML says they mean.
 
-    >>> _spell_numbers(load_yaml_string("m: [3.10, 3.9, 7, x]")["m"])
-    ['3.10', 3.9, 7, 'x']
+    >>> _spell_numbers(load_yaml_string("m: [3.10, 3.9, 7, 0x10, x]")["m"],
+    ...                decimals_only=True)
+    ['3.10', 3.9, 7, 16, 'x']
     """
     if isinstance(obj, dict):
-        return {k: _spell_numbers(v) for k, v in obj.items()}
+        return {
+            k: _spell_numbers(v, decimals_only=decimals_only) for k, v in obj.items()
+        }
     if isinstance(obj, list):
-        return [_spell_numbers(v) for v in obj]
+        return [_spell_numbers(v, decimals_only=decimals_only) for v in obj]
     if isinstance(obj, (int, float)) and not isinstance(obj, (bool, ScalarBoolean)):
         text = scalar_source_text(obj)
-        return text if text != str(obj) else obj
+        if text != str(obj) and (not decimals_only or _DECIMAL_RE.fullmatch(text)):
+            return text
+    return obj
+
+
+def _spell_env_numbers(obj: Any) -> Any:
+    """*obj* with the numbers under any ``env`` key spelled as written.
+
+    ``env`` values are strings for GitHub (``container.env``, ``services.<id>.env``);
+    other keys (``timeout-minutes``, ``ports``) are typed and keep their numbers.
+    """
+    if isinstance(obj, dict):
+        return {
+            k: _spell_numbers(v) if k == "env" else _spell_env_numbers(v)
+            for k, v in obj.items()
+        }
+    if isinstance(obj, list):
+        return [_spell_env_numbers(v) for v in obj]
     return obj
 
 
 def _strategy(value: Any) -> dict | None:
     """A ``strategy:`` mapping with the numbers of its ``matrix`` spelled as written."""
     if isinstance(value, dict) and "matrix" in value:
-        return {**value, "matrix": _spell_numbers(value["matrix"])}
+        return {**value, "matrix": _spell_numbers(value["matrix"], decimals_only=True)}
     return value
 
 
@@ -192,7 +218,7 @@ def _extra(data: dict, known: frozenset) -> dict[str, Any]:
     {'shell': 'bash'}
     """
     return {
-        k: _spell_numbers(v)
+        k: _spell_env_numbers(v)
         for k, v in data.items()
         if k not in known and not (isinstance(k, str) and k.startswith(("x-", ".")))
     }

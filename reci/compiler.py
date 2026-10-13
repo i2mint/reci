@@ -230,7 +230,7 @@ def _build_job(
     if job_spec.strategy:
         d["strategy"] = _rewrite_all_config_refs(job_spec.strategy)
     if job_spec.permissions:
-        d["permissions"] = job_spec.permissions
+        d["permissions"] = _rewrite_all_config_refs(job_spec.permissions)
     if job_spec.continue_on_error:
         d["continue-on-error"] = _continue_on_error_value(job_spec.continue_on_error)
     if job_spec.env:
@@ -569,8 +569,8 @@ def compile_recipe(
     if recipe.env:
         workflow["env"] = recipe.env
     if recipe.defaults:
-        workflow["defaults"] = recipe.defaults
-    workflow.update(recipe.extra)
+        workflow["defaults"] = _rewrite_all_config_refs(recipe.defaults)
+    workflow.update(_rewrite_all_config_refs(recipe.extra))
 
     jobs: dict[str, Any] = {}
 
