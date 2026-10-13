@@ -30,7 +30,8 @@ Compile a recipe into a GitHub Actions workflow dict.
 * **Parameters:**
   * **recipe** ([`Recipe`](reci.recipe.html.md#reci.recipe.Recipe)) – Parsed recipe.
   * **action_specs** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`ActionSpec`](reci.action_spec.html.md#reci.action_spec.ActionSpec)]) – Action specs keyed by ref string.
-  * **config** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – Flat config dict (optional).  If provided, a `setup` job is
-    injected and config references are wired.
+  * **config** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – Flat config dict (optional).  If non-empty, a `setup` job is
+    injected, jobs depend on it, and config references are wired.
+    Cross-job data-flow wiring happens either way.
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)

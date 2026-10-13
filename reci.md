@@ -1,4 +1,4 @@
-> built 2026-10-13 17:06 UTC from 5bc3dcb (main) · reci 0.0.9. Details: build_info.json
+> built 2026-10-13 17:15 UTC from d70dfed (main) · reci 0.0.10. Details: build_info.json
 
 # index.html.md
 
@@ -509,8 +509,9 @@ Compile a recipe into a GitHub Actions workflow dict.
 * **Parameters:**
   * **recipe** ([`Recipe`](_autosummary/reci.recipe.html.md#reci.recipe.Recipe)) – Parsed recipe.
   * **action_specs** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`ActionSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.ActionSpec)]) – Action specs keyed by ref string.
-  * **config** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – Flat config dict (optional).  If provided, a `setup` job is
-    injected and config references are wired.
+  * **config** ([`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)) – Flat config dict (optional).  If non-empty, a `setup` job is
+    injected, jobs depend on it, and config references are wired.
+    Cross-job data-flow wiring happens either way.
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 
@@ -1055,20 +1056,18 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 17:06 UTC** from commit <a href="https://github.com/i2mint/reci/commit/5bc3dcb1c9d0f1fe2fdf523fd0518f4f49fae546"><code>5bc3dcb</code></a> on branch <code>main</code>, for **reci 0.0.9** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 17:15 UTC** from commit <a href="https://github.com/i2mint/reci/commit/d70dfedd0303f538da196ef3df1548cea6812975"><code>d70dfed</code></a> on branch <code>main</code>, for **reci 0.0.10** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.9) is ahead of the latest release on PyPI (0.0.8): these docs describe unreleased code.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/5bc3dcb1c9d0f1fe2fdf523fd0518f4f49fae546"><code>5bc3dcb1c9d0f1fe2fdf523fd0518f4f49fae546</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/d70dfedd0303f538da196ef3df1548cea6812975"><code>d70dfedd0303f538da196ef3df1548cea6812975</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.9</code>                                                                                                                                 |
+| Tags at this commit | <code>0.0.10</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1077,9 +1076,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38435751786">38435751786</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38436883781">38436883781</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>34d6a6acf10eab7a7238a532db3bcbb66fbfebfc</code> (in the history of the built commit) |
+| Event commit | <code>06731d08030a2dd98b107afbefc0a6e3cf64fa49</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1104,13 +1103,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.8/">0.0.8</a>, older than the documented version (0.0.9).
+Latest release: <a href="https://pypi.org/project/reci/0.0.10/">0.0.10</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 5bc3dcb1c9d0f1fe2fdf523fd0518f4f49fae546
+git checkout d70dfedd0303f538da196ef3df1548cea6812975
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
