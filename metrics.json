@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.5732271671295166,
+  "collection_duration_seconds": 4.488722562789917,
   "commit_message": "fix: emit action input/output ids with their original spelling (#10) (#26)\n\n* fix: emit action input/output ids with their original spelling (#10)\n\nMatching stays normalized; InputSpec/OutputSpec keep original_name and the\ncompiler writes it into with: and steps./needs.<job>.outputs references.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: normalize bind: names; inspect and validation messages show the declared spelling\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "b794df51766a9024a5dab95f8f705f6c0843a8a8",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14873,
-      "comment_lines_ratio": 0.051454943625475265,
-      "docs_lines": 21239,
-      "empty_lines": 34058,
-      "empty_lines_ratio": 0.11782777314572962,
-      "files_analyzed": 725,
-      "function_lines": 112792,
-      "function_lines_ratio": 0.3902175755667724,
-      "mean_lines_per_function": 14.566963709156658,
-      "num_classes": 1970,
-      "num_functions": 7743,
+      "comment_lines": 15019,
+      "comment_lines_ratio": 0.05157481937309415,
+      "docs_lines": 21272,
+      "empty_lines": 34391,
+      "empty_lines_ratio": 0.11809771709568419,
+      "files_analyzed": 735,
+      "function_lines": 114351,
+      "function_lines_ratio": 0.3926780857668745,
+      "mean_lines_per_function": 14.587447378492154,
+      "num_classes": 1981,
+      "num_functions": 7839,
       "pypi_version": "0.0.11",
-      "total_lines": 289049
+      "total_lines": 291208
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:25:40.053786Z",
+  "timestamp": "2026-10-13T17:25:49.448552Z",
   "workflow_status": {}
 }
