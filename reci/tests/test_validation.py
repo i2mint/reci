@@ -731,7 +731,7 @@ def test_DAG005_reports_a_data_flow_cycle_beside_an_explicit_needs_cycle():
     assert "e1" not in f.message and "'b.t' reads 'v' from 'a.s'" in f.message
 
 
-def test_DAG005_names_the_other_producer_that_would_avoid_the_cycle():
+def test_DAG005_names_only_the_other_producers_that_avoid_the_cycle():
     specs = {
         **_LOOP_SPECS,
         "x/c@v1": mk_spec("x/c@v1", outputs=["v"]),
@@ -798,3 +798,34 @@ def test_FLOW006_ignores_a_matrix_job_nobody_reads_from():
         "    steps: [{id: a, uses: x/p@v1}]\n"
     )
     assert _only("FLOW006", mk_graph(recipe, _PRODUCERS)) == []
+
+
+def test_DAG005_does_not_suggest_a_producer_that_depends_on_the_consumer():
+    specs = {**_LOOP_SPECS, "x/c@v1": mk_spec("x/c@v1", outputs=["v"])}
+    recipe = _LOOP_RECIPE + (
+        "  c:\n    needs: b\n    steps: [{id: u, uses: x/c@v1}]\n"
+    )  # c also produces v, but needs b, the consumer of v
+    (f,) = _only("DAG005", mk_graph(recipe, specs))
+    assert "also produced" not in f.suggestion
+
+
+def test_DAG005_leaves_an_explicit_needs_cycle_to_DAG001():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/c@v1": mk_spec("x/c@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  a:\n    needs: b\n    steps: [{id: s, uses: x/p@v1}]\n"
+        "  b:\n    needs: a\n    steps: [{id: t, uses: x/c@v1}]\n"
+    )
+    g = mk_graph(recipe, specs)
+    assert len(_only("DAG001", g)) == 1 and _only("DAG005", g) == []
+
+
+def test_FLOW006_stays_quiet_when_the_skip_cannot_reach_the_consumer():
+    plain = _two_producers().replace("  p2:\n    steps: [{id: b, uses: x/p@v1}]\n", "")
+    guarded = plain.replace("  p1:\n", "  p1:\n    if: github.ref == 'x'\n")
+    resilient = guarded.replace("  c:\n", "  c:\n    if: ${{ always() }}\n")
+    assert _only("FLOW006", mk_graph(resilient, _PRODUCERS)) == []
+    never_skipped = plain.replace("  p1:\n", "  p1:\n    if: always()\n")
+    assert _only("FLOW006", mk_graph(never_skipped, _PRODUCERS)) == []

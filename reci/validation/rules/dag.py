@@ -46,22 +46,35 @@ def check_data_flow_needs_cycles(graph, config: dict[str, Any]) -> Iterable[Find
     # Every data-flow edge closes a loop if its producer already depends, through
     # needs: or other data flow, on its consumer.  Looking edge by edge also finds
     # a loop beside an explicit-needs loop (DAG001's).
+    explicit = {
+        (job_id, needed)
+        for job_id in graph.job_ids()
+        for needed in graph.job_needs(job_id)
+    }
     reported: set[frozenset[str]] = set()
     for edge in edges:
         path = _dependency_path(depends_on, edge.source_job, edge.target_job)
         if path is None:
             continue
         cycle = [edge.target_job, *path]
-        if frozenset(cycle) in reported:
-            continue
+        if frozenset(cycle) in reported or set(zip(cycle, cycle[1:])) <= explicit:
+            continue  # seen, or made of explicit needs: alone (DAG001's)
         reported.add(frozenset(cycle))
         reasons = describe_cycle_edges(cycle, edges)
         hops = set(zip(cycle, cycle[1:]))
         alternatives = [
             f"'{e.source_output}' is also produced by job "
-            f"{', '.join(repr(j) for j in e.alternatives)}"
+            f"{', '.join(repr(j) for j in avoiding)}"
             for e in edges
-            if (e.target_job, e.source_job) in hops and e.alternatives
+            if (e.target_job, e.source_job) in hops
+            # only a producer that does not itself depend on the consumer helps
+            if (
+                avoiding := [
+                    j
+                    for j in e.alternatives
+                    if _dependency_path(depends_on, j, e.target_job) is None
+                ]
+            )
         ]
         yield Finding(
             rule_id="DAG005",

@@ -229,6 +229,22 @@ def check_boolean_coercion(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
+#: A status function in an ``if:`` lets a job run although a job it needs was skipped.
+_STATUS_FUNCTION_RE = re.compile(r"\b(always|cancelled|failure)\s*\(")
+
+
+def _always_true(condition: str) -> bool:
+    """An ``if:`` that never skips a job.
+
+    >>> _always_true("always()"), _always_true("${{ true }}"), _always_true("x == 1")
+    (True, True, False)
+    """
+    body = condition.strip()
+    if body.startswith("${{") and body.endswith("}}"):
+        body = body[3:-2].strip()
+    return body in ("true", "always()")
+
+
 @register_rule("FLOW006")
 def check_matrix_output(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """A job output consumed by another job comes from a matrix or conditional job.
@@ -265,7 +281,13 @@ def check_matrix_output(graph, config: dict[str, Any]) -> Iterable[Finding]:
                         "aggregate the legs yourself."
                     ),
                 )
-        if job.if_ and (edge.source_job, edge.source_output, "if") not in reported:
+        consumer = graph.recipe.jobs[edge.target_job]
+        if (
+            job.if_
+            and not _always_true(job.if_)
+            and not (consumer.if_ and _STATUS_FUNCTION_RE.search(consumer.if_))
+            and (edge.source_job, edge.source_output, "if") not in reported
+        ):
             reported.add((edge.source_job, edge.source_output, "if"))
             yield Finding(
                 rule_id="FLOW006",
