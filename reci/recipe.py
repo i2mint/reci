@@ -8,7 +8,7 @@ input renaming, and ``outputs:`` annotations on ``run:`` steps.
 from __future__ import annotations
 
 import itertools
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from ruamel.yaml.scalarbool import ScalarBoolean
@@ -35,6 +35,8 @@ class StepSpec:
     outputs: list[str] = field(default_factory=list)
     bind: dict[str, str] = field(default_factory=dict)
     env: dict[str, str] = field(default_factory=dict)
+    continue_on_error: bool | str = False  # a bool, or an expression string
+    extra: dict[str, Any] = field(default_factory=dict)  # other keys, kept verbatim
 
 
 @dataclass(frozen=True)
@@ -45,11 +47,12 @@ class JobSpec:
     steps: list[StepSpec] = field(default_factory=list)
     needs: list[str] = field(default_factory=list)
     if_: str | None = None
-    runs_on: str = "ubuntu-latest"
+    runs_on: str | list | dict = "ubuntu-latest"
     strategy: dict | None = None
     permissions: dict | None = None
     continue_on_error: bool | str = False  # a bool, or an expression string
     env: dict[str, str] = field(default_factory=dict)
+    extra: dict[str, Any] = field(default_factory=dict)  # other keys, kept verbatim
 
 
 @dataclass(frozen=True)
@@ -61,6 +64,7 @@ class Recipe:
     jobs: dict[str, JobSpec] = field(default_factory=dict)
     env: dict[str, str] = field(default_factory=dict)
     defaults: dict | None = None
+    extra: dict[str, Any] = field(default_factory=dict)  # other keys, kept verbatim
 
 
 # ---------------------------------------------------------------------------
@@ -139,8 +143,61 @@ def _continue_on_error(value: Any, *, where: str) -> bool | str:
         return False
     if isinstance(value, str):
         lowered = value.strip().lower()
-        return {"true": True, "false": False}.get(lowered, value)
+        if lowered in ("true", "false"):
+            return lowered == "true"
+        if "${{" not in value:
+            raise RecipeParseError(
+                f"{where} must be a boolean or a ${{{{ }}}} expression, got {value!r}."
+            )
+        return value
     return bool(value)
+
+
+def _spell_numbers(obj: Any) -> Any:
+    """*obj* with each number whose source spelling ``str()`` loses kept as text.
+
+    GitHub reads an unquoted ``3.10`` in a matrix as the number 3.1; quoting the
+    author's spelling keeps ``3.10``.  Other numbers are left alone.
+
+    >>> _spell_numbers(load_yaml_string("m: [3.10, 3.9, 7, x]")["m"])
+    ['3.10', 3.9, 7, 'x']
+    """
+    if isinstance(obj, dict):
+        return {k: _spell_numbers(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_spell_numbers(v) for v in obj]
+    if isinstance(obj, (int, float)) and not isinstance(obj, (bool, ScalarBoolean)):
+        text = scalar_source_text(obj)
+        return text if text != str(obj) else obj
+    return obj
+
+
+def _strategy(value: Any) -> dict | None:
+    """A ``strategy:`` mapping with the numbers of its ``matrix`` spelled as written."""
+    if isinstance(value, dict) and "matrix" in value:
+        return {**value, "matrix": _spell_numbers(value["matrix"])}
+    return value
+
+
+def _extra(data: dict, known: frozenset) -> dict[str, Any]:
+    """The keys of *data* reci does not model, kept so they reach the workflow.
+
+    ``timeout-minutes``, ``container``, ``services``, ``concurrency``, ``shell``,
+    ``working-directory``... are plain GitHub keys with no recipe meaning;
+    dropping them silently would change what the workflow does.
+    """
+    return {k: v for k, v in data.items() if k not in known}
+
+
+_STEP_KEYS = frozenset(
+    {"id", "uses", "run", "with", "if", "name", "outputs", "bind", "env"}
+    | {"continue-on-error"}
+)
+_JOB_KEYS = frozenset(
+    {"steps", "needs", "if", "runs-on", "strategy", "permissions", "env"}
+    | {"continue-on-error"}
+)
+_RECIPE_KEYS = frozenset({"name", "on", True, "jobs", "env", "defaults"})
 
 
 def _str_map(mapping: dict | None, *, where: str) -> dict[str, str]:
@@ -175,7 +232,7 @@ def _parse_step(step_data: dict, *, index: int, job_id: str) -> StepSpec:
             f"Step {index} in job '{job_id}' has neither 'uses' nor 'run'."
         )
 
-    step_id = step_data.get("id") or _auto_step_id(
+    step_id = _scalar_to_str(step_data.get("id") or "") or _auto_step_id(
         step_data, index=index, job_id=job_id
     )
 
@@ -198,30 +255,42 @@ def _parse_step(step_data: dict, *, index: int, job_id: str) -> StepSpec:
         outputs=outputs,
         bind=bind,
         env=_str_map(step_data.get("env"), where=f"Job '{job_id}' step {index} env:"),
+        continue_on_error=_continue_on_error(
+            step_data.get("continue-on-error"),
+            where=f"Job '{job_id}' step {index} continue-on-error:",
+        ),
+        extra=_extra(step_data, _STEP_KEYS),
     )
 
 
-def _ensure_unique_step_ids(steps: list[StepSpec], *, job_id: str) -> list[StepSpec]:
-    """Deduplicate step IDs within a job by appending a numeric suffix."""
-    seen: dict[str, int] = {}
+def _ensure_unique_step_ids(
+    steps: list[StepSpec], *, explicit: list[bool], job_id: str
+) -> list[StepSpec]:
+    """Make step ids unique within a job (GitHub compares them case-insensitively).
+
+    A step id the author wrote is never changed: two of them that collide are an
+    error.  A derived id (from ``uses:``) that collides gets the first free
+    ``_1``, ``_2``... suffix, one that no other step uses.
+    """
+    taken: dict[str, str] = {}  # casefolded id -> spelling
+    for step, written in zip(steps, explicit):
+        if written:
+            if step.id.casefold() in taken:
+                raise RecipeParseError(
+                    f"Job '{job_id}' has two steps with the id '{step.id}' "
+                    f"(step ids are case-insensitive): "
+                    f"{taken[step.id.casefold()]!r} and {step.id!r}."
+                )
+            taken[step.id.casefold()] = step.id
     result: list[StepSpec] = []
-    for step in steps:
-        base = step.id
-        count = seen.get(base, 0)
-        if count > 0:
-            new_id = f"{base}_{count}"
-            step = StepSpec(
-                id=new_id,
-                uses=step.uses,
-                run=step.run,
-                with_=step.with_,
-                if_=step.if_,
-                name=step.name,
-                outputs=step.outputs,
-                bind=step.bind,
-                env=step.env,
-            )
-        seen[base] = count + 1
+    for step, written in zip(steps, explicit):
+        if not written:
+            new_id, count = step.id, 0
+            while new_id.casefold() in taken:
+                count += 1
+                new_id = f"{step.id}_{count}"
+            taken[new_id.casefold()] = new_id
+            step = replace(step, id=new_id)
         result.append(step)
     return result
 
@@ -232,7 +301,9 @@ def _parse_job(job_id: str, job_data: dict) -> JobSpec:
         raise RecipeParseError(f"Job '{job_id}' has no steps.")
 
     steps = [_parse_step(s, index=i, job_id=job_id) for i, s in enumerate(raw_steps)]
-    steps = _ensure_unique_step_ids(steps, job_id=job_id)
+    steps = _ensure_unique_step_ids(
+        steps, explicit=[bool(s.get("id")) for s in raw_steps], job_id=job_id
+    )
 
     needs = job_data.get("needs", [])
     if isinstance(needs, str):
@@ -244,59 +315,39 @@ def _parse_job(job_id: str, job_data: dict) -> JobSpec:
         needs=needs,
         if_=_if_condition(job_data.get("if"), where=f"Job '{job_id}' if:"),
         runs_on=job_data.get("runs-on", "ubuntu-latest"),
-        strategy=job_data.get("strategy"),
+        strategy=_strategy(job_data.get("strategy")),
         permissions=job_data.get("permissions"),
         continue_on_error=_continue_on_error(
             job_data.get("continue-on-error"),
             where=f"Job '{job_id}' continue-on-error:",
         ),
         env=_str_map(job_data.get("env"), where=f"Job '{job_id}' env:"),
+        extra=_extra(job_data, _JOB_KEYS),
+    )
+
+
+def _recipe_from_data(data: Any, *, source: str) -> Recipe:
+    if not isinstance(data, dict):
+        raise RecipeParseError(f"{source} is not a YAML mapping.")
+    jobs_data = data.get("jobs", {})
+    if not jobs_data:
+        raise RecipeParseError(f"{source} has no jobs.")
+
+    return Recipe(
+        name=data.get("name", ""),
+        on=data.get("on", data.get(True, [])),  # PyYAML compat: `on:` → True key
+        jobs={jid: _parse_job(jid, jdata) for jid, jdata in jobs_data.items()},
+        env=_str_map(data.get("env"), where="Workflow env:"),
+        defaults=data.get("defaults"),
+        extra=_extra(data, _RECIPE_KEYS),
     )
 
 
 def parse_recipe(path: str) -> Recipe:
     """Load a recipe YAML and return a :class:`Recipe`."""
-    data = load_yaml(path)
-    if not isinstance(data, dict):
-        raise RecipeParseError(f"Recipe file '{path}' is not a YAML mapping.")
-
-    name = data.get("name", "")
-    on = data.get("on", data.get(True, []))  # PyYAML compat: `on:` → True key
-    jobs_data = data.get("jobs", {})
-    if not jobs_data:
-        raise RecipeParseError(f"Recipe file '{path}' has no jobs.")
-
-    jobs = {jid: _parse_job(jid, jdata) for jid, jdata in jobs_data.items()}
-
-    return Recipe(
-        name=name,
-        on=on,
-        jobs=jobs,
-        env=_str_map(data.get("env"), where="Workflow env:"),
-        defaults=data.get("defaults"),
-    )
+    return _recipe_from_data(load_yaml(path), source=f"Recipe file '{path}'")
 
 
 def parse_recipe_string(text: str) -> Recipe:
     """Parse a recipe from a YAML string (useful for testing)."""
-    from reci.yaml_gen import load_yaml_string
-
-    data = load_yaml_string(text)
-    if not isinstance(data, dict):
-        raise RecipeParseError("Recipe is not a YAML mapping.")
-
-    name = data.get("name", "")
-    on = data.get("on", data.get(True, []))
-    jobs_data = data.get("jobs", {})
-    if not jobs_data:
-        raise RecipeParseError("Recipe has no jobs.")
-
-    jobs = {jid: _parse_job(jid, jdata) for jid, jdata in jobs_data.items()}
-
-    return Recipe(
-        name=name,
-        on=on,
-        jobs=jobs,
-        env=_str_map(data.get("env"), where="Workflow env:"),
-        defaults=data.get("defaults"),
-    )
+    return _recipe_from_data(load_yaml_string(text), source="Recipe")

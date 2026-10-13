@@ -166,6 +166,9 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
         d["with"] = {keys[k]: _rewrite_config_refs(v) for k, v in step.with_.items()}
     if step.env:
         d["env"] = {k: _rewrite_config_refs(v) for k, v in step.env.items()}
+    if step.continue_on_error:
+        d["continue-on-error"] = _continue_on_error_value(step.continue_on_error)
+    d.update(_rewrite_all_config_refs(step.extra))
 
     return d
 
@@ -173,6 +176,11 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
 # ---------------------------------------------------------------------------
 # Job building
 # ---------------------------------------------------------------------------
+
+
+def _continue_on_error_value(value: bool | str) -> bool | str:
+    """``continue-on-error`` as emitted: ``true``, or an expression with config refs."""
+    return _rewrite_config_refs(value) if isinstance(value, str) else True
 
 
 def _build_job(
@@ -193,7 +201,7 @@ def _build_job(
 
     if job_spec.if_:
         d["if"] = _rewrite_config_refs(job_spec.if_)
-    d["runs-on"] = _rewrite_config_refs(job_spec.runs_on)
+    d["runs-on"] = _rewrite_all_config_refs(job_spec.runs_on)
 
     # needs: explicit + setup + data-flow driven
     needs = list(job_spec.needs)
@@ -212,21 +220,27 @@ def _build_job(
     if job_spec.permissions:
         d["permissions"] = job_spec.permissions
     if job_spec.continue_on_error:
-        # True, or an expression (rewritten for config refs)
-        coe = job_spec.continue_on_error
-        d["continue-on-error"] = (
-            _rewrite_config_refs(coe) if isinstance(coe, str) else True
-        )
+        d["continue-on-error"] = _continue_on_error_value(job_spec.continue_on_error)
     if job_spec.env:
         d["env"] = {k: _rewrite_config_refs(v) for k, v in job_spec.env.items()}
+    extra = _rewrite_all_config_refs(job_spec.extra)
+    d.update({k: v for k, v in extra.items() if k != "outputs"})
 
-    # Job-level outputs for cross-job forwarding
+    # Job-level outputs: those the recipe declares, plus cross-job forwarding
+    job_outputs = dict(extra.get("outputs") or {})
     if cross_job_edges:
-        job_outputs = _build_job_outputs(
+        forwarded = _build_job_outputs(
             job_spec.id, graph.job_nodes(job_spec.id), cross_job_edges
         )
-        if job_outputs:
-            d["outputs"] = job_outputs
+        clash = sorted(set(job_outputs) & set(forwarded))
+        if clash:
+            raise CompilationError(
+                f"Job '{job_spec.id}' declares outputs {clash} that the compiler "
+                f"also generates to forward them to other jobs; rename one."
+            )
+        job_outputs.update(forwarded)
+    if job_outputs:
+        d["outputs"] = job_outputs
 
     # Steps
     steps: list[dict] = []
@@ -536,6 +550,9 @@ def compile_recipe(
 
     if recipe.env:
         workflow["env"] = recipe.env
+    if recipe.defaults:
+        workflow["defaults"] = recipe.defaults
+    workflow.update(recipe.extra)
 
     jobs: dict[str, Any] = {}
 
