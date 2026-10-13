@@ -214,3 +214,16 @@ def test_compile_reports_a_job_named_setup_when_config_is_supplied(project, caps
             output=str(project / "ci.yml"),
         )
     assert "DAG007" in capsys.readouterr().err
+
+
+def test_scaffold_adds_the_config_keys_the_recipe_references(project):
+    (project / "refs.yml").write_text(
+        "on: push\njobs:\n  j:\n    steps: [{run: 'echo ${{ config.greeting }}'}]\n"
+    )
+    cfg = project / "empty.toml"
+    cfg.write_text("")
+    cli.scaffold(
+        str(project / "refs.yml"), config_path=str(cfg), output=str(project / "ci.yml")
+    )
+    assert "<REQUIRED: greeting>" in cfg.read_text()
+    assert (project / "ci.yml").exists()

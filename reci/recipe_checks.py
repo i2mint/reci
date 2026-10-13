@@ -17,7 +17,9 @@ from reci.recipe import Recipe
 #: when config is supplied.
 SETUP_JOB_ID = "setup"
 
-_CONFIG_NAME_RE = re.compile(r"\bconfig\.(\w+)")
+#: ``${{ config.X }}`` — the one form the compiler rewrites (see reci#19 for refs
+#: inside larger expressions).  Plain text such as ``config.json`` does not match.
+CONFIG_REF_RE = re.compile(r"\$\{\{\s*config\.(\w+)\s*\}\}")
 
 
 @dataclass(frozen=True)
@@ -62,6 +64,21 @@ def _recipe_strings(recipe: Recipe) -> Iterator[tuple[str, str, bool]]:
                 yield f"{job_id}.{step.id}", text, True
 
 
+def config_references(recipe: Recipe) -> list[tuple[str, str, bool]]:
+    """``(location, key, needs_context_available)`` for each ``${{ config.key }}``.
+
+    Duplicates within one location are reported once.
+    """
+    seen: set[tuple[str, str]] = set()
+    refs: list[tuple[str, str, bool]] = []
+    for location, text, needs_ok in _recipe_strings(recipe):
+        for name in CONFIG_REF_RE.findall(text):
+            if (location, name) not in seen:
+                seen.add((location, name))
+                refs.append((location, name, needs_ok))
+    return refs
+
+
 def find_recipe_problems(
     recipe: Recipe, config: dict[str, Any] | None
 ) -> list[RecipeProblem]:
@@ -78,24 +95,19 @@ def find_recipe_problems(
     config = config or {}
     problems: list[RecipeProblem] = []
 
-    seen: set[tuple[str, str]] = set()
-    for location, text, needs_ok in _recipe_strings(recipe):
-        for name in _CONFIG_NAME_RE.findall(text):
-            if (location, name) in seen:
-                continue
-            if not needs_ok:
-                message = (
-                    f"'{location}' references config.{name}, but GitHub offers no "
-                    f"'needs' context there; use a literal value."
-                )
-            elif name not in config:
-                message = (
-                    f"'{location}' references config.{name}, which is not a config key."
-                )
-            else:
-                continue
-            seen.add((location, name))
-            problems.append(RecipeProblem("CONF004", message, location))
+    for location, name, needs_ok in config_references(recipe):
+        if not needs_ok:
+            message = (
+                f"'{location}' references config.{name}, but GitHub offers no "
+                f"'needs' context there; use a literal value."
+            )
+        elif name not in config:
+            message = (
+                f"'{location}' references config.{name}, which is not a config key."
+            )
+        else:
+            continue
+        problems.append(RecipeProblem("CONF004", message, location))
 
     known = set(recipe.jobs) | ({SETUP_JOB_ID} if config else set())
     for job_id, job in recipe.jobs.items():

@@ -15,6 +15,7 @@ from typing import Any
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
 from reci.graph import RecipeGraph
 from reci.recipe import Recipe
+from reci.recipe_checks import config_references
 
 
 def resolve_config_for_input(
@@ -61,7 +62,7 @@ def collect_required_config_keys(
     Returns ``{key: required}`` where *required* is True when the input
     has ``required=True`` and no default.  Inputs given by an explicit
     ``with:`` or fed by an upstream step output (``bind:`` honoured) need no
-    config key.
+    config key.  Keys the recipe references as ``${{ config.X }}`` are required.
     """
     graph = RecipeGraph.from_recipe(recipe, action_specs)
     keys: dict[str, bool] = {}
@@ -92,4 +93,9 @@ def collect_required_config_keys(
     for norm_name, is_required in cross_job_fed:
         if norm_name in keys:
             record(norm_name, is_required)
+
+    # Keys the recipe itself references as ${{ config.X }} must exist too.
+    for _, name, needs_ok in config_references(recipe):
+        if needs_ok:
+            record(name, True)
     return keys

@@ -517,3 +517,23 @@ def test_DAG007_job_named_setup_is_only_a_clash_when_config_is_supplied():
     assert _only("DAG007", g) == []
     (f,) = _only("DAG007", g, {"k": 1})
     assert f.severity is Severity.ERROR and f.location == "setup"
+
+
+def test_CONF004_ignores_text_that_merely_contains_config_dot_something():
+    recipe = _steps(
+        "{id: r, name: 'Write config.toml', run: 'cat config.json && python -m my.config.x',\n"
+        "         env: {CFG: config.yml, G: '${{ github.event.config.x }}'}}"
+    )
+    assert _only("CONF004", mk_graph(recipe)) == []
+    top_env = "on: push\nenv: {CFG: config.yml}\njobs:\n  j:\n    steps: [{run: e}]\n"
+    assert _only("CONF004", mk_graph(top_env)) == []
+
+
+def test_CONF004_sees_with_values_and_reports_a_repeated_reference_once():
+    specs = {"x/s@v1": mk_spec("x/s@v1", inputs={"p": {}})}
+    recipe = _steps(
+        "{id: s, uses: x/s@v1, with: {p: '${{ config.a }}'}}",
+        "{id: r, run: 'echo ${{ config.b }} ${{ config.b }}'}",
+    )
+    found = _only("CONF004", mk_graph(recipe, specs))
+    assert sorted(f.location for f in found) == ["j.r", "j.s"]

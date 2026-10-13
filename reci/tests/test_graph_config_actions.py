@@ -189,6 +189,16 @@ def test_upstream_output_names_is_scoped_by_job_even_for_equal_step_ids():
     assert graph.upstream_output_names(node) == {"v"}  # b.s is another job
 
 
+def test_collect_required_config_keys_includes_explicit_config_references():
+    recipe = parse_recipe_string(
+        "on: push\nenv: {W: '${{ config.not_needed_here }}'}\njobs:\n  j:\n"
+        "    runs-on: ${{ config.os }}\n"
+        "    steps: [{run: 'echo ${{ config.msg }} config.json'}]\n"
+    )
+    # workflow env cannot use config at all (CONF004), so it asks for nothing
+    assert collect_required_config_keys(recipe, {}) == {"os": True, "msg": True}
+
+
 # -- action specs -------------------------------------------------------------
 
 
