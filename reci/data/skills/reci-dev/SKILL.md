@@ -1,5 +1,6 @@
 ---
 name: reci-dev
+license: MIT
 description: >
   Guide for contributing to the reci codebase. Use this skill when the user wants to
   add features, fix bugs, add validation rules, add config adapters, or understand
