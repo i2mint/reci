@@ -1,10 +1,8 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T18:23:54.751817Z
-commit_sha,78e6f4bd32d2e17ab1ef65cdc14c3aebc10c3317
-commit_message,"fix: boolean if: kept as expression text; continue-on-error keeps expressions (#31)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-13T18:24:05.202823Z
+commit_sha,d031a52caee1a0a720dfdbfaf5d204d384f687bb
+commit_message,Merge 78e6f4bd32d2e17ab1ef65cdc14c3aebc10c3317 into 6c0306cd030f5b697a55c5b6f0e869d813121824
 python_version,3.10
 metrics.umpyre_stats.num_functions,7773
 metrics.umpyre_stats.num_classes,1971
@@ -20,9 +18,9 @@ metrics.umpyre_stats.mean_lines_per_function,14.5754534928599
 metrics.umpyre_stats.files_analyzed,727
 metrics.umpyre_stats.pypi_version,0.0.20
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T18:21:42Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T18:24:01Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38445952816
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38446273647
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.7052366733551025
+collection_duration_seconds,4.611228704452515

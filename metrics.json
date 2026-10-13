@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.7052366733551025,
-  "commit_message": "fix: boolean if: kept as expression text; continue-on-error keeps expressions (#31)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "78e6f4bd32d2e17ab1ef65cdc14c3aebc10c3317",
+  "collection_duration_seconds": 4.611228704452515,
+  "commit_message": "Merge 78e6f4bd32d2e17ab1ef65cdc14c3aebc10c3317 into 6c0306cd030f5b697a55c5b6f0e869d813121824",
+  "commit_sha": "d031a52caee1a0a720dfdbfaf5d204d384f687bb",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T18:21:42Z",
+      "last_success_timestamp": "2026-10-13T18:24:01Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38445952816",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38446273647",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T18:23:54.751817Z",
+  "timestamp": "2026-10-13T18:24:05.202823Z",
   "workflow_status": {}
 }
