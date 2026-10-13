@@ -1,28 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T23:09:02.909149Z
-commit_sha,ea22e404ae6774625e3e786342c8fd50cfaeeb97
-commit_message,"fix: config values export faithfully, unsupported config refs reported, scaffold safe (#51, #45, #43, #56) (#63)
+timestamp,2026-10-13T23:10:23.113947Z
+commit_sha,3b99afe6978e9e457be32a3f001304b5a733de3c
+commit_message,"fix: DAG005 finds data-flow cycles beside explicit ones and names alternatives; FLOW002 across jobs; FLOW006 implemented (#41, #47)
 
-Closes #51, #45, #43, #56."
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7793
+metrics.umpyre_stats.num_functions,7794
 metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,290184
-metrics.umpyre_stats.empty_lines,34244
+metrics.umpyre_stats.total_lines,290297
+metrics.umpyre_stats.empty_lines,34251
 metrics.umpyre_stats.comment_lines,14901
-metrics.umpyre_stats.docs_lines,21496
-metrics.umpyre_stats.function_lines,113713
-metrics.umpyre_stats.empty_lines_ratio,0.11800788465249634
-metrics.umpyre_stats.comment_lines_ratio,0.05135017781821189
-metrics.umpyre_stats.function_lines_ratio,0.39186516141482647
-metrics.umpyre_stats.mean_lines_per_function,14.591684845374054
+metrics.umpyre_stats.docs_lines,21504
+metrics.umpyre_stats.function_lines,113821
+metrics.umpyre_stats.empty_lines_ratio,0.11798606254973355
+metrics.umpyre_stats.comment_lines_ratio,0.0513301894266906
+metrics.umpyre_stats.function_lines_ratio,0.3920846581259882
+metrics.umpyre_stats.mean_lines_per_function,14.603669489350782
 metrics.umpyre_stats.files_analyzed,727
 metrics.umpyre_stats.pypi_version,0.0.30
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T23:07:29Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T23:10:10Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38482155248
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38482315850
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.639373540878296
+collection_duration_seconds,3.9756832122802734
