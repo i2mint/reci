@@ -1,5 +1,6 @@
 ---
 name: ci-advisor
+license: MIT
 description: >
   Discuss and plan what CI/CD actions, jobs, and recipes make sense for a project.
   Use this skill when the user wants to talk through their CI strategy, asks

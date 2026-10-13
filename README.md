@@ -33,23 +33,31 @@ say what you want:
 
 | Skill | What it does |
 |-------|-------------|
-| [ci-setup](.claude/skills/ci-setup/) | Examines your project, proposes a CI plan, writes a recipe, compiles to a workflow |
-| [ci-migrate](.claude/skills/ci-migrate/) | Converts an existing GitHub Actions workflow into a reci recipe |
-| [ci-advisor](.claude/skills/ci-advisor/) | Interactive discussion about what CI pipeline makes sense for your project |
-| [reci-dev](.claude/skills/reci-dev/) | Guide for contributors — architecture, adding rules, adding adapters |
+| [ci-setup](reci/data/skills/ci-setup/) | Examines your project, proposes a CI plan, writes a recipe, compiles to a workflow |
+| [ci-migrate](reci/data/skills/ci-migrate/) | Converts an existing GitHub Actions workflow into a reci recipe |
+| [ci-advisor](reci/data/skills/ci-advisor/) | Interactive discussion about what CI pipeline makes sense for your project |
+| [reci-dev](reci/data/skills/reci-dev/) | Guide for contributors — architecture, adding rules, adding adapters |
 
 ### Using the skills
 
-**Claude Code** — symlink or copy the skills into your project or your personal skills directory:
+The skills live in `reci/data/skills/`, so they ship inside `pip install reci` and any agent host can install them from the repo with the GitHub CLI (`gh` 2.90+):
+
+```bash
+gh skill install i2mint/reci ci-setup
+gh skill install i2mint/reci ci-migrate
+gh skill install i2mint/reci ci-advisor
+```
+
+**Claude Code** — symlink or copy the skills into your project or your personal skills directory (from a checkout, or from the installed package's `reci/data/skills/`):
 
 ```bash
 # Make available to all your projects
-ln -s /path/to/reci/.claude/skills/ci-setup ~/.claude/skills/ci-setup
-ln -s /path/to/reci/.claude/skills/ci-migrate ~/.claude/skills/ci-migrate
-ln -s /path/to/reci/.claude/skills/ci-advisor ~/.claude/skills/ci-advisor
+ln -s /path/to/reci/reci/data/skills/ci-setup ~/.claude/skills/ci-setup
+ln -s /path/to/reci/reci/data/skills/ci-migrate ~/.claude/skills/ci-migrate
+ln -s /path/to/reci/reci/data/skills/ci-advisor ~/.claude/skills/ci-advisor
 
 # Or just for one project
-ln -s /path/to/reci/.claude/skills/ci-setup my-project/.claude/skills/ci-setup
+ln -s /path/to/reci/reci/data/skills/ci-setup my-project/.claude/skills/ci-setup
 ```
 
 Then invoke with `/ci-setup`, `/ci-migrate`, or `/ci-advisor` in Claude Code.

@@ -59,11 +59,17 @@ docs = [
     "sphinx-rtd-theme>=1.0",
 ]
 
+# .claude/skills/* are symlinks into reci/data/skills. Hatch walks symlinked dirs and
+# keeps only the first visit of each real directory, so unless excluded dirs are
+# skipped (rather than walked and filtered), the .claude walk wins and
+# reci/data/skills silently drops out of the sdist and the wheel.
 [tool.hatch.build.targets.sdist]
 exclude = [".claude", ".github"]
+skip-excluded-dirs = true
 
 [tool.hatch.build.targets.wheel]
 exclude = [".claude", ".github"]
+skip-excluded-dirs = true
 
 [tool.ruff]
 line-length = 88

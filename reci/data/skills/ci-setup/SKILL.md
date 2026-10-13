@@ -1,5 +1,6 @@
 ---
 name: ci-setup
+license: MIT
 description: >
   Create a new CI/CD pipeline for a project using reci recipes.
   Use this skill whenever the user wants to set up CI, create a GitHub Actions workflow,

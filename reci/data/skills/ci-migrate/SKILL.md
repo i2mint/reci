@@ -1,5 +1,6 @@
 ---
 name: ci-migrate
+license: MIT
 description: >
   Migrate an existing GitHub Actions workflow to a reci recipe.
   Use this skill when the user wants to convert their current CI workflow to reci,
