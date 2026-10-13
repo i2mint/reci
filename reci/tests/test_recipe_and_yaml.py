@@ -174,3 +174,32 @@ def test_boolean_env_and_with_compile_to_valid_lowercase_workflow():
     assert job["env"] == {"A": "true"}
     assert job["steps"][0]["env"] == {"B": "false"}
     assert job["steps"][0]["with"] == {"flag": "true"}
+
+
+def test_anchored_booleans_are_still_booleans():
+    r = parse_recipe_string(
+        "on: push\njobs:\n  j:\n    env: {A: &x true, B: *x, C: &y false}\n"
+        "    steps:\n      - uses: a/b@v1\n        with: {p: &z true, q: *z}\n"
+    )
+    assert r.jobs["j"].env == {"A": "true", "B": "true", "C": "false"}
+    assert r.jobs["j"].steps[0].with_ == {"p": "true", "q": "true"}
+
+
+def test_strings_pass_through_unchanged_and_non_scalars_are_rejected():
+    r = parse_recipe_string(
+        "on: push\njobs:\n  j:\n    steps:\n      - uses: a/b@v1\n"
+        "        with: {a: Hello, b: 'True', c: 'null', d: '', e: 'a: b'}\n"
+    )
+    assert r.jobs["j"].steps[0].with_ == {
+        "a": "Hello",
+        "b": "True",
+        "c": "null",
+        "d": "",
+        "e": "a: b",
+    }
+    for field, value in [("with", "[a, b]"), ("env", "{k: v}")]:
+        with pytest.raises(RecipeParseError, match="must be a scalar"):
+            parse_recipe_string(
+                "on: push\njobs:\n  j:\n    steps:\n      - uses: a/b@v1\n"
+                f"        {field}: {{x: {value}}}\n"
+            )
