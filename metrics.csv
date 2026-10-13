@@ -1,32 +1,22 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:13:00.853123Z
-commit_sha,eb2362bec39165944aabec67f3f9d4d6a3833622
-commit_message,"fix: refuse config keys/values the setup job cannot export: CONF005 (#29) (#50)
+timestamp,2026-10-13T22:13:25.827669Z
+commit_sha,9a138fc85c6fe5b8cafc735aa14b2550f621ab36
+commit_message,"fix: emit explicit with: keys in the action's declared input spelling (#27)
 
-* fix: refuse config keys/values the setup job cannot export (CONF005) (#29)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
-* fix: CONF005 also refuses case-colliding and non-string keys and lone surrogates (#29)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7871
+metrics.umpyre_stats.num_functions,7872
 metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,291899
-metrics.umpyre_stats.empty_lines,34514
+metrics.umpyre_stats.total_lines,291918
+metrics.umpyre_stats.empty_lines,34517
 metrics.umpyre_stats.comment_lines,15040
-metrics.umpyre_stats.docs_lines,21422
-metrics.umpyre_stats.function_lines,114913
-metrics.umpyre_stats.empty_lines_ratio,0.11823952805593715
-metrics.umpyre_stats.comment_lines_ratio,0.05152467120476603
-metrics.umpyre_stats.function_lines_ratio,0.39367383923891486
-metrics.umpyre_stats.mean_lines_per_function,14.599542624825308
+metrics.umpyre_stats.docs_lines,21428
+metrics.umpyre_stats.function_lines,114930
+metrics.umpyre_stats.empty_lines_ratio,0.1182421090854281
+metrics.umpyre_stats.comment_lines_ratio,0.05152131763029344
+metrics.umpyre_stats.function_lines_ratio,0.3937064518118102
+metrics.umpyre_stats.mean_lines_per_function,14.59984756097561
 metrics.umpyre_stats.files_analyzed,737
 metrics.umpyre_stats.pypi_version,0.0.22
 metrics.workflow_status.last_run_status,success
@@ -48,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.519830942153931
+collection_duration_seconds,3.3550636768341064
