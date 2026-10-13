@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.070679664611816,
-  "commit_message": "test_skills: skip the bridge test on checkouts without symlinks\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "1a5eed516cbc4d31c3bc30ad4263514fe781de4c",
+  "collection_duration_seconds": 3.656541585922241,
+  "commit_message": "Merge 1a5eed516cbc4d31c3bc30ad4263514fe781de4c into 48a8d37d18701a7aaf7326e63a987d14df5a30e4",
+  "commit_sha": "db09cc17d378cacfe08c9115636b0dddd02d9992",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15005,
-      "comment_lines_ratio": 0.05161838515812323,
-      "docs_lines": 21243,
-      "empty_lines": 34276,
-      "empty_lines_ratio": 0.11791214726290115,
-      "files_analyzed": 724,
-      "function_lines": 114047,
-      "function_lines_ratio": 0.39233068791259446,
-      "mean_lines_per_function": 14.610171662823468,
-      "num_classes": 1975,
-      "num_functions": 7806,
+      "comment_lines": 14859,
+      "comment_lines_ratio": 0.05149862060360723,
+      "docs_lines": 21210,
+      "empty_lines": 33943,
+      "empty_lines_ratio": 0.11764033105513426,
+      "files_analyzed": 714,
+      "function_lines": 112488,
+      "function_lines_ratio": 0.3898631694231489,
+      "mean_lines_per_function": 14.58988326848249,
+      "num_classes": 1964,
+      "num_functions": 7710,
       "pypi_version": "0.0.7",
-      "total_lines": 290691
+      "total_lines": 288532
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T16:19:02.606568Z",
+  "timestamp": "2026-10-13T16:19:06.146530Z",
   "workflow_status": {}
 }
