@@ -1,6 +1,6 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:36:16.033275Z
+timestamp,2026-10-13T17:36:20.232824Z
 commit_sha,4ddd3db682ae51af1484f7e56c58d435adb6eee2
 commit_message,"fix: anchored booleans (ScalarBoolean) render lowercase; non-scalar with:/env: values are a parse error
 
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.445815563201904
+collection_duration_seconds,4.284035921096802
