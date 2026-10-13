@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.602643728256226,
-  "commit_message": "fix: config values export faithfully; unsupported config refs reported; bare if rewritten; scaffold safe (#51, #45, #43, #56)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "8ca70d33d8734eff5ef78ae954c012687b6077aa",
+  "collection_duration_seconds": 4.2056214809417725,
+  "commit_message": "Merge 8ca70d33d8734eff5ef78ae954c012687b6077aa into af8cf6ec44cb36a46314752e4e85c1b892192d20",
+  "commit_sha": "4e46448de9d75057dbd1690df97a71c785104164",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.60932944606414,
       "num_classes": 1982,
       "num_functions": 7889,
-      "pypi_version": "0.0.29",
+      "pypi_version": "0.0.30",
       "total_lines": 292321
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:02:37.493220Z",
+  "timestamp": "2026-10-13T23:02:46.683121Z",
   "workflow_status": {}
 }
