@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.421471834182739,
-  "commit_message": "fix: numeric spelling ignores anchors/tags; avoid ruamel's padded underscored floats (#32)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "bf772719135d1ea3d8d55e98f02885feb43a5dcf",
+  "collection_duration_seconds": 4.165192604064941,
+  "commit_message": "fix: numeric spelling falls back to the value when ruamel cannot respell it (#32)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "088b6732f2ed60db16953b089d9c78db751e8978",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -12,18 +12,18 @@
     },
     "umpyre_stats": {
       "comment_lines": 14896,
-      "comment_lines_ratio": 0.05139848316506449,
-      "docs_lines": 21415,
-      "empty_lines": 34192,
-      "empty_lines_ratio": 0.11797911764096973,
+      "comment_lines_ratio": 0.05139635505441196,
+      "docs_lines": 21416,
+      "empty_lines": 34194,
+      "empty_lines_ratio": 0.11798113350769082,
       "files_analyzed": 727,
-      "function_lines": 113421,
-      "function_lines_ratio": 0.3913579054151973,
-      "mean_lines_per_function": 14.584158415841584,
+      "function_lines": 113431,
+      "function_lines_ratio": 0.39137620503336484,
+      "mean_lines_per_function": 14.583569040884546,
       "num_classes": 1971,
-      "num_functions": 7777,
+      "num_functions": 7778,
       "pypi_version": "0.0.24",
-      "total_lines": 289814
+      "total_lines": 289826
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T22:23:45Z",
+      "last_success_timestamp": "2026-10-13T22:25:39Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38477445736",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38477581939",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:25:34.515908Z",
+  "timestamp": "2026-10-13T22:28:01.638989Z",
   "workflow_status": {}
 }
