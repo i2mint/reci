@@ -461,6 +461,12 @@ def compile_recipe(
 
     jobs: dict[str, Any] = {}
 
+    # ``setup`` is reserved for the generated config job
+    if "setup" in recipe.jobs:
+        raise CompilationError(
+            "Job id 'setup' is reserved for the generated config job; rename it."
+        )
+
     # Setup job (always present when config is provided)
     if config:
         jobs["setup"] = _build_setup_job(config)
@@ -475,6 +481,16 @@ def compile_recipe(
             cross_job_edges=cross_job_edges,
             wired_inputs=all_wired,
             has_setup=bool(config),
+        )
+
+    # Without config there is no setup job, so nothing may depend on it
+    if not config and (
+        any("setup" in job.get("needs", []) for job in jobs.values())
+        or "needs.setup." in json.dumps(jobs)
+    ):
+        raise CompilationError(
+            "Recipe refers to 'setup' (config.* or needs: [setup]) but config is "
+            "empty, so no setup job is generated; the 'setup' id is reserved."
         )
 
     workflow["jobs"] = jobs

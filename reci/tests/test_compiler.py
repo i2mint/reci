@@ -339,6 +339,29 @@ def test_no_config_means_no_dangling_needs_setup():
     assert "needs" not in wf["jobs"]["j"]  # not even an empty list
 
 
+def test_setup_refs_without_setup_job_are_a_compile_error():
+    """``setup`` is reserved: a dangling reference to it must not compile."""
+    from reci.compiler import CompilationError
+
+    dangling = [
+        # config.X rewritten to needs.setup.outputs.X, but no config => no setup job
+        "on: push\njobs:\n  j:\n    steps:\n      - run: echo ${{ config.x }}\n",
+        # explicit needs: [setup] pointing at a job that is never generated
+        "on: push\njobs:\n  j:\n    needs: [setup]\n    steps:\n      - run: echo\n",
+    ]
+    for recipe_yaml in dangling:
+        with pytest.raises(CompilationError, match="reserved"):
+            compile_recipe(parse_recipe_string(recipe_yaml), {}, config={})
+
+    # A recipe job named ``setup`` would overwrite the generated setup job
+    with pytest.raises(CompilationError, match="reserved"):
+        compile_recipe(
+            parse_recipe_string("on: push\njobs:\n  setup:\n    steps:\n      - run: echo\n"),
+            {},
+            config={"x": 1},
+        )
+
+
 def test_cross_job_input_is_wired_through_needs_outputs():
     specs = {
         "x/a@v1": mk_spec("x/a@v1", outputs=["wheel_path"]),
