@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 2.7682156562805176,
-  "commit_message": "fix: review of #65: FLOW007 only judges composite outputs (or typos), dedupes, tolerates odd output keys\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "417810b44b217dcb0c1882d892dc57efe3a189b8",
+  "collection_duration_seconds": 2.894728660583496,
+  "commit_message": "Merge 417810b44b217dcb0c1882d892dc57efe3a189b8 into ffc29cddc172159dd79ed5477985852246f0e808",
+  "commit_sha": "a5507ec885edeab705347f48e74bc224db9fdc5e",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.63071274844917,
       "num_classes": 1982,
       "num_functions": 7899,
-      "pypi_version": "0.0.31",
+      "pypi_version": "0.0.32",
       "total_lines": 292673
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:23:52.720400Z",
+  "timestamp": "2026-10-13T23:23:59.263931Z",
   "workflow_status": {}
 }
