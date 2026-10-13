@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.446009874343872,
-  "commit_message": "fix: refuse two with: keys that name one input (#27)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "0a0ffd5d20775916ccc08e7a793eca409dfb0394",
+  "collection_duration_seconds": 4.0666797161102295,
+  "commit_message": "fix: emit explicit with: keys in the declared input spelling (#27) (#52)\n\n* fix: emit explicit with: keys in the action's declared input spelling (#27)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: refuse two with: keys that name one input (#27)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "89854112f544a5b7901d9fa033eacd358ed7987e",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.580889917695472,
       "num_classes": 1971,
       "num_functions": 7776,
-      "pypi_version": "0.0.22",
+      "pypi_version": "0.0.23",
       "total_lines": 289769
     },
     "wily": {
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T22:14:45Z",
+      "last_success_timestamp": "2026-10-13T22:15:47Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38476369803",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38476441423",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:15:50.393349Z",
+  "timestamp": "2026-10-13T22:17:08.179471Z",
   "workflow_status": {}
 }

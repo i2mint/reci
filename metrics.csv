@@ -1,10 +1,20 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:15:50.393349Z
-commit_sha,0a0ffd5d20775916ccc08e7a793eca409dfb0394
-commit_message,"fix: refuse two with: keys that name one input (#27)
+timestamp,2026-10-13T22:17:08.179471Z
+commit_sha,89854112f544a5b7901d9fa033eacd358ed7987e
+commit_message,"fix: emit explicit with: keys in the declared input spelling (#27) (#52)
 
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+* fix: emit explicit with: keys in the action's declared input spelling (#27)
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+* fix: refuse two with: keys that name one input (#27)
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+---------
+
+Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7776
 metrics.umpyre_stats.num_classes,1971
@@ -18,11 +28,11 @@ metrics.umpyre_stats.comment_lines_ratio,0.05139956310026262
 metrics.umpyre_stats.function_lines_ratio,0.3912806407862815
 metrics.umpyre_stats.mean_lines_per_function,14.580889917695472
 metrics.umpyre_stats.files_analyzed,727
-metrics.umpyre_stats.pypi_version,0.0.22
+metrics.umpyre_stats.pypi_version,0.0.23
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T22:14:45Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T22:15:47Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38476369803
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38476441423
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +48,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.446009874343872
+collection_duration_seconds,4.0666797161102295
