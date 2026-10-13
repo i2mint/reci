@@ -1,28 +1,26 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:59:54.510776Z
-commit_sha,5a94dca768d388e9be220a88224ee20c4e286c1e
-commit_message,"fix: keep unmodelled recipe keys, safe step ids, matrix number spelling (#49, #54) (#62)
-
-Closes #49, #54. Part of #43 and #56 (see PR)."
+timestamp,2026-10-13T23:02:34.378969Z
+commit_sha,4e46448de9d75057dbd1690df97a71c785104164
+commit_message,Merge 8ca70d33d8734eff5ef78ae954c012687b6077aa into af8cf6ec44cb36a46314752e4e85c1b892192d20
 python_version,3.10
-metrics.umpyre_stats.num_functions,7787
+metrics.umpyre_stats.num_functions,7793
 metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,290014
-metrics.umpyre_stats.empty_lines,34220
-metrics.umpyre_stats.comment_lines,14896
-metrics.umpyre_stats.docs_lines,21460
-metrics.umpyre_stats.function_lines,113576
-metrics.umpyre_stats.empty_lines_ratio,0.11799430372326854
-metrics.umpyre_stats.comment_lines_ratio,0.05136303764645845
-metrics.umpyre_stats.function_lines_ratio,0.39162247339783596
-metrics.umpyre_stats.mean_lines_per_function,14.585334531912162
+metrics.umpyre_stats.total_lines,290162
+metrics.umpyre_stats.empty_lines,34243
+metrics.umpyre_stats.comment_lines,14898
+metrics.umpyre_stats.docs_lines,21496
+metrics.umpyre_stats.function_lines,113694
+metrics.umpyre_stats.empty_lines_ratio,0.11801338562596067
+metrics.umpyre_stats.comment_lines_ratio,0.05134373212205595
+metrics.umpyre_stats.function_lines_ratio,0.39182939185696264
+metrics.umpyre_stats.mean_lines_per_function,14.589246759912742
 metrics.umpyre_stats.files_analyzed,727
-metrics.umpyre_stats.pypi_version,0.0.29
+metrics.umpyre_stats.pypi_version,0.0.30
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T22:58:13Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T23:01:12Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38481143268
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38481543563
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.735974073410034
+collection_duration_seconds,3.322711706161499
