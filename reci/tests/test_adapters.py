@@ -227,3 +227,19 @@ def test_write_updates_nested_leaves_in_place_and_keeps_new_keys_flat(
     got = ad.read(str(p))
     assert got[key] == 90 and got["scoped__new"] == "v"
     assert p.read_text().count(leaf) == 1  # updated in place, no flat duplicate
+
+
+def test_package_json_null_ci_and_yaml_top_level_list_are_replaced_by_a_mapping(
+    tmp_path,
+):
+    p = tmp_path / "package.json"
+    p.write_text('{"name": "x", "ci": null}')
+    ad = PackageJsonAdapter()
+    assert ad.read(str(p)) == {}
+    ad.write(str(p), {"a": 1})
+    assert json.loads(p.read_text()) == {"name": "x", "ci": {"a": 1}}
+
+    y = tmp_path / ".ci.yml"
+    y.write_text("- not\n- a mapping\n")
+    YamlAdapter().write(str(y), {"a": 1})
+    assert YamlAdapter().read(str(y)) == {"a": 1}

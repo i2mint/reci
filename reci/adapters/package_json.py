@@ -14,12 +14,14 @@ class PackageJsonAdapter:
     def read(self, path: str) -> dict[str, Any]:
         with open(path) as f:
             data = json.load(f)
-        return _flatten(data.get("ci", {}))
+        return _flatten(data.get("ci") or {})
 
     def write(self, path: str, config: dict[str, Any]) -> None:
         with open(path) as f:
             data = json.load(f)
-        merge_flat(data.setdefault("ci", {}), config)
+        if not isinstance(data.get("ci"), dict):  # missing or null
+            data["ci"] = {}
+        merge_flat(data["ci"], config)
         with open(path, "w") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
             f.write("\n")
