@@ -15,11 +15,15 @@ from reci.compiler import _rewrite_config_refs, compile_recipe
 from reci.recipe import parse_recipe_string
 from reci.yaml_gen import dump_workflow
 
-from reci.tests._helpers import mk_spec
+from reci.tests._helpers import assert_valid_workflow, mk_spec
 
 
-def _compile(recipe_yaml, specs, config=None):
-    return compile_recipe(parse_recipe_string(recipe_yaml), specs, config=config)
+def _compile(recipe_yaml, specs, config=None, *, lint=True):
+    """Compile, and require the result to pass actionlint (skipped if absent)."""
+    wf = compile_recipe(parse_recipe_string(recipe_yaml), specs, config=config)
+    if lint:
+        assert_valid_workflow(wf)
+    return wf
 
 
 GOLDEN_PIPELINE = """\
@@ -39,8 +43,10 @@ jobs:
       - name: Export config
         id: config
         run: |-
-          echo "python_version=3.12" >> $GITHUB_OUTPUT
-          echo "acme_ci_extra=a b" >> $GITHUB_OUTPUT
+          {
+            echo "python_version=3.12"
+            echo "acme_ci_extra=a b"
+          } >> "$GITHUB_OUTPUT"
   test:
     runs-on: ubuntu-latest
     needs:
@@ -176,7 +182,9 @@ jobs:
       - uses: x/s@v1
         with: {a: "${{ config.a }}"}
 """
-    wf = _compile(recipe, {"x/s@v1": mk_spec("x/s@v1")}, config={"top": 1})
+    config = dict.fromkeys(["gate", "e", "versions", "cmd", "s_if", "k", "a"], "v")
+    # lint=False: config.X inside fromJson(...) is not rewritten yet (#19)
+    wf = _compile(recipe, {"x/s@v1": mk_spec("x/s@v1")}, config=config, lint=False)
     j = wf["jobs"]["j"]
     n = "needs.setup.outputs"
     assert j["if"] == f"${{{{ {n}.gate }}}}"
@@ -290,14 +298,10 @@ def test_unnamed_recipe_gets_default_name():
 # -- known defects, pinned so the fix flips them ------------------------------
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#8: needs 'setup' without a setup job",
-)
 def test_no_config_means_no_dangling_needs_setup():
     wf = _compile("on: push\njobs:\n  j:\n    steps: [{run: echo}]\n", {})
-    assert "setup" in wf["jobs"] or "setup" not in wf["jobs"]["j"]["needs"]
+    assert "setup" not in wf["jobs"]
+    assert "needs" not in wf["jobs"]["j"]  # not even an empty list
 
 
 @pytest.mark.xfail(
@@ -330,7 +334,7 @@ def test_cross_job_forwarding_adds_needs_and_job_outputs():
         "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
         "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
     )
-    wf = _compile(recipe, specs, config={"k": "v"})
+    wf = _compile(recipe, specs, config={"k": "v"}, lint=False)  # garbled until #9
     assert wf["jobs"]["build"]["outputs"] == {
         "wheel_path": "${{ steps.bld.outputs.wheel_path }}"
     }
@@ -371,11 +375,6 @@ def test_hyphenated_step_output_keeps_its_spelling():
     }
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#17: no config disables cross-job wiring",
-)
 def test_cross_job_edges_are_found_without_config():
     specs = {
         "x/a@v1": mk_spec("x/a@v1", outputs=["wheel_path"]),
@@ -385,8 +384,12 @@ def test_cross_job_edges_are_found_without_config():
         "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
         "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
     )
-    wf = _compile(recipe, specs)
-    assert "build" in wf["jobs"]["test"]["needs"]
+    wf = _compile(recipe, specs, lint=False)  # expression garbled until #9
+    assert wf["jobs"]["test"]["needs"] == ["build"]
+    assert wf["jobs"]["build"]["outputs"] == {
+        "wheel_path": "${{ steps.bld.outputs.wheel_path }}"
+    }
+    assert "wheel_path" in wf["jobs"]["test"]["steps"][0]["with"]
 
 
 # -- mutation-hardening: behaviours the cases above do not distinguish --------
@@ -429,7 +432,7 @@ def test_cross_job_first_matching_job_wins_and_job_outputs_use_source_names():
         "  two:\n    steps: [{id: w, uses: x/a@v1}]\n"
         "  use:\n    steps: [{id: t, uses: x/b@v1, bind: {target: v}}]\n"
     )
-    wf = _compile(recipe, specs, config={"k": 1})
+    wf = _compile(recipe, specs, config={"k": 1}, lint=False)  # garbled until #9
     assert wf["jobs"]["use"]["needs"] == ["setup", "one"]
     assert "two" not in wf["jobs"]["use"]["needs"]
     assert wf["jobs"]["one"]["outputs"] == {

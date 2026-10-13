@@ -22,3 +22,59 @@ def mk_spec(
 
 def mk_graph(recipe_yaml: str, specs: dict[str, ActionSpec] | None = None):
     return RecipeGraph.from_recipe(parse_recipe_string(recipe_yaml), specs or {})
+
+
+def _find_actionlint() -> str | None:
+    """The ``actionlint`` binary: on PATH, or next to the running interpreter."""
+    import shutil
+    import sys
+    from pathlib import Path
+
+    return shutil.which("actionlint") or shutil.which(
+        "actionlint", path=str(Path(sys.executable).parent)
+    )
+
+
+def lint_workflow(workflow: dict) -> list[str]:
+    """Lint a compiled workflow with actionlint; return its complaints.
+
+    Skips the calling test when actionlint is not installed (``pip install
+    actionlint-py``, part of the ``dev`` extra), so a bare checkout still runs.
+    """
+    import os
+    import subprocess
+    import sys
+    import tempfile
+    from pathlib import Path
+
+    import pytest
+
+    from reci.yaml_gen import dump_workflow
+
+    exe = _find_actionlint()
+    if exe is None:
+        pytest.skip("actionlint not installed (pip install actionlint-py)")
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "workflow.yml"
+        path.write_text(dump_workflow(workflow))
+        # actionlint runs shellcheck on ``run:`` scripts if it finds it on PATH;
+        # look next to the interpreter too so results do not depend on activation.
+        env = {
+            **os.environ,
+            "PATH": str(Path(sys.executable).parent) + os.pathsep + os.environ["PATH"],
+        }
+        proc = subprocess.run(
+            [exe, "-no-color", str(path)], capture_output=True, text=True, env=env
+        )
+    if proc.returncode == 0:
+        return []
+    # exit 1: findings on stdout; other codes (bad invocation/crash): stderr
+    return (proc.stdout + proc.stderr).strip().splitlines() or [
+        f"actionlint exited {proc.returncode} without output"
+    ]
+
+
+def assert_valid_workflow(workflow: dict) -> None:
+    """Fail with actionlint's complaints if the compiled workflow is invalid."""
+    problems = lint_workflow(workflow)
+    assert not problems, "actionlint rejected the workflow:\n" + "\n".join(problems)

@@ -64,10 +64,15 @@ def _build_setup_job(config: dict[str, Any]) -> dict:
 
     for key, value in config.items():
         serialized = _serialize_config_value(value)
-        lines.append(f'echo "{key}={serialized}" >> $GITHUB_OUTPUT')
+        lines.append(f'  echo "{key}={serialized}"')
         outputs[key] = f"${{{{ steps.config.outputs.{key} }}}}"
 
-    run_script = "\n".join(lines) if lines else 'echo "No config values"'
+    # One grouped, quoted redirect: shellcheck-clean (SC2086, SC2129)
+    run_script = (
+        "{\n" + "\n".join(lines) + '\n} >> "$GITHUB_OUTPUT"'
+        if lines
+        else 'echo "No config values"'
+    )
 
     return {
         "name": "Setup",
@@ -126,8 +131,12 @@ def _build_job(
     graph: RecipeGraph,
     cross_job_edges: list[CrossJobEdge] | None = None,
     wired_inputs: dict[str, dict[str, str]] | None = None,
+    has_setup: bool = True,
 ) -> dict:
-    """Convert a JobSpec to a GitHub Actions job dict."""
+    """Convert a JobSpec to a GitHub Actions job dict.
+
+    *has_setup*: whether the workflow has a ``setup`` job to depend on.
+    """
     d: dict[str, Any] = {}
 
     if job_spec.if_:
@@ -136,14 +145,15 @@ def _build_job(
 
     # needs: explicit + setup + data-flow driven
     needs = list(job_spec.needs)
-    if "setup" not in needs:
+    if has_setup and "setup" not in needs:
         needs.insert(0, "setup")
     # Add cross-job needs
     if cross_job_edges:
         for edge in cross_job_edges:
             if edge.target_job == job_spec.id and edge.source_job not in needs:
                 needs.append(edge.source_job)
-    d["needs"] = needs
+    if needs:
+        d["needs"] = needs
 
     if job_spec.strategy:
         d["strategy"] = _rewrite_all_config_refs(job_spec.strategy)
@@ -377,14 +387,16 @@ def compile_recipe(
     action_specs:
         Action specs keyed by ref string.
     config:
-        Flat config dict (optional).  If provided, a ``setup`` job is
-        injected and config references are wired.
+        Flat config dict (optional).  If non-empty, a ``setup`` job is
+        injected, jobs depend on it, and config references are wired.
+        Cross-job data-flow wiring happens either way.
     """
     config = config or {}
     graph = RecipeGraph.from_recipe(recipe, action_specs)
 
-    # Detect cross-job edges
-    cross_job_edges = _detect_cross_job_edges(graph, config) if config else []
+    # Detect cross-job edges (independent of config: data flow between jobs
+    # exists whether or not any config was supplied)
+    cross_job_edges = _detect_cross_job_edges(graph, config)
 
     # Compute wired inputs for all nodes
     all_wired: dict[str, dict[str, str]] = {}
@@ -431,6 +443,7 @@ def compile_recipe(
             graph=graph,
             cross_job_edges=cross_job_edges,
             wired_inputs=all_wired,
+            has_setup=bool(config),
         )
 
     workflow["jobs"] = jobs
