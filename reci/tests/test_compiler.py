@@ -5,6 +5,10 @@ repos' publishing, so a change that quietly alters the emitted YAML must show up
 as a failing diff here. Update a golden only when the change is intended.
 """
 
+import os
+import shutil
+import sys
+
 import pytest
 
 from reci.compiler import _rewrite_config_refs, compile_recipe
@@ -189,21 +193,22 @@ def test_rewrite_config_refs_tolerates_whitespace_and_leaves_other_contexts():
     )
 
 
-def test_setup_job_serializes_scalars_by_type():
+def test_setup_job_declares_one_output_per_config_key():
     wf = _compile(
         "on: push\njobs:\n  j:\n    steps:\n      - run: echo\n",
         {},
         config={"flag": True, "off": False, "n": 3, "s": "a b"},
     )
-    run = wf["jobs"]["setup"]["steps"][0]["run"]
-    assert run.splitlines() == [
-        'echo "flag=true" >> $GITHUB_OUTPUT',
-        'echo "off=false" >> $GITHUB_OUTPUT',
-        'echo "n=3" >> $GITHUB_OUTPUT',
-        'echo "s=a b" >> $GITHUB_OUTPUT',
-    ]
-    assert list(wf["jobs"]["setup"]["outputs"]) == ["flag", "off", "n", "s"]
-    assert wf["jobs"]["setup"]["outputs"]["n"] == "${{ steps.config.outputs.n }}"
+    setup = wf["jobs"]["setup"]
+    assert list(setup["outputs"]) == ["flag", "off", "n", "s"]
+    assert setup["outputs"]["n"] == "${{ steps.config.outputs.n }}"
+    assert setup["steps"][0]["id"] == "config"  # the id the outputs refer to
+
+
+needs_posix_bash = pytest.mark.skipif(
+    sys.platform == "win32" or shutil.which("bash") is None,
+    reason="the setup script targets a POSIX bash (ubuntu runner)",
+)
 
 
 def _run_setup_script(tmp_path, config):
@@ -216,15 +221,27 @@ def _run_setup_script(tmp_path, config):
     out.write_text("")
     subprocess.run(
         ["bash", "-c", wf["jobs"]["setup"]["steps"][0]["run"]],
-        env={"GITHUB_OUTPUT": str(out), "PATH": "/usr/bin:/bin"},
+        env={**os.environ, "GITHUB_OUTPUT": str(out)},
         check=True,
     )
     return dict(line.split("=", 1) for line in out.read_text().splitlines())
 
 
+@needs_posix_bash
 def test_setup_script_exports_scalars_through_a_real_shell(tmp_path):
-    got = _run_setup_script(tmp_path, {"flag": True, "n": 3, "s": "a b"})
-    assert got == {"flag": "true", "n": "3", "s": "a b"}
+    got = _run_setup_script(tmp_path, {"flag": True, "off": False, "n": 3, "s": "a b"})
+    assert got == {"flag": "true", "off": "false", "n": "3", "s": "a b"}
+
+
+@needs_posix_bash
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#13: the shell expands $VAR and backticks in values",
+)
+def test_setup_script_does_not_expand_shell_syntax_in_values(tmp_path):
+    got = _run_setup_script(tmp_path, {"s": "cost $5 `echo X`"})
+    assert got == {"s": "cost $5 `echo X`"}
 
 
 @pytest.mark.xfail(
@@ -273,7 +290,9 @@ def test_unnamed_recipe_gets_default_name():
 
 
 @pytest.mark.xfail(
-    strict=True, reason="i2mint/reci#8: needs 'setup' without a setup job"
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#8: needs 'setup' without a setup job",
 )
 def test_no_config_means_no_dangling_needs_setup():
     wf = _compile("on: push\njobs:\n  j:\n    steps: [{run: echo}]\n", {})
@@ -318,7 +337,9 @@ def test_cross_job_forwarding_adds_needs_and_job_outputs():
 
 
 @pytest.mark.xfail(
-    strict=True, reason="i2mint/reci#10: hyphens in action input ids are lost"
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#10: hyphens in action input ids are lost",
 )
 def test_hyphenated_action_input_keeps_its_spelling():
     specs = {"x/s@v1": mk_spec("x/s@v1", inputs={"root-dir": {"required": True}})}
