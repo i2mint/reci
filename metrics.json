@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 2.6032590866088867,
-  "commit_message": "fix: CONF005 also refuses case-colliding and non-string keys and lone surrogates (#29)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "ae9812489c341638384fda39cafbeb11aae96d68",
+  "collection_duration_seconds": 3.230424642562866,
+  "commit_message": "Merge ae9812489c341638384fda39cafbeb11aae96d68 into 7cff011c0ac06cf83e15244d249b4f28e4ae4d30",
+  "commit_sha": "e2d81c304c3f25032389ea43cc4d09a1054573c9",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15040,
-      "comment_lines_ratio": 0.05152467120476603,
-      "docs_lines": 21422,
-      "empty_lines": 34514,
-      "empty_lines_ratio": 0.11823952805593715,
-      "files_analyzed": 737,
-      "function_lines": 114913,
-      "function_lines_ratio": 0.39367383923891486,
-      "mean_lines_per_function": 14.599542624825308,
-      "num_classes": 1982,
-      "num_functions": 7871,
-      "pypi_version": "0.0.21",
-      "total_lines": 291899
+      "comment_lines": 14894,
+      "comment_lines_ratio": 0.051404707668944574,
+      "docs_lines": 21389,
+      "empty_lines": 34181,
+      "empty_lines_ratio": 0.1179712845999862,
+      "files_analyzed": 727,
+      "function_lines": 113354,
+      "function_lines_ratio": 0.3912266169669359,
+      "mean_lines_per_function": 14.579292604501608,
+      "num_classes": 1971,
+      "num_functions": 7775,
+      "pypi_version": "0.0.22",
+      "total_lines": 289740
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:11:17.981692Z",
+  "timestamp": "2026-10-13T22:11:22.529181Z",
   "workflow_status": {}
 }
