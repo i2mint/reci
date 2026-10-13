@@ -337,6 +337,8 @@ def _wire_step_inputs(
             wired[input_spec.emitted_name] = f"${{{{ {outputs_path}.{out_name} }}}}"
             continue
 
+        # Another job's output.  Placed before config only because
+        # detect_cross_job_edges never makes an edge for an input config supplies.
         if norm_name in cross_job_sources:
             outputs_path, out_name = cross_job_sources[norm_name]
             wired[input_spec.emitted_name] = f"${{{{ {outputs_path}.{out_name} }}}}"
