@@ -1,10 +1,20 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T18:05:33.254122Z
-commit_sha,30c05cd19255665335086ef8decf8d0b8f95bd75
-commit_message,"fix: CONF004 uses the compiler's ${{ config.X }} pattern (no false positives on config.json); scaffold adds referenced keys
+timestamp,2026-10-13T18:10:08.630607Z
+commit_sha,58dd73ef0de6dd4b3c89592b108c9c9337828724
+commit_message,"fix: undefined config refs, needs on missing jobs, job named setup (#22) (#42)
 
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+* fix: refuse recipes that compile to an invalid workflow: undefined config refs, needs on missing jobs, job named setup (#22)
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+* fix: CONF004 uses the compiler's ${{ config.X }} pattern (no false positives on config.json); scaffold adds referenced keys
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
+
+---------
+
+Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7766
 metrics.umpyre_stats.num_classes,1971
@@ -18,11 +28,11 @@ metrics.umpyre_stats.comment_lines_ratio,0.05140504829691639
 metrics.umpyre_stats.function_lines_ratio,0.3909097502097989
 metrics.umpyre_stats.mean_lines_per_function,14.5754571207829
 metrics.umpyre_stats.files_analyzed,727
-metrics.umpyre_stats.pypi_version,0.0.17
+metrics.umpyre_stats.pypi_version,0.0.18
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T18:03:28Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T18:05:45Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38443517754
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38443771968
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +48,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.519247531890869
+collection_duration_seconds,3.1190478801727295
