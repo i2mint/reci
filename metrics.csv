@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:07:04.520599Z
+timestamp,2026-10-13T22:07:11.807079Z
 commit_sha,cd715e43a7a2d3896f3efae464bcaef7ee920022
 commit_message,"fix: refuse config keys/values the setup job cannot export (CONF005) (#29)
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7871
-metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,291887
-metrics.umpyre_stats.empty_lines,34514
-metrics.umpyre_stats.comment_lines,15040
-metrics.umpyre_stats.docs_lines,21422
-metrics.umpyre_stats.function_lines,114901
-metrics.umpyre_stats.empty_lines_ratio,0.11824438909578022
-metrics.umpyre_stats.comment_lines_ratio,0.05152678947674957
-metrics.umpyre_stats.function_lines_ratio,0.3936489120789895
-metrics.umpyre_stats.mean_lines_per_function,14.598018040909668
-metrics.umpyre_stats.files_analyzed,737
+metrics.umpyre_stats.num_functions,7775
+metrics.umpyre_stats.num_classes,1971
+metrics.umpyre_stats.total_lines,289728
+metrics.umpyre_stats.empty_lines,34181
+metrics.umpyre_stats.comment_lines,14894
+metrics.umpyre_stats.docs_lines,21389
+metrics.umpyre_stats.function_lines,113342
+metrics.umpyre_stats.empty_lines_ratio,0.11797617075325822
+metrics.umpyre_stats.comment_lines_ratio,0.05140683675723437
+metrics.umpyre_stats.function_lines_ratio,0.39120140269494147
+metrics.umpyre_stats.mean_lines_per_function,14.577749196141479
+metrics.umpyre_stats.files_analyzed,727
 metrics.umpyre_stats.pypi_version,0.0.21
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T18:30:01Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.022766590118408
+collection_duration_seconds,4.368431329727173

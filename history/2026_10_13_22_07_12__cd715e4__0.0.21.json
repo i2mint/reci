@@ -1,0 +1,47 @@
+{
+  "collection_duration_seconds": 4.368431329727173,
+  "commit_message": "fix: refuse config keys/values the setup job cannot export (CONF005) (#29)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "cd715e43a7a2d3896f3efae464bcaef7ee920022",
+  "metrics": {
+    "coverage": {
+      "branch_coverage": 0.0,
+      "error": "No coverage file found",
+      "line_coverage": 0.0,
+      "statements_covered": 0,
+      "statements_total": 0
+    },
+    "umpyre_stats": {
+      "comment_lines": 14894,
+      "comment_lines_ratio": 0.05140683675723437,
+      "docs_lines": 21389,
+      "empty_lines": 34181,
+      "empty_lines_ratio": 0.11797617075325822,
+      "files_analyzed": 727,
+      "function_lines": 113342,
+      "function_lines_ratio": 0.39120140269494147,
+      "mean_lines_per_function": 14.577749196141479,
+      "num_classes": 1971,
+      "num_functions": 7775,
+      "pypi_version": "0.0.21",
+      "total_lines": 289728
+    },
+    "wily": {
+      "cyclomatic_avg": 0.0,
+      "error": "wily report failed: Usage: wily report [OPTIONS] FILE [METRICS]...\nTry 'wily report --help' for help.\n\nError: Invalid value for '-f' / '--format': 'json' is not one of 'CONSOLE', 'HTML'.\n",
+      "files_analyzed": 0,
+      "maintainability_index": 0.0,
+      "total_loc": 0
+    },
+    "workflow_status": {
+      "last_run_status": "success",
+      "last_success_timestamp": "2026-10-13T18:30:01Z",
+      "recent_failure_count": 0,
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38447169683",
+      "total_runs_analyzed": 10
+    }
+  },
+  "python_version": "3.10",
+  "schema_version": "1.0",
+  "timestamp": "2026-10-13T22:07:11.807079Z",
+  "workflow_status": {}
+}

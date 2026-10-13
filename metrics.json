@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.022766590118408,
+  "collection_duration_seconds": 4.368431329727173,
   "commit_message": "fix: refuse config keys/values the setup job cannot export (CONF005) (#29)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "cd715e43a7a2d3896f3efae464bcaef7ee920022",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15040,
-      "comment_lines_ratio": 0.05152678947674957,
-      "docs_lines": 21422,
-      "empty_lines": 34514,
-      "empty_lines_ratio": 0.11824438909578022,
-      "files_analyzed": 737,
-      "function_lines": 114901,
-      "function_lines_ratio": 0.3936489120789895,
-      "mean_lines_per_function": 14.598018040909668,
-      "num_classes": 1982,
-      "num_functions": 7871,
+      "comment_lines": 14894,
+      "comment_lines_ratio": 0.05140683675723437,
+      "docs_lines": 21389,
+      "empty_lines": 34181,
+      "empty_lines_ratio": 0.11797617075325822,
+      "files_analyzed": 727,
+      "function_lines": 113342,
+      "function_lines_ratio": 0.39120140269494147,
+      "mean_lines_per_function": 14.577749196141479,
+      "num_classes": 1971,
+      "num_functions": 7775,
       "pypi_version": "0.0.21",
-      "total_lines": 291887
+      "total_lines": 289728
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:07:04.520599Z",
+  "timestamp": "2026-10-13T22:07:11.807079Z",
   "workflow_status": {}
 }
