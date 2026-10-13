@@ -41,7 +41,9 @@ def lint_workflow(workflow: dict) -> list[str]:
     Skips the calling test when actionlint is not installed (``pip install
     actionlint-py``, part of the ``dev`` extra), so a bare checkout still runs.
     """
+    import os
     import subprocess
+    import sys
     import tempfile
     from pathlib import Path
 
@@ -55,8 +57,14 @@ def lint_workflow(workflow: dict) -> list[str]:
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "workflow.yml"
         path.write_text(dump_workflow(workflow))
+        # actionlint runs shellcheck on ``run:`` scripts if it finds it on PATH;
+        # look next to the interpreter too so results do not depend on activation.
+        env = {
+            **os.environ,
+            "PATH": str(Path(sys.executable).parent) + os.pathsep + os.environ["PATH"],
+        }
         proc = subprocess.run(
-            [exe, "-no-color", str(path)], capture_output=True, text=True
+            [exe, "-no-color", str(path)], capture_output=True, text=True, env=env
         )
     if proc.returncode == 0:
         return []

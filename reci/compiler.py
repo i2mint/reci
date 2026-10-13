@@ -64,10 +64,15 @@ def _build_setup_job(config: dict[str, Any]) -> dict:
 
     for key, value in config.items():
         serialized = _serialize_config_value(value)
-        lines.append(f'echo "{key}={serialized}" >> $GITHUB_OUTPUT')
+        lines.append(f'  echo "{key}={serialized}"')
         outputs[key] = f"${{{{ steps.config.outputs.{key} }}}}"
 
-    run_script = "\n".join(lines) if lines else 'echo "No config values"'
+    # One grouped, quoted redirect: shellcheck-clean (SC2086, SC2129)
+    run_script = (
+        "{\n" + "\n".join(lines) + '\n} >> "$GITHUB_OUTPUT"'
+        if lines
+        else 'echo "No config values"'
+    )
 
     return {
         "name": "Setup",

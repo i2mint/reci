@@ -43,8 +43,10 @@ jobs:
       - name: Export config
         id: config
         run: |-
-          echo "python_version=3.12" >> $GITHUB_OUTPUT
-          echo "acme_ci_extra=a b" >> $GITHUB_OUTPUT
+          {
+            echo "python_version=3.12"
+            echo "acme_ci_extra=a b"
+          } >> "$GITHUB_OUTPUT"
   test:
     runs-on: ubuntu-latest
     needs:
