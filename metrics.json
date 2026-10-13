@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.9585986137390137,
-  "commit_message": "fix: key cross-job sources by target input so a sibling bind cannot override config (#25)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "54f0a03a724dec2f053d3160ccc31e59e79e631e",
+  "collection_duration_seconds": 2.8581414222717285,
+  "commit_message": "Merge 54f0a03a724dec2f053d3160ccc31e59e79e631e into 89854112f544a5b7901d9fa033eacd358ed7987e",
+  "commit_sha": "ba9d4d4e981318851e5801a7857b772f6f768c4e",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:17:46.788863Z",
+  "timestamp": "2026-10-13T22:17:50.966966Z",
   "workflow_status": {}
 }
