@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.572527885437012,
-  "commit_message": "fix: FLOW001/CONF001 count cross-job producers as sources (#21) (#46)\n\n* fix: FLOW001/CONF001 count outputs of steps in other jobs as sources (#21)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* test: producer jobs with several steps; bind to a name nobody produces\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "6c0306cd030f5b697a55c5b6f0e869d813121824",
+  "collection_duration_seconds": 3.7052366733551025,
+  "commit_message": "fix: boolean if: kept as expression text; continue-on-error keeps expressions (#31)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "78e6f4bd32d2e17ab1ef65cdc14c3aebc10c3317",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14888,
-      "comment_lines_ratio": 0.051403514829264925,
-      "docs_lines": 21372,
-      "empty_lines": 34167,
-      "empty_lines_ratio": 0.11796775195939647,
+      "comment_lines": 14889,
+      "comment_lines_ratio": 0.05140075604577702,
+      "docs_lines": 21382,
+      "empty_lines": 34173,
+      "empty_lines_ratio": 0.11797421158924964,
       "files_analyzed": 727,
-      "function_lines": 113264,
-      "function_lines_ratio": 0.391064461554397,
-      "mean_lines_per_function": 14.575215544974906,
+      "function_lines": 113295,
+      "function_lines_ratio": 0.3911242297136347,
+      "mean_lines_per_function": 14.5754534928599,
       "num_classes": 1971,
-      "num_functions": 7771,
+      "num_functions": 7773,
       "pypi_version": "0.0.20",
-      "total_lines": 289630
+      "total_lines": 289665
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T18:23:13.661496Z",
+  "timestamp": "2026-10-13T18:23:54.751817Z",
   "workflow_status": {}
 }
