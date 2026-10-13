@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.061642408370972,
-  "commit_message": "fix: config.X inside larger expressions is rewritten (#19) (#44)\n\n* fix: rewrite config.X anywhere in ${{ }} expression code, hyphenated keys included (#19)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: expression scanner skips string literals; nested config access left alone; more tests\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "5718d4c9e3ad0c24deb867f2df9f00d63b09abeb",
+  "collection_duration_seconds": 3.8144452571868896,
+  "commit_message": "fix: FLOW001/CONF001 count outputs of steps in other jobs as sources (#21)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "ee658fdeec5f7e4344ac34dd241313db54530005",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14887,
-      "comment_lines_ratio": 0.05139899736220636,
+      "comment_lines": 14888,
+      "comment_lines_ratio": 0.051403514829264925,
       "docs_lines": 21372,
       "empty_lines": 34167,
-      "empty_lines_ratio": 0.11796530817992239,
+      "empty_lines_ratio": 0.11796775195939647,
       "files_analyzed": 727,
-      "function_lines": 113270,
-      "function_lines_ratio": 0.39107707605408165,
-      "mean_lines_per_function": 14.575987646377557,
+      "function_lines": 113264,
+      "function_lines_ratio": 0.391064461554397,
+      "mean_lines_per_function": 14.575215544974906,
       "num_classes": 1971,
       "num_functions": 7771,
       "pypi_version": "0.0.19",
-      "total_lines": 289636
+      "total_lines": 289630
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T18:16:10.407821Z",
+  "timestamp": "2026-10-13T18:16:50.686061Z",
   "workflow_status": {}
 }
