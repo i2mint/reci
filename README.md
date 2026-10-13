@@ -150,10 +150,13 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 | DAG001 | Structure | Cycle detected |
 | DAG002 | Structure | Duplicate output name in a job |
 | DAG005 | Structure | Data flow between jobs makes their `needs` form a cycle |
+| DAG006 | Structure | `needs:` names a job that does not exist (`setup` exists only with config) |
+| DAG007 | Structure | A recipe job is named `setup` while config is supplied |
 | FLOW001 | Data flow | Required input has no source |
 | FLOW002 | Data flow | Ambiguous wiring (multiple upstream matches) |
 | FLOW006 | Data flow | Matrix job output consumed downstream (non-deterministic) |
 | CONF001 | Config | Required config key missing |
+| CONF004 | Config | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`) |
 | PURE001 | Purity | `run:` step breaks typed contract |
 | ACT002 | Action | Referenced action not found |
 

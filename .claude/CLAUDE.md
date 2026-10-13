@@ -17,6 +17,7 @@ reci/
   compiler.py          # Recipe + specs + config -> workflow YAML
   graph.py             # Two-level DAG (RecipeGraph, ActionNode, CrossJobEdge)
   config.py            # Config resolution with scoped overrides
+  recipe_checks.py     # Whole-recipe checks shared by compiler and rules (CONF004, DAG006/7)
   yaml_gen.py          # YAML I/O (ruamel.yaml wrapper)
   adapters/            # Pluggable config readers (pyproject, wads, package-json, yaml)
   validation/          # ESLint-style validation rules (DAG, FLOW, CONF, PURITY, ACT)
@@ -28,7 +29,7 @@ reci/
 - **Recipe**: Simplified workflow YAML with `${{ config.* }}`, `bind:`, and `outputs:` extensions
 - **Five-level input resolution**: explicit `with:` > upstream output match > config > action default > error
 - **Config adapters**: Read CI config from `[tool.ci]` in pyproject.toml, `[tool.wads.ci]`, package.json, or `.ci.yml`
-- **Validation rules**: DAG001-DAG005, FLOW001-FLOW006, CONF001/CONF003, PURE001-PURE002, ACT002
+- **Validation rules**: DAG001-DAG007, FLOW001-FLOW006, CONF001/CONF003/CONF004, PURE001-PURE002, ACT002
 
 ## CLI
 

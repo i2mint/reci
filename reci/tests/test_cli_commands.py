@@ -186,17 +186,44 @@ def test_compile_reports_a_data_flow_needs_cycle_as_a_finding_not_a_traceback(
     assert "Compilation aborted" in err and not out.exists()
 
 
-def test_a_compilation_error_that_validation_misses_exits_cleanly(project, capsys):
-    # a job named `setup` collides with the generated one (reci#22); validation
-    # does not see it yet, the compiler does: a message and exit 1, no traceback
+def test_a_compilation_error_exits_cleanly_without_a_traceback(
+    project, capsys, monkeypatch
+):
+    def boom(*args, **kwargs):
+        raise cli.CompilationError("boom")
+
+    monkeypatch.setattr(cli, "compile_recipe", boom)
+    with pytest.raises(SystemExit) as e:
+        cli.compile(
+            str(project / "recipe.yml"),
+            config_path=str(project / "pyproject.toml"),
+            output=str(project / "ci.yml"),
+        )
+    assert e.value.code == 1
+    assert capsys.readouterr().err.endswith("error: boom\n")
+
+
+def test_compile_reports_a_job_named_setup_when_config_is_supplied(project, capsys):
     (project / "clash.yml").write_text(
         "on: push\njobs:\n  setup:\n    steps: [{run: echo}]\n"
     )
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(SystemExit):
         cli.compile(
             str(project / "clash.yml"),
             config_path=str(project / "pyproject.toml"),
             output=str(project / "ci.yml"),
         )
-    assert e.value.code == 1
-    assert "error: The jobs' needs form a cycle" in capsys.readouterr().err
+    assert "DAG007" in capsys.readouterr().err
+
+
+def test_scaffold_adds_the_config_keys_the_recipe_references(project):
+    (project / "refs.yml").write_text(
+        "on: push\njobs:\n  j:\n    steps: [{run: 'echo ${{ config.greeting }}'}]\n"
+    )
+    cfg = project / "empty.toml"
+    cfg.write_text("")
+    cli.scaffold(
+        str(project / "refs.yml"), config_path=str(cfg), output=str(project / "ci.yml")
+    )
+    assert "<REQUIRED: greeting>" in cfg.read_text()
+    assert (project / "ci.yml").exists()

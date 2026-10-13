@@ -645,3 +645,61 @@ def test_a_three_job_cycle_is_reported_with_the_reads_that_cause_it():
 def test_config_that_supplies_an_input_breaks_the_loop():
     wf = _compile(_CHAIN, _CHAIN_SPECS, config={"z": "from config"})
     assert wf["jobs"]["ja"]["steps"][0]["with"] == {"z": "${{ needs.setup.outputs.z }}"}
+
+
+@pytest.mark.parametrize(
+    "recipe, config, expected",
+    [
+        (
+            "on: push\njobs:\n  j:\n    steps: [{run: 'echo ${{ config.x }}'}]\n",
+            {},
+            "[CONF004]",
+        ),
+        (
+            "on: push\njobs:\n  j:\n    needs: [setup]\n    steps: [{run: echo}]\n",
+            {},
+            "[DAG006]",
+        ),
+        (
+            "on: push\njobs:\n  setup:\n    steps: [{run: echo}]\n",
+            {"k": 1},
+            "[DAG007]",
+        ),
+    ],
+)
+def test_recipes_that_cannot_compile_to_a_valid_workflow_are_refused(
+    recipe, config, expected
+):
+    with pytest.raises(CompilationError, match="cannot be compiled") as e:
+        _compile(recipe, {}, config=config)
+    assert expected in str(e.value)
+
+
+def test_explicit_needs_setup_is_fine_when_the_setup_job_exists():
+    wf = _compile(
+        "on: push\njobs:\n  j:\n    needs: [setup]\n    steps: [{run: echo}]\n",
+        {},
+        config={"k": 1},
+    )
+    assert wf["jobs"]["j"]["needs"] == ["setup"]
+
+
+def test_config_refs_are_rewritten_in_step_name_and_runs_on():
+    recipe = (
+        "on: push\njobs:\n  j:\n    runs-on: ${{ config.os }}\n"
+        "    steps: [{name: 'go ${{ config.n }}', run: echo}]\n"
+    )
+    wf = _compile(recipe, {}, config={"os": "ubuntu-latest", "n": "x"})
+    job = wf["jobs"]["j"]
+    assert job["runs-on"] == "${{ needs.setup.outputs.os }}"
+    assert job["steps"][0]["name"] == "go ${{ needs.setup.outputs.n }}"
+
+
+def test_config_refs_where_github_has_no_needs_context_are_refused():
+    for recipe in (
+        "on: push\nenv: {W: '${{ config.w }}'}\njobs:\n  j:\n    steps: [{run: e}]\n",
+        "on: push\njobs:\n  j:\n    permissions: {contents: '${{ config.w }}'}\n"
+        "    steps: [{run: e}]\n",
+    ):
+        with pytest.raises(CompilationError, match="no 'needs' context"):
+            _compile(recipe, {}, config={"w": "read"})

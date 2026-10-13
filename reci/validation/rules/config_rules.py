@@ -76,3 +76,13 @@ def check_unused_config(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 severity=Severity.INFO,
                 message=f"Config key '{key}' is not referenced by any action input.",
             )
+
+
+@register_rule("CONF004")
+def check_undefined_config_references(
+    graph, config: dict[str, Any]
+) -> Iterable[Finding]:
+    """``${{ config.X }}`` where ``X`` is not a config key."""
+    from reci.validation.rules.dag import _recipe_problems
+
+    yield from _recipe_problems(graph, config, "CONF004")

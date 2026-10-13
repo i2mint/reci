@@ -9,19 +9,19 @@ dependencies.
 from __future__ import annotations
 
 import json
-import re
 import shlex
 from typing import Any
 
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
 from reci.recipe import Recipe, StepSpec, JobSpec
+from reci.recipe_checks import CONFIG_REF_RE, find_recipe_problems
 from reci.graph import RecipeGraph, ActionNode, CrossJobEdge, find_cycle
 
 # ---------------------------------------------------------------------------
 # Config reference rewriting
 # ---------------------------------------------------------------------------
 
-_CONFIG_REF_RE = re.compile(r"\$\{\{\s*config\.(\w+)\s*\}\}")
+_CONFIG_REF_RE = CONFIG_REF_RE
 
 
 def _rewrite_config_refs(value: str) -> str:
@@ -126,7 +126,7 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
     """
     d: dict[str, Any] = {}
     if step.name:
-        d["name"] = step.name
+        d["name"] = _rewrite_config_refs(step.name)
     d["id"] = step.id
 
     if step.uses:
@@ -166,7 +166,7 @@ def _build_job(
 
     if job_spec.if_:
         d["if"] = _rewrite_config_refs(job_spec.if_)
-    d["runs-on"] = job_spec.runs_on
+    d["runs-on"] = _rewrite_config_refs(job_spec.runs_on)
 
     # needs: explicit + setup + data-flow driven
     needs = list(job_spec.needs)
@@ -448,6 +448,12 @@ def compile_recipe(
         Cross-job data-flow wiring happens either way.
     """
     config = config or {}
+    problems = find_recipe_problems(recipe, config)
+    if problems:
+        raise CompilationError(
+            "The recipe cannot be compiled:\n"
+            + "\n".join(f"  [{p.rule_id}] {p.message}" for p in problems)
+        )
     graph = RecipeGraph.from_recipe(recipe, action_specs)
 
     # Detect cross-job edges (independent of config: data flow between jobs

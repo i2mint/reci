@@ -7,6 +7,7 @@ from graphlib import CycleError, TopologicalSorter
 from typing import Any, Iterable
 
 from reci.graph import find_cycle
+from reci.recipe_checks import find_recipe_problems
 from reci.validation.report import Finding, Severity
 from reci.validation.rules import register_rule
 
@@ -104,3 +105,29 @@ def check_isolated_nodes(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 message=f"Node '{node.key}' appears isolated (no data connections).",
                 location=node.key,
             )
+
+
+def _recipe_problems(graph, config: dict[str, Any], rule_id: str) -> Iterable[Finding]:
+    """The recipe-level problems (see :mod:`reci.recipe_checks`) for *rule_id*."""
+    if graph.recipe is None:
+        return
+    for problem in find_recipe_problems(graph.recipe, config):
+        if problem.rule_id == rule_id:
+            yield Finding(
+                rule_id=rule_id,
+                severity=Severity.ERROR,
+                message=problem.message,
+                location=problem.location,
+            )
+
+
+@register_rule("DAG006")
+def check_needs_unknown_job(graph, config: dict[str, Any]) -> Iterable[Finding]:
+    """``needs:`` names a job that does not exist."""
+    yield from _recipe_problems(graph, config, "DAG006")
+
+
+@register_rule("DAG007")
+def check_reserved_setup_job(graph, config: dict[str, Any]) -> Iterable[Finding]:
+    """A recipe job uses the id of the generated ``setup`` job."""
+    yield from _recipe_problems(graph, config, "DAG007")
