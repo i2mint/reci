@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.4940829277038574,
+  "collection_duration_seconds": 4.5096964836120605,
   "commit_message": "fix: scaffold skips config keys fed by upstream outputs (#15) (#33)\n\n* fix: scaffold does not ask for config keys that upstream outputs already supply (#15)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: scaffold keeps a key required when config would beat a cross-job output\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "305b2789cf1ec1805255900ac476c59a9e6c5900",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14876,
-      "comment_lines_ratio": 0.051440407484378725,
-      "docs_lines": 21287,
-      "empty_lines": 34085,
-      "empty_lines_ratio": 0.11786409579894118,
-      "files_analyzed": 725,
-      "function_lines": 112916,
-      "function_lines_ratio": 0.3904574517011366,
-      "mean_lines_per_function": 14.571686669247645,
-      "num_classes": 1970,
-      "num_functions": 7749,
+      "comment_lines": 15022,
+      "comment_lines_ratio": 0.05156033334706262,
+      "docs_lines": 21320,
+      "empty_lines": 34418,
+      "empty_lines_ratio": 0.11813364086933839,
+      "files_analyzed": 735,
+      "function_lines": 114475,
+      "function_lines_ratio": 0.39291500199074647,
+      "mean_lines_per_function": 14.592096876991715,
+      "num_classes": 1981,
+      "num_functions": 7845,
       "pypi_version": "0.0.14",
-      "total_lines": 289189
+      "total_lines": 291348
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:44:14.325497Z",
+  "timestamp": "2026-10-13T17:44:23.436357Z",
   "workflow_status": {}
 }
