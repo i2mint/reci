@@ -1,33 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:17:11.374390Z
-commit_sha,89854112f544a5b7901d9fa033eacd358ed7987e
-commit_message,"fix: emit explicit with: keys in the declared input spelling (#27) (#52)
+timestamp,2026-10-13T22:17:46.788863Z
+commit_sha,54f0a03a724dec2f053d3160ccc31e59e79e631e
+commit_message,"fix: key cross-job sources by target input so a sibling bind cannot override config (#25)
 
-* fix: emit explicit with: keys in the action's declared input spelling (#27)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
-* fix: refuse two with: keys that name one input (#27)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7872
-metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,291928
-metrics.umpyre_stats.empty_lines,34517
-metrics.umpyre_stats.comment_lines,15040
-metrics.umpyre_stats.docs_lines,21428
-metrics.umpyre_stats.function_lines,114940
-metrics.umpyre_stats.empty_lines_ratio,0.11823805869940533
-metrics.umpyre_stats.comment_lines_ratio,0.05151955276643556
-metrics.umpyre_stats.function_lines_ratio,0.39372722041051217
-metrics.umpyre_stats.mean_lines_per_function,14.601117886178862
-metrics.umpyre_stats.files_analyzed,737
+metrics.umpyre_stats.num_functions,7776
+metrics.umpyre_stats.num_classes,1971
+metrics.umpyre_stats.total_lines,289783
+metrics.umpyre_stats.empty_lines,34186
+metrics.umpyre_stats.comment_lines,14893
+metrics.umpyre_stats.docs_lines,21400
+metrics.umpyre_stats.function_lines,113395
+metrics.umpyre_stats.empty_lines_ratio,0.11797103349747914
+metrics.umpyre_stats.comment_lines_ratio,0.05139362902585728
+metrics.umpyre_stats.function_lines_ratio,0.39131004924374446
+metrics.umpyre_stats.mean_lines_per_function,14.582690329218106
+metrics.umpyre_stats.files_analyzed,727
 metrics.umpyre_stats.pypi_version,0.0.23
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T22:15:47Z
@@ -48,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.307587623596191
+collection_duration_seconds,3.9585986137390137
