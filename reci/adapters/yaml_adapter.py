@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
-from reci.adapters.pyproject import _flatten
+from reci.adapters._flat import flatten as _flatten, merge_flat
 from reci.yaml_gen import load_yaml, _make_yaml
 
 
@@ -18,9 +19,11 @@ class YamlAdapter:
         return _flatten(data)
 
     def write(self, path: str, config: dict[str, Any]) -> None:
-        y = _make_yaml()
+        existing = load_yaml(path) if Path(path).exists() else None
+        data = existing if isinstance(existing, dict) else {}
+        merge_flat(data, config)
         with open(path, "w") as f:
-            y.dump(config, f)
+            _make_yaml().dump(data, f)
 
     def default_path(self) -> str:
         return ".ci.yml"

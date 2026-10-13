@@ -6,6 +6,8 @@ from typing import Any
 
 import tomlkit
 
+from reci.adapters._flat import flatten as _flatten, merge_flat
+
 
 class PyprojectTomlAdapter:
     """Read/write CI config from ``[tool.ci]`` in pyproject.toml."""
@@ -35,24 +37,10 @@ class PyprojectTomlAdapter:
         if last_key not in parent:
             parent[last_key] = tomlkit.table()
 
-        section = parent[last_key]
-        for k, v in config.items():
-            section[k] = v
+        merge_flat(parent[last_key], config)
 
         with open(path, "w") as f:
             tomlkit.dump(doc, f)
 
     def default_path(self) -> str:
         return "pyproject.toml"
-
-
-def _flatten(d: dict, *, prefix: str = "") -> dict[str, Any]:
-    """Flatten a nested dict using ``__`` as separator."""
-    result: dict[str, Any] = {}
-    for k, v in d.items():
-        full_key = f"{prefix}{k}" if not prefix else f"{prefix}__{k}"
-        if isinstance(v, dict):
-            result.update(_flatten(v, prefix=full_key))
-        else:
-            result[full_key] = v
-    return result

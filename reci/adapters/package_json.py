@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from reci.adapters.pyproject import _flatten
+from reci.adapters._flat import flatten as _flatten, merge_flat
 
 
 class PackageJsonAdapter:
@@ -19,7 +19,7 @@ class PackageJsonAdapter:
     def write(self, path: str, config: dict[str, Any]) -> None:
         with open(path) as f:
             data = json.load(f)
-        data["ci"] = config
+        merge_flat(data.setdefault("ci", {}), config)
         with open(path, "w") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
             f.write("\n")
