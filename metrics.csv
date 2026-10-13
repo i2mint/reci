@@ -1,26 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:34:11.691215Z
-commit_sha,921ef0d1a80dfc278d3be0a01867a745adc2fbb8
-commit_message,Merge f7f1c5ff2b3a23a7b1ae5cc998bbd48cc980a421 into c085bf2529f3ade3b6842fd6bb99c83e7674cd75
+timestamp,2026-10-13T17:36:12.424736Z
+commit_sha,4ddd3db682ae51af1484f7e56c58d435adb6eee2
+commit_message,"fix: anchored booleans (ScalarBoolean) render lowercase; non-scalar with:/env: values are a parse error
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7843
 metrics.umpyre_stats.num_classes,1981
-metrics.umpyre_stats.total_lines,291293
-metrics.umpyre_stats.empty_lines,34410
-metrics.umpyre_stats.comment_lines,15020
-metrics.umpyre_stats.docs_lines,21307
-metrics.umpyre_stats.function_lines,114422
-metrics.umpyre_stats.empty_lines_ratio,0.11812848231849031
-metrics.umpyre_stats.comment_lines_ratio,0.05156320268595538
-metrics.umpyre_stats.function_lines_ratio,0.392807242192569
-metrics.umpyre_stats.mean_lines_per_function,14.5890603085554
+metrics.umpyre_stats.total_lines,291311
+metrics.umpyre_stats.empty_lines,34413
+metrics.umpyre_stats.comment_lines,15021
+metrics.umpyre_stats.docs_lines,21313
+metrics.umpyre_stats.function_lines,114438
+metrics.umpyre_stats.empty_lines_ratio,0.11813148147512452
+metrics.umpyre_stats.comment_lines_ratio,0.05156344937197703
+metrics.umpyre_stats.function_lines_ratio,0.392837894895833
+metrics.umpyre_stats.mean_lines_per_function,14.591100344256024
 metrics.umpyre_stats.files_analyzed,735
 metrics.umpyre_stats.pypi_version,0.0.12
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T17:34:04Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T17:34:54Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38439533080
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38439741906
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.194852590560913
+collection_duration_seconds,3.85563063621521
