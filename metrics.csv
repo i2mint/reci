@@ -1,24 +1,24 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T23:07:32.013781Z
-commit_sha,c94fbb1184729cef04397bb736a2bafe66fdf64c
-commit_message,"fix: review of #63: YAML numbers normalised, tagged scalars, toml bool arrays, scaffold case-insensitive refs
+timestamp,2026-10-13T23:09:00.445721Z
+commit_sha,ea22e404ae6774625e3e786342c8fd50cfaeeb97
+commit_message,"fix: config values export faithfully, unsupported config refs reported, scaffold safe (#51, #45, #43, #56) (#63)
 
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Closes #51, #45, #43, #56."
 python_version,3.10
-metrics.umpyre_stats.num_functions,7793
-metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,290184
-metrics.umpyre_stats.empty_lines,34244
-metrics.umpyre_stats.comment_lines,14901
-metrics.umpyre_stats.docs_lines,21496
-metrics.umpyre_stats.function_lines,113713
-metrics.umpyre_stats.empty_lines_ratio,0.11800788465249634
-metrics.umpyre_stats.comment_lines_ratio,0.05135017781821189
-metrics.umpyre_stats.function_lines_ratio,0.39186516141482647
-metrics.umpyre_stats.mean_lines_per_function,14.591684845374054
-metrics.umpyre_stats.files_analyzed,727
-metrics.umpyre_stats.pypi_version,0.0.29
+metrics.umpyre_stats.num_functions,7889
+metrics.umpyre_stats.num_classes,1982
+metrics.umpyre_stats.total_lines,292343
+metrics.umpyre_stats.empty_lines,34577
+metrics.umpyre_stats.comment_lines,15047
+metrics.umpyre_stats.docs_lines,21529
+metrics.umpyre_stats.function_lines,115272
+metrics.umpyre_stats.empty_lines_ratio,0.11827545041270016
+metrics.umpyre_stats.comment_lines_ratio,0.051470361869447874
+metrics.umpyre_stats.function_lines_ratio,0.3943039511806337
+metrics.umpyre_stats.mean_lines_per_function,14.611737862847002
+metrics.umpyre_stats.files_analyzed,737
+metrics.umpyre_stats.pypi_version,0.0.30
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T23:07:29Z
 metrics.workflow_status.recent_failure_count,0
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.73062801361084
+collection_duration_seconds,4.521515607833862
