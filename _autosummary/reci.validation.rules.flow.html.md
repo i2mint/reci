@@ -43,5 +43,11 @@ Required input has no source at any level.
 
 An output is declared but never consumed downstream.
 
+Consumed means: matched by an input of a later step (by name, honouring
+`bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (same
+job) in a step’s `with:`, `env:`, `run:` or `if:`.  `needs.` references
+are not counted: a recipe cannot declare job outputs, so only the compiler’s
+own forwarding makes them resolve.
+
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](reci.validation.report.html.md#reci.validation.report.Finding)]

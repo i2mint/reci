@@ -1,4 +1,4 @@
-> built 2026-10-13 17:49 UTC from e835e35 (main) · reci 0.0.16. Details: build_info.json
+> built 2026-10-13 17:55 UTC from 098050d (main) · reci 0.0.17. Details: build_info.json
 
 # index.html.md
 
@@ -976,6 +976,12 @@ Required input has no source at any level.
 
 An output is declared but never consumed downstream.
 
+Consumed means: matched by an input of a later step (by name, honouring
+`bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (same
+job) in a step’s `with:`, `env:`, `run:` or `if:`.  `needs.` references
+are not counted: a recipe cannot declare job outputs, so only the compiler’s
+own forwarding makes them resolve.
+
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
 
@@ -1088,18 +1094,20 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 17:49 UTC** from commit <a href="https://github.com/i2mint/reci/commit/e835e35d904686b0a0163f376c8815e33aa65eef"><code>e835e35</code></a> on branch <code>main</code>, for **reci 0.0.16** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 17:55 UTC** from commit <a href="https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042"><code>098050d</code></a> on branch <code>main</code>, for **reci 0.0.17** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.0.17) is ahead of the latest release on PyPI (0.0.16): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/e835e35d904686b0a0163f376c8815e33aa65eef"><code>e835e35d904686b0a0163f376c8815e33aa65eef</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/098050d19575feb18e507065db3f3c15a6886042"><code>098050d19575feb18e507065db3f3c15a6886042</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.16</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.17</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1108,9 +1116,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38441546015">38441546015</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38442351744">38442351744</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>fb5e3377bd1d2bd12f28dba8bf6198ab54b9d02e</code> (in the history of the built commit) |
+| Event commit | <code>9413584e24094bd4fe1429bd5b9a0dfbd53e8f4f</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1135,13 +1143,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.16/">0.0.16</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.16/">0.0.16</a>, older than the documented version (0.0.17).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout e835e35d904686b0a0163f376c8815e33aa65eef
+git checkout 098050d19575feb18e507065db3f3c15a6886042
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
