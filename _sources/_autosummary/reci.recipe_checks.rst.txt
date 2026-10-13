@@ -17,6 +17,7 @@ reci.recipe\_checks
       as_expression
       config_names
       config_references
+      expression_texts
       find_recipe_problems
       serialize_config_value
       sub_config_refs

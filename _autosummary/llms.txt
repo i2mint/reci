@@ -25,7 +25,7 @@
 - [reci.validation.rules.action](reci.validation.rules.action.html.md): Action metadata validation rules (ACT001–ACT003).
 - [reci.validation.rules.config_rules](reci.validation.rules.config_rules.html.md): Config validation rules (CONF001–CONF003).
 - [reci.validation.rules.dag](reci.validation.rules.dag.html.md): DAG structure validation rules (DAG001–DAG004).
-- [reci.validation.rules.flow](reci.validation.rules.flow.html.md): Data-flow validation rules (FLOW001–FLOW006).
+- [reci.validation.rules.flow](reci.validation.rules.flow.html.md): Data-flow validation rules (FLOW001–FLOW007).
 - [reci.validation.rules.purity](reci.validation.rules.purity.html.md): Purity validation rules (PURE001–PURE003).
 - [reci.yaml_gen](reci.yaml_gen.html.md): YAML I/O wrapper using ruamel.yaml (YAML 1.2).
 

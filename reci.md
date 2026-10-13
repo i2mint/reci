@@ -1,4 +1,4 @@
-> built 2026-10-13 23:18 UTC from ffc29cd (main) · reci 0.0.32. Details: build_info.json
+> built 2026-10-13 23:26 UTC from 2eb9059 (main) · reci 0.0.33. Details: build_info.json
 
 # index.html.md
 
@@ -151,21 +151,22 @@ For each action input, the compiler resolves its value using this precedence:
 
 ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 
-| Rule    | Category   | What it catches                                                                                                                              |
-|---------|------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-| DAG001  | Structure  | Cycle detected                                                                                                                               |
-| DAG002  | Structure  | Duplicate output name in a job                                                                                                               |
-| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                      |
-| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                   |
-| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                       |
-| FLOW001 | Data flow  | Required input has no source                                                                                                                 |
-| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches, in a job or across jobs)                                                                        |
-| FLOW006 | Data flow  | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer)                            |
-| CONF001 | Config     | Required config key missing                                                                                                                  |
-| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)     |
-| CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |
-| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                            |
-| ACT002  | Action     | Referenced action not found                                                                                                                  |
+| Rule    | Category   | What it catches                                                                                                                                           |
+|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DAG001  | Structure  | Cycle detected                                                                                                                                            |
+| DAG002  | Structure  | Duplicate output name in a job                                                                                                                            |
+| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                                   |
+| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                                |
+| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                                    |
+| FLOW001 | Data flow  | Required input has no source                                                                                                                              |
+| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches, in a job or across jobs)                                                                                     |
+| FLOW006 | Data flow  | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer)                                         |
+| FLOW007 | Data flow  | `steps.<id>.outputs.<n>` or `needs.<job>.outputs.<n>` reference that resolves to nothing (unknown or not-yet-run step, undeclared output, job not needed) |
+| CONF001 | Config     | Required config key missing                                                                                                                               |
+| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)                  |
+| CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged              |
+| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                                         |
+| ACT002  | Action     | Referenced action not found                                                                                                                               |
 
 ## Config adapters
 
@@ -235,10 +236,10 @@ about data flow without fetching YAML at every step.
 
 ### Classes
 
-| [`ActionSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.ActionSpec)(ref[, inputs, outputs])             | The typed contract of a single GitHub Action.                                                            |
-|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)(name[, required, default, ...])      | One declared input of a GitHub Action.                                                                   |
-| [`OutputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.OutputSpec)(name[, description, original_name]) | One declared output of a GitHub Action (see [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)). |
+| [`ActionSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.ActionSpec)(ref[, inputs, outputs, composite])   | The typed contract of a single GitHub Action.                                                            |
+|--------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)(name[, required, default, ...])       | One declared input of a GitHub Action.                                                                   |
+| [`OutputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.OutputSpec)(name[, description, original_name])  | One declared output of a GitHub Action (see [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)). |
 
 ### Exceptions
 
@@ -251,13 +252,18 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when an action.yml cannot be retrieved.
 
-### *class* reci.action_spec.ActionSpec(ref, inputs=<factory>, outputs=<factory>)
+### *class* reci.action_spec.ActionSpec(ref, inputs=<factory>, outputs=<factory>, composite=False)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 The typed contract of a single GitHub Action.
 
 *inputs* and *outputs* are keyed by **normalized** name.
+
+#### composite *: [bool](https://docs.python.org/3/builtins/functions.html#bool)* *= False*
+
+`runs.using: composite`.  Only a composite action must declare every
+output it sets; a JavaScript or Docker action may set undeclared ones.
 
 ### *class* reci.action_spec.InputSpec(name, required=False, default=None, description='', original_name='')
 
@@ -847,6 +853,7 @@ and the validation rules (which report them), so both always agree.
 |---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | [`config_names`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
 | [`config_references`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
+| [`expression_texts`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.expression_texts)(text)               | The body of each `${{ }}` in *text*, string literals blanked.                        |
 | [`find_recipe_problems`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                              |
 | [`serialize_config_value`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.serialize_config_value)(value)        | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
 | [`sub_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.sub_config_refs)(text, repl)          | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
@@ -900,6 +907,22 @@ Duplicates within one location are reported once.
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]]
+
+### reci.recipe_checks.expression_texts(text)
+
+The body of each `${{ }}` in *text*, string literals blanked.
+
+A literal survives only as the index of a bracket access (`steps['p']`),
+so a name inside a message or comparison (`'steps.p.outputs.v'`) is never
+taken for a reference.
+
+* **Return type:**
+  [`Iterator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+```pycon
+>>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
+[" steps['p'].outputs.v == '' "]
+```
 
 ### reci.recipe_checks.find_recipe_problems(recipe, config)
 
@@ -1190,16 +1213,17 @@ A recipe job uses the id of the generated `setup` job.
 
 # reci.validation.rules.flow
 
-Data-flow validation rules (FLOW001–FLOW006).
+Data-flow validation rules (FLOW001–FLOW007).
 
 ### Functions
 
-| [`check_ambiguous_wiring`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_ambiguous_wiring)(graph, config)          | An input name matches multiple upstream outputs, in a job or across jobs.    |
-|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| [`check_boolean_coercion`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_boolean_coercion)(graph, config)          | A string output is wired to a likely-boolean input.                          |
-| [`check_matrix_output`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_matrix_output)(graph, config)             | A job output consumed by another job comes from a matrix or conditional job. |
-| [`check_unsourced_required_inputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unsourced_required_inputs)(graph, config) | Required input has no source at any level.                                   |
-| [`check_unused_outputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unused_outputs)(graph, config)            | An output is declared but never consumed downstream.                         |
+| [`check_ambiguous_wiring`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_ambiguous_wiring)(graph, config)          | An input name matches multiple upstream outputs, in a job or across jobs.        |
+|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| [`check_boolean_coercion`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_boolean_coercion)(graph, config)          | A string output is wired to a likely-boolean input.                              |
+| [`check_matrix_output`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_matrix_output)(graph, config)             | A job output consumed by another job comes from a matrix or conditional job.     |
+| [`check_output_references`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_output_references)(graph, config)         | A `steps.*.outputs.*` or `needs.*.outputs.*` reference that resolves to nothing. |
+| [`check_unsourced_required_inputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unsourced_required_inputs)(graph, config) | Required input has no source at any level.                                       |
+| [`check_unused_outputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unused_outputs)(graph, config)            | An output is declared but never consumed downstream.                             |
 
 ### reci.validation.rules.flow.check_ambiguous_wiring(graph, config)
 
@@ -1229,6 +1253,20 @@ job that `needs` it (unless it uses `always()` or similar).
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
 
+### reci.validation.rules.flow.check_output_references(graph, config)
+
+A `steps.*.outputs.*` or `needs.*.outputs.*` reference that resolves to nothing.
+
+* `steps.<id>.outputs.<name>` naming a step that does not run before the
+  reader, or an output the step’s action does not declare (`-` and `_`
+  are different characters to GitHub).
+* `needs.<job>.outputs.<name>` naming a job that is not among the job’s
+  `needs` (explicit or inferred from data flow), or an output that job
+  neither declares in `outputs:` nor has forwarded by the compiler.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
+
 ### reci.validation.rules.flow.check_unsourced_required_inputs(graph, config)
 
 Required input has no source at any level.
@@ -1241,10 +1279,11 @@ Required input has no source at any level.
 An output is declared but never consumed downstream.
 
 Consumed means: matched by an input of a later step (by name, honouring
-`bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (dot or
-bracket syntax, ids compared case-insensitively) in a step of the same job:
-its `with:`, `env:`, `run:`, `if:`, `name:` or other keys, or in a
-job `outputs:` entry (a job’s other fields cannot read `steps`).
+`bind:`), or read explicitly as `steps.<id>.outputs.<name>` (dot or
+bracket syntax; ids and names compared as GitHub does: ignoring case, but
+`-` and `_` differ) inside a `${{ }}` of a *later* step of the same
+job: its `with:`, `env:`, `run:`, `if:`, `name:` or other keys, or
+in a job `outputs:` entry (a job’s other fields cannot read `steps`).
 `needs.` references are not counted: only the compiler’s own forwarding and
 the job `outputs:` the recipe declares make them resolve.
 
@@ -1281,7 +1320,7 @@ Run all registered rules and return a merged report.
 |---------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
 | [`config_rules`](_autosummary/reci.validation.rules.config_rules.html.md#module-reci.validation.rules.config_rules) | Config validation rules (CONF001–CONF003).          |
 | [`dag`](_autosummary/reci.validation.rules.dag.html.md#module-reci.validation.rules.dag)                   | DAG structure validation rules (DAG001–DAG004).     |
-| [`flow`](_autosummary/reci.validation.rules.flow.html.md#module-reci.validation.rules.flow)                 | Data-flow validation rules (FLOW001–FLOW006).       |
+| [`flow`](_autosummary/reci.validation.rules.flow.html.md#module-reci.validation.rules.flow)                 | Data-flow validation rules (FLOW001–FLOW007).       |
 | [`purity`](_autosummary/reci.validation.rules.purity.html.md#module-reci.validation.rules.purity)             | Purity validation rules (PURE001–PURE003).          |
 
 
@@ -1382,18 +1421,20 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-13 23:18 UTC** from commit <a href="https://github.com/i2mint/reci/commit/ffc29cddc172159dd79ed5477985852246f0e808"><code>ffc29cd</code></a> on branch <code>main</code>, for **reci 0.0.32** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 23:26 UTC** from commit <a href="https://github.com/i2mint/reci/commit/2eb9059106424a59f610e1c3c82a0f5ad0435428"><code>2eb9059</code></a> on branch <code>main</code>, for **reci 0.0.33** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.0.33) is ahead of the latest release on PyPI (0.0.32): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/ffc29cddc172159dd79ed5477985852246f0e808"><code>ffc29cddc172159dd79ed5477985852246f0e808</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/2eb9059106424a59f610e1c3c82a0f5ad0435428"><code>2eb9059106424a59f610e1c3c82a0f5ad0435428</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.32</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.33</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1402,9 +1443,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38483195202">38483195202</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38484053545">38484053545</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>44015e3949e91b28f61e035cc334a2641d2e97c8</code> (in the history of the built commit) |
+| Event commit | <code>07f5bebe7e3b3b4999b10a7dc5fa7a1be1cb6ccb</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1429,13 +1470,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.32/">0.0.32</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.32/">0.0.32</a>, older than the documented version (0.0.33).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout ffc29cddc172159dd79ed5477985852246f0e808
+git checkout 2eb9059106424a59f610e1c3c82a0f5ad0435428
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

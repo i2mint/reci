@@ -25,5 +25,5 @@ Run all registered rules and return a merged report.
 |---------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
 | [`config_rules`](reci.validation.rules.config_rules.html.md#module-reci.validation.rules.config_rules) | Config validation rules (CONF001–CONF003).          |
 | [`dag`](reci.validation.rules.dag.html.md#module-reci.validation.rules.dag)                   | DAG structure validation rules (DAG001–DAG004).     |
-| [`flow`](reci.validation.rules.flow.html.md#module-reci.validation.rules.flow)                 | Data-flow validation rules (FLOW001–FLOW006).       |
+| [`flow`](reci.validation.rules.flow.html.md#module-reci.validation.rules.flow)                 | Data-flow validation rules (FLOW001–FLOW007).       |
 | [`purity`](reci.validation.rules.purity.html.md#module-reci.validation.rules.purity)             | Purity validation rules (PURE001–PURE003).          |

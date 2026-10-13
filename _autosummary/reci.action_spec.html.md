@@ -18,10 +18,10 @@ about data flow without fetching YAML at every step.
 
 ### Classes
 
-| [`ActionSpec`](#reci.action_spec.ActionSpec)(ref[, inputs, outputs])             | The typed contract of a single GitHub Action.                                                            |
-|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| [`InputSpec`](#reci.action_spec.InputSpec)(name[, required, default, ...])      | One declared input of a GitHub Action.                                                                   |
-| [`OutputSpec`](#reci.action_spec.OutputSpec)(name[, description, original_name]) | One declared output of a GitHub Action (see [`InputSpec`](#reci.action_spec.InputSpec)). |
+| [`ActionSpec`](#reci.action_spec.ActionSpec)(ref[, inputs, outputs, composite])   | The typed contract of a single GitHub Action.                                                            |
+|--------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`InputSpec`](#reci.action_spec.InputSpec)(name[, required, default, ...])       | One declared input of a GitHub Action.                                                                   |
+| [`OutputSpec`](#reci.action_spec.OutputSpec)(name[, description, original_name])  | One declared output of a GitHub Action (see [`InputSpec`](#reci.action_spec.InputSpec)). |
 
 ### Exceptions
 
@@ -34,13 +34,18 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when an action.yml cannot be retrieved.
 
-### *class* reci.action_spec.ActionSpec(ref, inputs=<factory>, outputs=<factory>)
+### *class* reci.action_spec.ActionSpec(ref, inputs=<factory>, outputs=<factory>, composite=False)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 The typed contract of a single GitHub Action.
 
 *inputs* and *outputs* are keyed by **normalized** name.
+
+#### composite *: [bool](https://docs.python.org/3/builtins/functions.html#bool)* *= False*
+
+`runs.using: composite`.  Only a composite action must declare every
+output it sets; a JavaScript or Docker action may set undeclared ones.
 
 ### *class* reci.action_spec.InputSpec(name, required=False, default=None, description='', original_name='')
 

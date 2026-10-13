@@ -16,6 +16,7 @@ and the validation rules (which report them), so both always agree.
 |---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | [`config_names`](#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
 | [`config_references`](#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
+| [`expression_texts`](#reci.recipe_checks.expression_texts)(text)               | The body of each `${{ }}` in *text*, string literals blanked.                        |
 | [`find_recipe_problems`](#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                              |
 | [`serialize_config_value`](#reci.recipe_checks.serialize_config_value)(value)        | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
 | [`sub_config_refs`](#reci.recipe_checks.sub_config_refs)(text, repl)          | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
@@ -69,6 +70,22 @@ Duplicates within one location are reported once.
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]]
+
+### reci.recipe_checks.expression_texts(text)
+
+The body of each `${{ }}` in *text*, string literals blanked.
+
+A literal survives only as the index of a bracket access (`steps['p']`),
+so a name inside a message or comparison (`'steps.p.outputs.v'`) is never
+taken for a reference.
+
+* **Return type:**
+  [`Iterator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+```pycon
+>>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
+[" steps['p'].outputs.v == '' "]
+```
 
 ### reci.recipe_checks.find_recipe_problems(recipe, config)
 

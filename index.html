@@ -305,23 +305,27 @@ and other tools, see the standard’s
 <td><p>Data flow</p></td>
 <td><p>Job output consumed downstream comes from a matrix job (non-deterministic) or a job with <code class="docutils literal notranslate"><span class="pre">if:</span></code> (skipped consumer)</p></td>
 </tr>
-<tr class="row-even"><td><p>CONF001</p></td>
+<tr class="row-even"><td><p>FLOW007</p></td>
+<td><p>Data flow</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">steps.&lt;id&gt;.outputs.&lt;n&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">needs.&lt;job&gt;.outputs.&lt;n&gt;</span></code> reference that resolves to nothing (unknown or not-yet-run step, undeclared output, job not needed)</p></td>
+</tr>
+<tr class="row-odd"><td><p>CONF001</p></td>
 <td><p>Config</p></td>
 <td><p>Required config key missing</p></td>
 </tr>
-<tr class="row-odd"><td><p>CONF004</p></td>
+<tr class="row-even"><td><p>CONF004</p></td>
 <td><p>Config</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">config.X</span> <span class="pre">}}</span></code> names a key that is not in the config, or sits where GitHub has no <code class="docutils literal notranslate"><span class="pre">needs</span></code> context (workflow <code class="docutils literal notranslate"><span class="pre">env</span></code>, job <code class="docutils literal notranslate"><span class="pre">permissions</span></code>)</p></td>
 </tr>
-<tr class="row-even"><td><p>CONF005</p></td>
+<tr class="row-odd"><td><p>CONF005</p></td>
 <td><p>Config</p></td>
 <td><p>A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged</p></td>
 </tr>
-<tr class="row-odd"><td><p>PURE001</p></td>
+<tr class="row-even"><td><p>PURE001</p></td>
 <td><p>Purity</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">run:</span></code> step breaks typed contract</p></td>
 </tr>
-<tr class="row-even"><td><p>ACT002</p></td>
+<tr class="row-odd"><td><p>ACT002</p></td>
 <td><p>Action</p></td>
 <td><p>Referenced action not found</p></td>
 </tr>
@@ -393,7 +397,7 @@ and other tools, see the standard’s
 
 </section>
 </section>
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 23:18 UTC from <a href="https://github.com/i2mint/reci/commit/ffc29cddc172159dd79ed5477985852246f0e808">ffc29cd</a> (main) · reci 0.0.32 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 23:26 UTC from <a href="https://github.com/i2mint/reci/commit/2eb9059106424a59f610e1c3c82a0f5ad0435428">2eb9059</a> (main) · reci 0.0.33 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
@@ -422,7 +426,7 @@ and other tools, see the standard’s
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=f2234cd1"></script>
+<script src="_static/documentation_options.js?v=565bc8c8"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>

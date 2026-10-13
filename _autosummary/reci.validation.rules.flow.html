@@ -125,7 +125,7 @@
 <div id="content" role="main">
 <section id="module-reci.validation.rules.flow">
 <span id="reci-validation-rules-flow"></span><h1>reci.validation.rules.flow<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#module-reci.validation.rules.flow">¶</a></h1>
-<p>Data-flow validation rules (FLOW001–FLOW006).</p>
+<p>Data-flow validation rules (FLOW001–FLOW007).</p>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -138,10 +138,13 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_matrix_output" title="reci.validation.rules.flow.check_matrix_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_matrix_output</span></code></a>(graph, config)</p></td>
 <td><p>A job output consumed by another job comes from a matrix or conditional job.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_unsourced_required_inputs" title="reci.validation.rules.flow.check_unsourced_required_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_unsourced_required_inputs</span></code></a>(graph, config)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_output_references" title="reci.validation.rules.flow.check_output_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_output_references</span></code></a>(graph, config)</p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">steps.*.outputs.*</span></code> or <code class="docutils literal notranslate"><span class="pre">needs.*.outputs.*</span></code> reference that resolves to nothing.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_unsourced_required_inputs" title="reci.validation.rules.flow.check_unsourced_required_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_unsourced_required_inputs</span></code></a>(graph, config)</p></td>
 <td><p>Required input has no source at any level.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_unused_outputs" title="reci.validation.rules.flow.check_unused_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_unused_outputs</span></code></a>(graph, config)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_unused_outputs" title="reci.validation.rules.flow.check_unused_outputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_unused_outputs</span></code></a>(graph, config)</p></td>
 <td><p>An output is declared but never consumed downstream.</p></td>
 </tr>
 </tbody>
@@ -182,6 +185,24 @@ job that <code class="docutils literal notranslate"><span class="pre">needs</spa
 </dl>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="reci.validation.rules.flow.check_output_references">
+<span class="sig-prename descclassname"><span class="pre">reci.validation.rules.flow.</span></span><span class="sig-name descname"><span class="pre">check_output_references</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/flow.html#check_output_references"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.flow.check_output_references" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.flow.check_output_references'">¶</a></dt>
+<dd><p>A <code class="docutils literal notranslate"><span class="pre">steps.*.outputs.*</span></code> or <code class="docutils literal notranslate"><span class="pre">needs.*.outputs.*</span></code> reference that resolves to nothing.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">steps.&lt;id&gt;.outputs.&lt;name&gt;</span></code> naming a step that does not run before the
+reader, or an output the step’s action does not declare (<code class="docutils literal notranslate"><span class="pre">-</span></code> and <code class="docutils literal notranslate"><span class="pre">_</span></code>
+are different characters to GitHub).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">needs.&lt;job&gt;.outputs.&lt;name&gt;</span></code> naming a job that is not among the job’s
+<code class="docutils literal notranslate"><span class="pre">needs</span></code> (explicit or inferred from data flow), or an output that job
+neither declares in <code class="docutils literal notranslate"><span class="pre">outputs:</span></code> nor has forwarded by the compiler.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="reci.validation.rules.flow.check_unsourced_required_inputs">
 <span class="sig-prename descclassname"><span class="pre">reci.validation.rules.flow.</span></span><span class="sig-name descname"><span class="pre">check_unsourced_required_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/flow.html#check_unsourced_required_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.flow.check_unsourced_required_inputs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.flow.check_unsourced_required_inputs'">¶</a></dt>
 <dd><p>Required input has no source at any level.</p>
@@ -196,10 +217,11 @@ job that <code class="docutils literal notranslate"><span class="pre">needs</spa
 <span class="sig-prename descclassname"><span class="pre">reci.validation.rules.flow.</span></span><span class="sig-name descname"><span class="pre">check_unused_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/flow.html#check_unused_outputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.flow.check_unused_outputs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.flow.check_unused_outputs'">¶</a></dt>
 <dd><p>An output is declared but never consumed downstream.</p>
 <p>Consumed means: matched by an input of a later step (by name, honouring
-<code class="docutils literal notranslate"><span class="pre">bind:</span></code>), or referenced explicitly as <code class="docutils literal notranslate"><span class="pre">steps.&lt;id&gt;.outputs.&lt;name&gt;</span></code> (dot or
-bracket syntax, ids compared case-insensitively) in a step of the same job:
-its <code class="docutils literal notranslate"><span class="pre">with:</span></code>, <code class="docutils literal notranslate"><span class="pre">env:</span></code>, <code class="docutils literal notranslate"><span class="pre">run:</span></code>, <code class="docutils literal notranslate"><span class="pre">if:</span></code>, <code class="docutils literal notranslate"><span class="pre">name:</span></code> or other keys, or in a
-job <code class="docutils literal notranslate"><span class="pre">outputs:</span></code> entry (a job’s other fields cannot read <code class="docutils literal notranslate"><span class="pre">steps</span></code>).
+<code class="docutils literal notranslate"><span class="pre">bind:</span></code>), or read explicitly as <code class="docutils literal notranslate"><span class="pre">steps.&lt;id&gt;.outputs.&lt;name&gt;</span></code> (dot or
+bracket syntax; ids and names compared as GitHub does: ignoring case, but
+<code class="docutils literal notranslate"><span class="pre">-</span></code> and <code class="docutils literal notranslate"><span class="pre">_</span></code> differ) inside a <code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">}}</span></code> of a <em>later</em> step of the same
+job: its <code class="docutils literal notranslate"><span class="pre">with:</span></code>, <code class="docutils literal notranslate"><span class="pre">env:</span></code>, <code class="docutils literal notranslate"><span class="pre">run:</span></code>, <code class="docutils literal notranslate"><span class="pre">if:</span></code>, <code class="docutils literal notranslate"><span class="pre">name:</span></code> or other keys, or
+in a job <code class="docutils literal notranslate"><span class="pre">outputs:</span></code> entry (a job’s other fields cannot read <code class="docutils literal notranslate"><span class="pre">steps</span></code>).
 <code class="docutils literal notranslate"><span class="pre">needs.</span></code> references are not counted: only the compiler’s own forwarding and
 the job <code class="docutils literal notranslate"><span class="pre">outputs:</span></code> the recipe declares make them resolve.</p>
 <dl class="field-list simple">
@@ -215,6 +237,7 @@ the job <code class="docutils literal notranslate"><span class="pre">outputs:</s
 <li><a :data-current="activeSection === '#reci.validation.rules.flow.check_ambiguous_wiring'" class="reference internal" href="#reci.validation.rules.flow.check_ambiguous_wiring"><code class="docutils literal notranslate"><span class="pre">check_ambiguous_wiring()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.flow.check_boolean_coercion'" class="reference internal" href="#reci.validation.rules.flow.check_boolean_coercion"><code class="docutils literal notranslate"><span class="pre">check_boolean_coercion()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.flow.check_matrix_output'" class="reference internal" href="#reci.validation.rules.flow.check_matrix_output"><code class="docutils literal notranslate"><span class="pre">check_matrix_output()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.validation.rules.flow.check_output_references'" class="reference internal" href="#reci.validation.rules.flow.check_output_references"><code class="docutils literal notranslate"><span class="pre">check_output_references()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.flow.check_unsourced_required_inputs'" class="reference internal" href="#reci.validation.rules.flow.check_unsourced_required_inputs"><code class="docutils literal notranslate"><span class="pre">check_unsourced_required_inputs()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.flow.check_unused_outputs'" class="reference internal" href="#reci.validation.rules.flow.check_unused_outputs"><code class="docutils literal notranslate"><span class="pre">check_unused_outputs()</span></code></a></li>
 </ul>
@@ -230,7 +253,7 @@ the job <code class="docutils literal notranslate"><span class="pre">outputs:</s
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=f2234cd1"></script>
+<script src="../_static/documentation_options.js?v=565bc8c8"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
