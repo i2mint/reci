@@ -650,3 +650,38 @@ def test_CONF005_reports_unusable_keys_and_unexportable_values():
     found = _only("CONF005", g, {"a.b": 1, "ok": "x\ry", "fine": "x\ty", "lst": ["\r"]})
     assert sorted(f.message.split("'")[1] for f in found) == ["a.b", "ok"]
     assert all(f.severity is Severity.ERROR and f.location == "config" for f in found)
+
+
+@pytest.mark.parametrize(
+    "ref",
+    [
+        "steps['p'].outputs.v",
+        "steps.p.outputs['v']",
+        "steps[\"p\"].outputs[\"v\"]",
+        "steps.P.outputs.V",
+    ],
+)
+def test_FLOW004_counts_bracket_and_case_variants_of_a_reference(ref):
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    run = json.dumps(f"echo ${{{{ {ref} }}}}")
+    recipe = _steps("{id: p, uses: x/p@v1}", f"{{id: r, run: {run}}}")
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+_REF = "${{ steps.p.outputs.v }}"
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        f"    steps: [{{id: p, uses: x/p@v1}}, {{id: r, name: 'n {_REF}', run: echo}}]\n",
+        f"    if: '{_REF}'\n    steps: [{{id: p, uses: x/p@v1}}]\n",
+        f"    env: {{E: '{_REF}'}}\n    steps: [{{id: p, uses: x/p@v1}}]\n",
+        f"    strategy: {{matrix: {{x: ['{_REF}']}}}}\n"
+        "    steps: [{id: p, uses: x/p@v1}]\n",
+    ],
+)
+def test_FLOW004_counts_step_names_and_job_level_references(extra):
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = f"on: push\njobs:\n  a:\n{extra}"
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
