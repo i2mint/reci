@@ -155,6 +155,7 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 | FLOW001 | Data flow | Required input has no source |
 | FLOW002 | Data flow | Ambiguous wiring (multiple upstream matches, in a job or across jobs) |
 | FLOW006 | Data flow | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer) |
+| FLOW007 | Data flow | `steps.<id>.outputs.<n>` or `needs.<job>.outputs.<n>` reference that resolves to nothing (unknown or not-yet-run step, undeclared output, job not needed) |
 | CONF001 | Config | Required config key missing |
 | CONF004 | Config | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`) |
 | CONF005 | Config | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |

@@ -89,6 +89,30 @@ def unsupported_config_refs(text: str) -> list[str]:
     return found
 
 
+def expression_texts(text: str) -> Iterator[str]:
+    """The body of each ``${{ }}`` in *text*, string literals blanked.
+
+    A literal survives only as the index of a bracket access (``steps['p']``),
+    so a name inside a message or comparison (``'steps.p.outputs.v'``) is never
+    taken for a reference.
+
+    >>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
+    [" steps['p'].outputs.v == '' "]
+    """
+    for start, end in _expression_spans(text):
+        body = text[start:end]
+        pieces, pos = [], 0
+        for literal in _STRING_LITERAL_RE.finditer(body):
+            before = body[pos : literal.start()]
+            indexed = before.rstrip().endswith("[") and body[
+                literal.end() :
+            ].lstrip().startswith("]")
+            pieces += [before, literal.group() if indexed else "''"]
+            pos = literal.end()
+        pieces.append(body[pos:])
+        yield "".join(pieces)
+
+
 def as_expression(text: str) -> str:
     """An ``if:`` value as a ``${{ }}`` expression: GitHub evaluates it either way.
 

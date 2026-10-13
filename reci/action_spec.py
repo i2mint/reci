@@ -83,6 +83,9 @@ class ActionSpec:
     ref: str
     inputs: dict[str, InputSpec] = field(default_factory=dict)
     outputs: dict[str, OutputSpec] = field(default_factory=dict)
+    #: ``runs.using: composite``.  Only a composite action must declare every
+    #: output it sets; a JavaScript or Docker action may set undeclared ones.
+    composite: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -122,7 +125,9 @@ def parse_action_spec(ref: str, *, action_yml_data: dict) -> ActionSpec:
             original_name=name,
         )
 
-    return ActionSpec(ref=ref, inputs=inputs, outputs=outputs)
+    runs = action_yml_data.get("runs")
+    composite = isinstance(runs, dict) and runs.get("using") == "composite"
+    return ActionSpec(ref=ref, inputs=inputs, outputs=outputs, composite=composite)
 
 
 # ---------------------------------------------------------------------------
