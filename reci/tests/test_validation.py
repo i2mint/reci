@@ -650,3 +650,47 @@ def test_CONF005_reports_unusable_keys_and_unexportable_values():
     found = _only("CONF005", g, {"a.b": 1, "ok": "x\ry", "fine": "x\ty", "lst": ["\r"]})
     assert sorted(f.message.split("'")[1] for f in found) == ["a.b", "ok"]
     assert all(f.severity is Severity.ERROR and f.location == "config" for f in found)
+
+
+@pytest.mark.parametrize(
+    "ref",
+    [
+        "steps['p'].outputs.v",
+        "steps.p.outputs['v']",
+        "steps[\"p\"].outputs[\"v\"]",
+        "steps.P.outputs.V",
+    ],
+)
+def test_FLOW004_counts_bracket_and_case_variants_of_a_reference(ref):
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    run = json.dumps(f"echo ${{{{ {ref} }}}}")
+    recipe = _steps("{id: p, uses: x/p@v1}", f"{{id: r, run: {run}}}")
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+def test_FLOW004_counts_a_reference_in_a_step_name():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = _steps(
+        "{id: p, uses: x/p@v1}", "{id: r, name: 'n ${{ steps.p.outputs.v }}', run: e}"
+    )
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        "    if: ${{ steps.p.outputs.v }}\n",  # job-level `steps` never resolves
+        "    continue-on-error: ${{ steps.p.outputs.v }}\n",
+        "    env: {E: '${{ steps.p.outputs.v }}'}\n",
+    ],
+)
+def test_FLOW004_ignores_job_level_references_and_dict_keys(extra):
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = (
+        f"on: push\njobs:\n  a:\n{extra}    steps: [{{id: p, uses: x/p@v1}}]\n"
+    )
+    assert len(_only("FLOW004", mk_graph(recipe, specs))) == 1
+    keyed = _steps(
+        "{id: p, uses: x/p@v1}", "{id: r, run: e, env: {'${{ steps.p.outputs.v }}': 1}}"
+    )
+    assert len(_only("FLOW004", mk_graph(keyed, specs))) == 1

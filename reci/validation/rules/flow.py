@@ -97,16 +97,40 @@ def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
-_STEP_OUTPUT_REF = re.compile(r"\bsteps\.([\w-]+)\.outputs\.([\w-]+)")
+# ``steps.<id>.outputs.<name>`` in dot or bracket syntax, in any mix.
+_STEP_OUTPUT_REF = re.compile(
+    r"""\bsteps(?:\.|\s*\[\s*['"])([\w-]+)(?:['"]\s*\])?\s*\.\s*outputs"""
+    r"""(?:\s*\.\s*|\s*\[\s*['"])([\w-]+)"""
+)
 
 
-def _expression_texts(node) -> Iterable[str]:
-    """Every string of a step in which a ``${{ ... }}`` reference can appear."""
-    yield from (str(v) for v in node.with_.values())
-    yield from (str(v) for v in node.env.values())
-    for text in (node.run, node.if_):
-        if text:
-            yield text
+def _strings_in(value) -> Iterable[str]:
+    """Every string anywhere inside a (possibly nested) value."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):  # values only: a key can never hold an expression
+        for v in value.values():
+            yield from _strings_in(v)
+    elif isinstance(value, (list, tuple)):
+        for v in value:
+            yield from _strings_in(v)
+
+
+def _job_texts(graph, job_id: str) -> Iterable[str]:
+    """Every string of a step of *job_id* where the ``steps`` context is available.
+
+    A job's own ``if``/``strategy``/``env``/``continue-on-error`` cannot see
+    ``steps``, so a reference there never resolves and does not count.
+    """
+    if graph.recipe is not None and job_id in graph.recipe.jobs:
+        job = graph.recipe.jobs[job_id]
+        for step in job.steps:
+            yield from _strings_in(
+                (step.with_, step.env, step.run, step.if_, step.name)
+            )
+        return
+    for node in graph.job_nodes(job_id):
+        yield from _strings_in((node.with_, node.env, node.run, node.if_, node.name))
 
 
 @register_rule("FLOW004")
@@ -114,8 +138,10 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """An output is declared but never consumed downstream.
 
     Consumed means: matched by an input of a later step (by name, honouring
-    ``bind:``), or referenced explicitly as ``steps.<id>.outputs.<name>`` (same
-    job) in a step's ``with:``, ``env:``, ``run:`` or ``if:``.  ``needs.`` references
+    ``bind:``), or referenced explicitly as ``steps.<id>.outputs.<name>`` (dot or
+    bracket syntax, ids compared case-insensitively) in a step of the same job:
+    its ``with:``, ``env:``, ``run:``, ``if:`` or ``name:`` (job-level fields
+    cannot read ``steps``).  ``needs.`` references
     are not counted: a recipe cannot declare job outputs, so only the compiler's
     own forwarding makes them resolve.
     """
@@ -124,15 +150,17 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
     for node in graph.nodes():
         for norm_name in node.input_specs:
             consumed.add(node.bind.get(norm_name, norm_name))
-        for text in _expression_texts(node):
+
+    for job_id in graph.job_ids():
+        for text in _job_texts(graph, job_id):
             for step_id, name in _STEP_OUTPUT_REF.findall(text):
-                referenced.add((node.job, step_id, normalize_name(name)))
+                referenced.add((job_id, step_id.lower(), normalize_name(name)))
 
     for node in graph.nodes():
         for name in node.output_names:
             if (
                 name not in consumed
-                and (node.job, node.step_id, name) not in referenced
+                and (node.job, node.step_id.lower(), name) not in referenced
             ):
                 yield Finding(
                     rule_id="FLOW004",
