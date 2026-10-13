@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:34:19.061457Z
+timestamp,2026-10-13T22:34:29.464761Z
 commit_sha,4da7e2261ddaed7fb692510e25b173cc75ebfc94
 commit_message,"fix: adapters add a new scoped key inside its existing table (#36)
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7875
-metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,291995
-metrics.umpyre_stats.empty_lines,34529
-metrics.umpyre_stats.comment_lines,15041
-metrics.umpyre_stats.docs_lines,21454
-metrics.umpyre_stats.function_lines,114998
-metrics.umpyre_stats.empty_lines_ratio,0.11825202486343944
-metrics.umpyre_stats.comment_lines_ratio,0.051511156012945425
-metrics.umpyre_stats.function_lines_ratio,0.39383551088203567
-metrics.umpyre_stats.mean_lines_per_function,14.602920634920634
-metrics.umpyre_stats.files_analyzed,737
+metrics.umpyre_stats.num_functions,7779
+metrics.umpyre_stats.num_classes,1971
+metrics.umpyre_stats.total_lines,289836
+metrics.umpyre_stats.empty_lines,34196
+metrics.umpyre_stats.comment_lines,14895
+metrics.umpyre_stats.docs_lines,21421
+metrics.umpyre_stats.function_lines,113439
+metrics.umpyre_stats.empty_lines_ratio,0.11798396334478808
+metrics.umpyre_stats.comment_lines_ratio,0.0513911315364551
+metrics.umpyre_stats.function_lines_ratio,0.3913903034819691
+metrics.umpyre_stats.mean_lines_per_function,14.582722715001928
+metrics.umpyre_stats.files_analyzed,727
 metrics.umpyre_stats.pypi_version,0.0.26
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T22:32:41Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,2.690700054168701
+collection_duration_seconds,4.487875461578369
