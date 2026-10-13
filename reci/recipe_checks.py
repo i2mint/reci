@@ -13,6 +13,8 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Any
 
+from ruamel.yaml.comments import TaggedScalar
+
 from reci.recipe import Recipe
 from reci.yaml_gen import scalar_source_text
 
@@ -158,12 +160,17 @@ _UNEXPORTABLE_CHAR_RE = re.compile(
 
 
 #: A decimal number as written, ``3.10`` (GitHub would read the number as 3.1).
-_DECIMAL_SPELLING_RE = re.compile(r"[+-]?\d*\.\d+")
+_DECIMAL_SPELLING_RE = re.compile(r"-?\d+\.\d+")
 
 
-def _json_default(value: Any) -> str:
+def _json_default(value: Any) -> Any:
     if isinstance(value, (datetime.date, datetime.time)):  # also datetime.datetime
         return value.isoformat()
+    if isinstance(value, TaggedScalar):  # `!!str 3.10`, or another tag
+        return value.value
+    unwrap = getattr(value, "unwrap", None)  # tomlkit items (Bool...) -> Python
+    if unwrap is not None:
+        return unwrap()
     raise TypeError(f"{type(value).__name__} has no JSON form")
 
 
@@ -184,6 +191,12 @@ def serialize_config_value(value: Any) -> str:
     ...
     TypeError: None (null) has no text form; give the key a value or remove it
     """
+    if isinstance(value, TaggedScalar):
+        value = value.value
+    elif not isinstance(value, (str, int, float, list, dict)) and hasattr(
+        value, "unwrap"
+    ):
+        value = value.unwrap()  # a tomlkit Bool (numbers keep their spelling below)
     if isinstance(value, (list, dict, tuple)):
         return json.dumps(value, default=_json_default)
     if isinstance(value, bool):
@@ -194,12 +207,14 @@ def serialize_config_value(value: Any) -> str:
         )
     if isinstance(value, (bytes, bytearray)):
         raise TypeError("bytes have no text form")
-    if isinstance(value, (int, float)):
+    if isinstance(value, float):
+        # Keep a decimal spelling (3.10); hex, underscores, exponents, ``.5``,
+        # inf/nan are normalised by str(), as before
         as_string = getattr(value, "as_string", None)  # tomlkit keeps the spelling
         text = as_string() if as_string else scalar_source_text(value)
-        if as_string and not _DECIMAL_SPELLING_RE.fullmatch(text):
-            return str(value)
-        return text
+        return text if _DECIMAL_SPELLING_RE.fullmatch(text) else str(value)
+    if isinstance(value, int):
+        return str(int(value))
     if isinstance(value, (str, datetime.date, datetime.time)):
         return str(value)
     raise TypeError(f"{type(value).__name__} has no text form")

@@ -293,3 +293,15 @@ def test_scaffold_of_a_refused_recipe_writes_neither_config_nor_workflow(
     assert e.value.code == 1
     assert not cfg.exists() and not out.exists()
     assert "CONF004" in capsys.readouterr().err
+
+
+def test_scaffold_accepts_a_config_ref_that_differs_from_a_key_only_in_case(project):
+    (project / "ref.yml").write_text(
+        "on: push\njobs:\n  t:\n    steps: [{run: x, name: '${{ config.OS }}'}]\n"
+    )
+    cfg = project / "pyproject.toml"
+    cfg.write_text('[tool.ci]\nos = "ubuntu-latest"\n')
+    cli.scaffold(
+        str(project / "ref.yml"), config_path=str(cfg), output=str(project / "ci.yml")
+    )
+    assert "<REQUIRED" not in cfg.read_text()

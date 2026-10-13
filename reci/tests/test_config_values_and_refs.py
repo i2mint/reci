@@ -139,3 +139,30 @@ def test_validation_reports_the_same_problems_as_the_compiler():
     )
     findings = graph.validate({"x": "1"}).findings
     assert any(f.rule_id == "CONF004" and "config.x.y" in f.message for f in findings)
+
+
+def test_yaml_numbers_that_are_not_plain_decimals_export_normalised(tmp_path):
+    path = tmp_path / ".ci.yml"
+    path.write_text("h: 1_000\nx: 0x1F\ng: -.5\nf: 0.\nn: .inf\nd: 3.10\n")
+    config = get_adapter("yaml").read(str(path))
+    got = {k: serialize_config_value(v) for k, v in config.items()}
+    assert got == {
+        "h": "1000", "x": "31", "g": "-0.5", "f": "0.0", "n": "inf", "d": "3.10",
+    }  # fmt: skip
+
+
+def test_yaml_tagged_strings_export_their_text(tmp_path):
+    path = tmp_path / ".ci.yml"
+    path.write_text("v: !!str 3.10\nl: [!!str 3.10, 1]\n")
+    config = get_adapter("yaml").read(str(path))
+    assert serialize_config_value(config["v"]) == "3.10"
+    assert serialize_config_value(config["l"]) == '["3.10", 1]'
+
+
+def test_toml_boolean_arrays_export_as_json(tmp_path):
+    path = tmp_path / "pyproject.toml"
+    path.write_text("[tool.ci]\nflags = [true, false]\nok = true\n")
+    config = get_adapter("pyproject").read(str(path))
+    assert serialize_config_value(config["flags"]) == "[true, false]"
+    assert serialize_config_value(config["ok"]) == "true"
+    _compile(ONE_JOB, config)

@@ -13,6 +13,7 @@ from reci.recipe import parse_recipe, RecipeParseError
 from reci.graph import RecipeGraph
 from reci.compiler import CompilationError, compile_recipe
 from reci.config import collect_required_config_keys
+from reci.recipe_checks import config_references
 from reci.yaml_gen import dump_workflow
 from reci.validation.formatters import (
     format_cli,
@@ -141,8 +142,14 @@ def scaffold(
     existing = adapter.read(path) if Path(path).exists() else {}
     # Only required inputs get a placeholder: a "" for an optional one would
     # override the action's own default.
+    # A ${{ config.X }} matches a key ignoring case (output ids do): not a new one.
+    existing_ids = {k.casefold() for k in existing if isinstance(k, str)}
+    referenced = {name for _, name, _ in config_references(rec)}
     for key, is_required in required.items():
-        if is_required and key not in existing:
+        known = key in existing or (
+            key in referenced and key.casefold() in existing_ids
+        )
+        if is_required and not known:
             existing[key] = f"<REQUIRED: {key}>"
 
     # Compile before writing anything: a refused recipe leaves no half-written config
