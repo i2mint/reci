@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.3067784309387207,
+  "collection_duration_seconds": 4.372917413711548,
   "commit_message": "fix: expression scanner skips string literals; nested config access left alone; more tests\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "7d6961adaea1ce7cb13316ae976791d2c3bd7dd7",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14887,
-      "comment_lines_ratio": 0.05139899736220636,
-      "docs_lines": 21372,
-      "empty_lines": 34167,
-      "empty_lines_ratio": 0.11796530817992239,
-      "files_analyzed": 727,
-      "function_lines": 113270,
-      "function_lines_ratio": 0.39107707605408165,
-      "mean_lines_per_function": 14.575987646377557,
-      "num_classes": 1971,
-      "num_functions": 7771,
+      "comment_lines": 15033,
+      "comment_lines_ratio": 0.051519045905515856,
+      "docs_lines": 21405,
+      "empty_lines": 34500,
+      "empty_lines_ratio": 0.11823369146147124,
+      "files_analyzed": 737,
+      "function_lines": 114829,
+      "function_lines_ratio": 0.39352627700954435,
+      "mean_lines_per_function": 14.596288292868946,
+      "num_classes": 1982,
+      "num_functions": 7867,
       "pypi_version": "0.0.18",
-      "total_lines": 289636
+      "total_lines": 291795
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T18:14:32.024854Z",
+  "timestamp": "2026-10-13T18:14:46.564184Z",
   "workflow_status": {}
 }
