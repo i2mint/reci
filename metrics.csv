@@ -1,10 +1,8 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:13:36.846383Z
-commit_sha,9a138fc85c6fe5b8cafc735aa14b2550f621ab36
-commit_message,"fix: emit explicit with: keys in the action's declared input spelling (#27)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-13T22:13:42.064310Z
+commit_sha,cc5ff374aedded77c3385428e4a5e16122b2b5fe
+commit_message,Merge 9a138fc85c6fe5b8cafc735aa14b2550f621ab36 into eb2362bec39165944aabec67f3f9d4d6a3833622
 python_version,3.10
 metrics.umpyre_stats.num_functions,7776
 metrics.umpyre_stats.num_classes,1971
@@ -38,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.134067535400391
+collection_duration_seconds,2.9839751720428467
