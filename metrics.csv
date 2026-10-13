@@ -1,10 +1,8 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:39:54.288518Z
-commit_sha,c7155cdb70589dcdb87cd4e3051eddd65d0d4ef7
-commit_message,"fix: FLOW004 sees bracket syntax, step names, job-level references, case-insensitive ids (#38)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-13T22:40:01.205057Z
+commit_sha,e1e4c55f98f6a5f7c5dc0e61358a2134a565fbfd
+commit_message,Merge c7155cdb70589dcdb87cd4e3051eddd65d0d4ef7 into e38378e60a5c19d60b6a9a4b70065f5918a6918c
 python_version,3.10
 metrics.umpyre_stats.num_functions,7780
 metrics.umpyre_stats.num_classes,1971
@@ -38,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.330369472503662
+collection_duration_seconds,4.224966287612915
