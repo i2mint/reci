@@ -190,6 +190,20 @@ class RecipeGraph:
     def job_nodes(self, job_id: str) -> list[ActionNode]:
         return [self._nodes[k] for k in self._jobs.get(job_id, [])]
 
+    def upstream_output_names(self, node: ActionNode) -> set[str]:
+        """Normalized output names *node* can be fed from.
+
+        Outputs of earlier steps in its own job, plus outputs of any step in
+        another job (the compiler forwards those through ``needs``).
+        """
+        names: set[str] = set()
+        for job_id, nodes in self.jobs().items():
+            for other in nodes:
+                if job_id == node.job and other.key == node.key:
+                    break  # same job: only steps before this one
+                names.update(other.output_names)
+        return names
+
     def predecessors(self, key: str) -> set[str]:
         return set(self._deps.get(key, ()))
 

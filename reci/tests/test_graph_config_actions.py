@@ -130,6 +130,34 @@ def test_collect_required_config_keys():
     }
 
 
+def test_collect_required_config_keys_skips_upstream_fed_inputs():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["wheel", "artifact"]),
+        "x/c@v1": mk_spec(
+            "x/c@v1",
+            inputs={
+                "wheel": {"required": True},
+                "path": {"required": True},
+                "other": {"required": True},
+                "later": {"required": True},
+            },
+            outputs=["later"],
+        ),
+    }
+    recipe = parse_recipe_string(
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  test:\n    steps:\n"
+        "      - {id: c1, uses: x/c@v1, bind: {path: artifact}}\n"
+        "      - {id: c2, uses: x/c@v1, bind: {path: artifact}}\n"
+    )
+    # wheel/artifact come from job `build`; `later` is produced by c1 so only
+    # c2 gets it; c1 still needs it from config.
+    assert collect_required_config_keys(recipe, specs) == {
+        "other": True,
+        "later": True,
+    }
+
+
 # -- action specs -------------------------------------------------------------
 
 
