@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.8281397819519043,
-  "commit_message": "fix: needs cycles from data flow are a DAG005 finding and a CompilationError (#23)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "e520d3d2a709c4612367a97089131f2dd3df6ad4",
+  "collection_duration_seconds": 4.337874889373779,
+  "commit_message": "Merge e520d3d2a709c4612367a97089131f2dd3df6ad4 into 098050d19575feb18e507065db3f3c15a6886042",
+  "commit_sha": "215993aa3be21fc438455bc21df2366074cf0c73",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15025,
-      "comment_lines_ratio": 0.051540910275936824,
-      "docs_lines": 21363,
-      "empty_lines": 34449,
-      "empty_lines_ratio": 0.11817190137076525,
-      "files_analyzed": 736,
-      "function_lines": 114603,
-      "function_lines_ratio": 0.393127649940312,
-      "mean_lines_per_function": 14.59538970962812,
-      "num_classes": 1981,
-      "num_functions": 7852,
-      "pypi_version": "0.0.16",
-      "total_lines": 291516
+      "comment_lines": 14879,
+      "comment_lines_ratio": 0.051420909119184954,
+      "docs_lines": 21330,
+      "empty_lines": 34116,
+      "empty_lines_ratio": 0.11790279827341311,
+      "files_analyzed": 726,
+      "function_lines": 113044,
+      "function_lines_ratio": 0.39067311314397096,
+      "mean_lines_per_function": 14.57503867973182,
+      "num_classes": 1970,
+      "num_functions": 7756,
+      "pypi_version": "0.0.17",
+      "total_lines": 289357
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:56:47.169559Z",
+  "timestamp": "2026-10-13T17:56:51.499542Z",
   "workflow_status": {}
 }
