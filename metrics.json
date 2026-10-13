@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.235582113265991,
-  "commit_message": "Merge 0a0ffd5d20775916ccc08e7a793eca409dfb0394 into 8511e9c594f73087f79b09a2f2ed5b261c5bf148",
-  "commit_sha": "728901e056dbd94b7f8d06a9f304004a41a6aa6a",
+  "collection_duration_seconds": 4.558132648468018,
+  "commit_message": "fix: refuse two with: keys that name one input (#27)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "0a0ffd5d20775916ccc08e7a793eca409dfb0394",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.601117886178862,
       "num_classes": 1982,
       "num_functions": 7872,
-      "pypi_version": "0.0.23",
+      "pypi_version": "0.0.22",
       "total_lines": 291928
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:15:42.344010Z",
+  "timestamp": "2026-10-13T22:15:48.718086Z",
   "workflow_status": {}
 }
