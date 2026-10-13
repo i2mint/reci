@@ -1,38 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T18:28:29.743187Z
-commit_sha,a34649835fa02a1e09daa73ad998bb158634b11d
-commit_message,"fix: boolean if: and expression continue-on-error (#31) (#48)
+timestamp,2026-10-13T22:07:04.520599Z
+commit_sha,cd715e43a7a2d3896f3efae464bcaef7ee920022
+commit_message,"fix: refuse config keys/values the setup job cannot export (CONF005) (#29)
 
-* fix: boolean if: kept as expression text; continue-on-error keeps expressions (#31)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
-* fix: non-scalar if:/continue-on-error are parse errors; tests for string forms and CONF004 on continue-on-error
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7870
+metrics.umpyre_stats.num_functions,7871
 metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,291841
-metrics.umpyre_stats.empty_lines,34508
-metrics.umpyre_stats.comment_lines,15035
-metrics.umpyre_stats.docs_lines,21419
-metrics.umpyre_stats.function_lines,114869
-metrics.umpyre_stats.empty_lines_ratio,0.1182424676450533
-metrics.umpyre_stats.comment_lines_ratio,0.05151777851638392
-metrics.umpyre_stats.function_lines_ratio,0.39360131030252776
-metrics.umpyre_stats.mean_lines_per_function,14.595806861499364
+metrics.umpyre_stats.total_lines,291887
+metrics.umpyre_stats.empty_lines,34514
+metrics.umpyre_stats.comment_lines,15040
+metrics.umpyre_stats.docs_lines,21422
+metrics.umpyre_stats.function_lines,114901
+metrics.umpyre_stats.empty_lines_ratio,0.11824438909578022
+metrics.umpyre_stats.comment_lines_ratio,0.05152678947674957
+metrics.umpyre_stats.function_lines_ratio,0.3936489120789895
+metrics.umpyre_stats.mean_lines_per_function,14.598018040909668
 metrics.umpyre_stats.files_analyzed,737
 metrics.umpyre_stats.pypi_version,0.0.21
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T18:26:47Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T18:30:01Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38446604242
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38447169683
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -48,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.147135972976685
+collection_duration_seconds,3.022766590118408
