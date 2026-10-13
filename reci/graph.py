@@ -46,14 +46,24 @@ class ActionNode:
         return f"{self.job}.{self.step_id}"
 
     @property
+    def output_spellings(self) -> dict[str, str]:
+        """``{normalized output name: spelling to emit}`` for this node.
+
+        Declared (recipe) outputs come first; the action's own ``action.yml``
+        spelling wins when both name the same output.
+        """
+        spellings: dict[str, str] = {}
+        for name in self.declared_outputs:
+            spellings.setdefault(normalize_name(name), name)
+        if self.action_spec:
+            for norm, out in self.action_spec.outputs.items():
+                spellings[norm] = out.emitted_name
+        return spellings
+
+    @property
     def output_names(self) -> list[str]:
         """All normalized output names this node produces."""
-        names: list[str] = list(self.declared_outputs)
-        if self.action_spec:
-            for n in self.action_spec.outputs:
-                if n not in names:
-                    names.append(n)
-        return names
+        return list(self.output_spellings)
 
     @property
     def input_specs(self) -> dict[str, InputSpec]:

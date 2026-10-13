@@ -40,20 +40,37 @@ def normalize_name(name: str) -> str:
 
 @dataclass(frozen=True)
 class InputSpec:
-    """One declared input of a GitHub Action."""
+    """One declared input of a GitHub Action.
+
+    *name* is normalized (used for matching); *original_name* is the spelling
+    in ``action.yml`` (used when emitting, since GitHub does not map ``_`` to
+    ``-``).
+    """
 
     name: str  # normalized
     required: bool = False
     default: str | None = None
     description: str = ""
+    original_name: str = ""
+
+    @property
+    def emitted_name(self) -> str:
+        """The spelling to write into a workflow."""
+        return self.original_name or self.name
 
 
 @dataclass(frozen=True)
 class OutputSpec:
-    """One declared output of a GitHub Action."""
+    """One declared output of a GitHub Action (see :class:`InputSpec`)."""
 
     name: str  # normalized
     description: str = ""
+    original_name: str = ""
+
+    @property
+    def emitted_name(self) -> str:
+        """The spelling to write into a workflow."""
+        return self.original_name or self.name
 
 
 @dataclass(frozen=True)
@@ -92,6 +109,7 @@ def parse_action_spec(ref: str, *, action_yml_data: dict) -> ActionSpec:
             required=_parse_bool(meta.get("required", False)),
             default=meta.get("default"),
             description=str(meta.get("description", "")),
+            original_name=name,
         )
 
     outputs: dict[str, OutputSpec] = {}
@@ -101,6 +119,7 @@ def parse_action_spec(ref: str, *, action_yml_data: dict) -> ActionSpec:
         outputs[norm] = OutputSpec(
             name=norm,
             description=str(meta.get("description", "")),
+            original_name=name,
         )
 
     return ActionSpec(ref=ref, inputs=inputs, outputs=outputs)
@@ -192,12 +211,13 @@ def action_spec_from_declaration(
             required=_parse_bool(meta.get("required", False)),
             default=meta.get("default"),
             description=str(meta.get("description", "")),
+            original_name=name,
         )
 
     parsed_outputs: dict[str, OutputSpec] = {}
     for name in outputs or []:
         norm = normalize_name(name)
-        parsed_outputs[norm] = OutputSpec(name=norm)
+        parsed_outputs[norm] = OutputSpec(name=norm, original_name=name)
 
     return ActionSpec(ref=ref, inputs=parsed_inputs, outputs=parsed_outputs)
 

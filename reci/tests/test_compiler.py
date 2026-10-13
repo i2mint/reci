@@ -389,11 +389,6 @@ def test_cross_job_forwarding_adds_needs_and_job_outputs():
     assert wf["jobs"]["test"]["needs"] == ["setup", "build"]  # inferred edge
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#10: hyphens in action input ids are lost",
-)
 def test_hyphenated_action_input_keeps_its_spelling():
     specs = {"x/s@v1": mk_spec("x/s@v1", inputs={"root-dir": {"required": True}})}
     wf = _compile(
@@ -404,11 +399,6 @@ def test_hyphenated_action_input_keeps_its_spelling():
     assert "root-dir" in wf["jobs"]["j"]["steps"][0]["with"]
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#10: hyphens in step output ids are lost",
-)
 def test_hyphenated_step_output_keeps_its_spelling():
     specs = {
         "x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"]),
@@ -421,6 +411,49 @@ def test_hyphenated_step_output_keeps_its_spelling():
     assert wf["jobs"]["j"]["steps"][1]["with"] == {
         "wheel-path": "${{ steps.p.outputs.wheel-path }}"
     }
+
+def test_hyphenated_output_keeps_its_spelling_across_jobs():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"wheel-path": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  test:\n    steps: [{id: s, uses: x/s@v1}]\n"
+    )
+    wf = _compile(recipe, specs)
+    assert wf["jobs"]["build"]["outputs"] == {
+        "wheel-path": "${{ steps.p.outputs.wheel-path }}"
+    }
+    assert wf["jobs"]["test"]["steps"][0]["with"] == {
+        "wheel-path": "${{ needs.build.outputs.wheel-path }}"
+    }
+
+
+def test_declared_run_step_outputs_match_hyphenated_inputs_and_keep_spelling():
+    specs = {"x/s@v1": mk_spec("x/s@v1", inputs={"wheel_path": {"required": True}})}
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n"
+        "      - {id: p, run: echo, outputs: [wheel-path]}\n"
+        "      - {id: s, uses: x/s@v1}\n"
+    )
+    w = _compile(recipe, specs)["jobs"]["j"]["steps"][1]["with"]
+    assert w == {"wheel_path": "${{ steps.p.outputs.wheel-path }}"}
+
+
+def test_action_yml_spelling_wins_over_a_differently_spelled_declaration():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"wheel-path": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n"
+        "      - {id: p, uses: x/p@v1, outputs: [wheel_path]}\n"
+        "      - {id: s, uses: x/s@v1}\n"
+    )
+    w = _compile(recipe, specs)["jobs"]["j"]["steps"][1]["with"]
+    assert w == {"wheel-path": "${{ steps.p.outputs.wheel-path }}"}
+
 
 
 def test_cross_job_edges_are_found_without_config():
