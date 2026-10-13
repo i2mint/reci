@@ -1,38 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:54:53.860619Z
-commit_sha,9413584e24094bd4fe1429bd5b9a0dfbd53e8f4f
-commit_message,"fix: FLOW004 recognises explicit output references (#18) (#37)
+timestamp,2026-10-13T17:56:47.169559Z
+commit_sha,e520d3d2a709c4612367a97089131f2dd3df6ad4
+commit_message,"fix: needs cycles from data flow are a DAG005 finding and a CompilationError (#23)
 
-* fix: FLOW004 counts explicit steps./needs. output references in with, env, run and if (#18)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
-* fix: FLOW004 no longer counts needs. references; test job-scoped step ids
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7752
-metrics.umpyre_stats.num_classes,1970
-metrics.umpyre_stats.total_lines,289265
-metrics.umpyre_stats.empty_lines,34102
-metrics.umpyre_stats.comment_lines,14875
-metrics.umpyre_stats.docs_lines,21309
-metrics.umpyre_stats.function_lines,112966
-metrics.umpyre_stats.empty_lines_ratio,0.11789189843223342
-metrics.umpyre_stats.comment_lines_ratio,0.05142343525832714
-metrics.umpyre_stats.function_lines_ratio,0.3905277167994745
-metrics.umpyre_stats.mean_lines_per_function,14.572497420020639
-metrics.umpyre_stats.files_analyzed,726
+metrics.umpyre_stats.num_functions,7852
+metrics.umpyre_stats.num_classes,1981
+metrics.umpyre_stats.total_lines,291516
+metrics.umpyre_stats.empty_lines,34449
+metrics.umpyre_stats.comment_lines,15025
+metrics.umpyre_stats.docs_lines,21363
+metrics.umpyre_stats.function_lines,114603
+metrics.umpyre_stats.empty_lines_ratio,0.11817190137076525
+metrics.umpyre_stats.comment_lines_ratio,0.051540910275936824
+metrics.umpyre_stats.function_lines_ratio,0.393127649940312
+metrics.umpyre_stats.mean_lines_per_function,14.59538970962812
+metrics.umpyre_stats.files_analyzed,736
 metrics.umpyre_stats.pypi_version,0.0.16
-metrics.workflow_status.last_run_status,other
-metrics.workflow_status.last_success_timestamp,2026-10-13T17:53:30Z
+metrics.workflow_status.last_run_status,success
+metrics.workflow_status.last_success_timestamp,2026-10-13T17:56:35Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38442466953
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38442625927
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -48,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.309823513031006
+collection_duration_seconds,3.8281397819519043
