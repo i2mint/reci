@@ -116,6 +116,9 @@ class CrossJobEdge:
     target_job: str
     target_step_id: str
     target_input: str
+    #: other jobs that also produce the output; the first producer in recipe
+    #: order (``source_job``) is the one used
+    alternatives: tuple[str, ...] = ()
 
 
 # ---------------------------------------------------------------------------

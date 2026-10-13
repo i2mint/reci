@@ -153,8 +153,8 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 | DAG006 | Structure | `needs:` names a job that does not exist (`setup` exists only with config) |
 | DAG007 | Structure | A recipe job is named `setup` while config is supplied |
 | FLOW001 | Data flow | Required input has no source |
-| FLOW002 | Data flow | Ambiguous wiring (multiple upstream matches) |
-| FLOW006 | Data flow | Matrix job output consumed downstream (non-deterministic) |
+| FLOW002 | Data flow | Ambiguous wiring (multiple upstream matches, in a job or across jobs) |
+| FLOW006 | Data flow | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer) |
 | CONF001 | Config | Required config key missing |
 | CONF004 | Config | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`) |
 | CONF005 | Config | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |

@@ -896,3 +896,19 @@ def test_numbers_ruamel_cannot_respell_fall_back_to_the_value(written, expected)
     specs = {"x/s@v1": mk_spec("x/s@v1", inputs={"a": {}})}
     step = _compile(recipe, specs)["jobs"]["j"]["steps"][0]
     assert step["with"] == {"a": expected}
+
+
+def test_first_producing_job_wins_across_jobs_and_the_workflow_is_valid():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/c@v1": mk_spec("x/c@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  p1:\n    strategy: {matrix: {os: [a, b]}}\n"
+        "    steps: [{id: a, uses: x/p@v1}]\n"
+        "  p2:\n    steps: [{id: b, uses: x/p@v1}]\n"
+        "  c:\n    steps: [{id: z, uses: x/c@v1}]\n"
+    )
+    wf = _compile(recipe, specs)
+    assert wf["jobs"]["c"]["needs"] == ["p1"]
+    assert wf["jobs"]["c"]["steps"][0]["with"] == {"v": "${{ needs.p1.outputs.v }}"}
