@@ -331,11 +331,6 @@ def test_FLOW005_follows_bind_and_accepts_yaml_boolean_defaults():
     assert _only("FLOW005", mk_graph(unbound_name, specs)) == []
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#18: explicit with: refs not counted",
-)
 def test_FLOW004_counts_an_explicit_steps_reference_as_consumption():
     specs = {
         "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
@@ -346,6 +341,63 @@ def test_FLOW004_counts_an_explicit_steps_reference_as_consumption():
         "{id: s, uses: x/s@v1, with: {other: '${{ steps.p.outputs.v }}'}}",
     )
     assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+@pytest.mark.parametrize(
+    "where",
+    [
+        "with: {other: '${{ steps.p.outputs.v }}'}",
+        "env: {E: '${{ steps.p.outputs.v }}'}",
+        "if: '${{ steps.p.outputs.v }}'",
+    ],
+)
+def test_FLOW004_counts_references_in_with_env_and_if(where):
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"other": {}}),
+    }
+    recipe = _steps("{id: p, uses: x/p@v1}", f"{{id: s, uses: x/s@v1, {where}}}")
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+def test_FLOW004_counts_run_references_and_normalizes_names():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"])}
+    recipe = _steps(
+        "{id: p, uses: x/p@v1}",
+        "{id: r, run: 'echo ${{ steps.p.outputs.wheel-path }}'}",
+    )
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+def test_FLOW004_needs_references_do_not_count_as_consumption():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = (
+        "on: push\njobs:\n  a:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  b:\n    needs: a\n"
+        "    steps: [{id: r, run: 'echo ${{ needs.a.outputs.v }}'}]\n"
+    )
+    assert [f.location for f in _only("FLOW004", mk_graph(recipe, specs))] == ["a.p"]
+
+
+def test_FLOW004_steps_reference_is_scoped_to_its_own_job():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = (
+        "on: push\njobs:\n  a:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  b:\n    steps:\n      - {id: p, uses: x/p@v1}\n"
+        "      - {id: r, run: 'echo ${{ steps.p.outputs.v }}'}\n"
+    )
+    assert [f.location for f in _only("FLOW004", mk_graph(recipe, specs))] == ["a.p"]
+
+
+def test_FLOW004_explicit_reference_only_consumes_the_step_it_names():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = _steps(
+        "{id: p1, uses: x/p@v1}",
+        "{id: p2, uses: x/p@v1}",
+        "{id: r, run: 'echo ${{ steps.p2.outputs.v }}'}",
+    )
+    flagged = [f.location for f in _only("FLOW004", mk_graph(recipe, specs))]
+    assert flagged == ["j.p1"]
 
 
 def test_severity_override_keeps_location_and_suggestion():
