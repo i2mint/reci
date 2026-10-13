@@ -38,7 +38,8 @@ def _build_upstream_outputs(graph, job_id: str, up_to_key: str) -> dict[str, str
 def check_unsourced_required_inputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """Required input has no source at any level."""
     for node in graph.nodes():
-        upstream = _build_upstream_outputs(graph, node.job, node.key)
+        # same job (earlier steps) or any other job: the compiler forwards those
+        upstream = graph.upstream_output_names(node)
         for norm_name, input_spec in node.input_specs.items():
             if not input_spec.required:
                 continue

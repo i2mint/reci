@@ -35,16 +35,9 @@ def check_missing_required_config(graph, config: dict[str, Any]) -> Iterable[Fin
                 continue
             if norm_name in {normalize_name(k) for k in node.with_}:
                 continue
-            # Check upstream outputs
-            has_upstream = False
+            # Check upstream outputs (earlier steps in the job, or other jobs)
             search_name = node.bind.get(norm_name, norm_name)
-            for prev in graph.job_nodes(node.job):
-                if prev.key == node.key:
-                    break
-                if search_name in prev.output_names:
-                    has_upstream = True
-                    break
-            if has_upstream:
+            if search_name in graph.upstream_output_names(node):
                 continue
             # Now check config
             if node.ref:

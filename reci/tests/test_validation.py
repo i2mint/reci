@@ -553,3 +553,84 @@ def test_CONF004_sees_a_ref_after_a_braces_string_literal():
     recipe = _steps("{id: r, if: \"${{ format('{0} }}', config.nokey) }}\", run: e}")
     (f,) = _only("CONF004", mk_graph(recipe))
     assert "config.nokey" in f.message
+
+
+# -- FLOW001 / CONF001 know about producers in other jobs ------------------------
+
+_XJOB_SPECS = {
+    "x/a@v1": mk_spec("x/a@v1", outputs=["wheel", "other"]),
+    "x/b@v1": mk_spec("x/b@v1", inputs={"wheel": {"required": True}}),
+    "x/c@v1": mk_spec("x/c@v1", inputs={"path": {"required": True}}),
+}
+
+
+@pytest.mark.parametrize("config", [{}, {"unrelated": 1}])
+def test_FLOW001_and_CONF001_accept_inputs_fed_by_another_job(config):
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/a@v1}]\n"
+        "  test:\n    steps:\n      - {id: t, uses: x/b@v1}\n"
+        "      - {id: u, uses: x/c@v1, bind: {path: other}}\n"
+    )
+    g = mk_graph(recipe, _XJOB_SPECS)
+    assert _only("FLOW001", g, config) == [] and _only("CONF001", g, config) == []
+
+
+def test_FLOW001_and_CONF001_still_flag_an_input_no_job_produces():
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/a@v1}]\n"
+        "  test:\n    steps: [{id: u, uses: x/c@v1}]\n"  # needs `path`: nobody has it
+    )
+    g = mk_graph(recipe, _XJOB_SPECS)
+    assert len(_only("FLOW001", g)) == 1 and len(_only("CONF001", g)) == 1
+
+
+def test_validation_and_compiler_agree_on_which_required_inputs_are_sourced():
+    from reci.compiler import compile_recipe
+    from reci.recipe import parse_recipe_string
+
+    recipes = {
+        "cross-job": (
+            "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/a@v1}]\n"
+            "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
+        ),
+        "unsourced": "on: push\njobs:\n  j:\n    steps: [{id: t, uses: x/b@v1}]\n",
+        "same-job-later": (
+            "on: push\njobs:\n  j:\n    steps:\n      - {id: t, uses: x/b@v1}\n"
+            "      - {id: p, uses: x/a@v1}\n"
+        ),
+    }
+    for name, text in recipes.items():
+        recipe = parse_recipe_string(text)
+        wf = compile_recipe(recipe, _XJOB_SPECS)
+        wired = any(
+            "wheel" in step.get("with", {})
+            for job in wf["jobs"].values()
+            for step in job["steps"]
+            if step["id"] == "t"
+        )
+        flagged = bool(_only("FLOW001", mk_graph(text, _XJOB_SPECS)))
+        assert flagged != wired, name
+
+
+def test_FLOW001_looks_at_every_step_of_a_producer_job_not_just_one():
+    specs = {
+        **_XJOB_SPECS,
+        "x/d@v1": mk_spec("x/d@v1", outputs=["unrelated"]),
+    }
+    for order in ("x/a@v1, x/d@v1", "x/d@v1, x/a@v1"):  # producer first or last
+        steps = ", ".join(f"{{id: s{i}, uses: {u}}}" for i, u in enumerate(order.split(", ")))
+        recipe = (
+            f"on: push\njobs:\n  build:\n    steps: [{steps}]\n"
+            "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
+        )
+        assert _only("FLOW001", mk_graph(recipe, specs)) == [], order
+
+
+def test_FLOW001_bind_replaces_the_name_searched_for():
+    # `wheel` is produced elsewhere, but the input is bound to a name nobody makes
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/a@v1}]\n"
+        "  test:\n    steps: [{id: t, uses: x/b@v1, bind: {wheel: nothing}}]\n"
+    )
+    g = mk_graph(recipe, _XJOB_SPECS)
+    assert len(_only("FLOW001", g)) == 1 and len(_only("CONF001", g)) == 1
