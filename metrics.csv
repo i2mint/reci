@@ -1,8 +1,10 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:37:30.818434Z
-commit_sha,d436fbc09ce64e38613184471677ffde9f5308a7
-commit_message,Merge 892b05bb7d85d08f4c88de2eb45b1eef56d5a391 into e080efe1eac92128fe70930643158d37fd6adc77
+timestamp,2026-10-13T22:37:33.148812Z
+commit_sha,892b05bb7d85d08f4c88de2eb45b1eef56d5a391
+commit_message,"fix: never place a scoped key over an existing table of that name (#36)
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7779
 metrics.umpyre_stats.num_classes,1971
@@ -16,7 +18,7 @@ metrics.umpyre_stats.comment_lines_ratio,0.05139422711997737
 metrics.umpyre_stats.function_lines_ratio,0.39139450313623475
 metrics.umpyre_stats.mean_lines_per_function,14.582979817457257
 metrics.umpyre_stats.files_analyzed,727
-metrics.umpyre_stats.pypi_version,0.0.27
+metrics.umpyre_stats.pypi_version,0.0.26
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T22:35:27Z
 metrics.workflow_status.recent_failure_count,0
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,2.956524610519409
+collection_duration_seconds,4.365422248840332
