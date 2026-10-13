@@ -191,8 +191,10 @@
 <span class="sig-prename descclassname"><span class="pre">reci.validation.rules.flow.</span></span><span class="sig-name descname"><span class="pre">check_unused_outputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/flow.html#check_unused_outputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.flow.check_unused_outputs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.flow.check_unused_outputs'">¶</a></dt>
 <dd><p>An output is declared but never consumed downstream.</p>
 <p>Consumed means: matched by an input of a later step (by name, honouring
-<code class="docutils literal notranslate"><span class="pre">bind:</span></code>), or referenced explicitly as <code class="docutils literal notranslate"><span class="pre">steps.&lt;id&gt;.outputs.&lt;name&gt;</span></code> (same
-job) in a step’s <code class="docutils literal notranslate"><span class="pre">with:</span></code>, <code class="docutils literal notranslate"><span class="pre">env:</span></code>, <code class="docutils literal notranslate"><span class="pre">run:</span></code> or <code class="docutils literal notranslate"><span class="pre">if:</span></code>.  <code class="docutils literal notranslate"><span class="pre">needs.</span></code> references
+<code class="docutils literal notranslate"><span class="pre">bind:</span></code>), or referenced explicitly as <code class="docutils literal notranslate"><span class="pre">steps.&lt;id&gt;.outputs.&lt;name&gt;</span></code> (dot or
+bracket syntax, ids compared case-insensitively) in a step of the same job:
+its <code class="docutils literal notranslate"><span class="pre">with:</span></code>, <code class="docutils literal notranslate"><span class="pre">env:</span></code>, <code class="docutils literal notranslate"><span class="pre">run:</span></code>, <code class="docutils literal notranslate"><span class="pre">if:</span></code> or <code class="docutils literal notranslate"><span class="pre">name:</span></code> (job-level fields
+cannot read <code class="docutils literal notranslate"><span class="pre">steps</span></code>).  <code class="docutils literal notranslate"><span class="pre">needs.</span></code> references
 are not counted: a recipe cannot declare job outputs, so only the compiler’s
 own forwarding makes them resolve.</p>
 <dl class="field-list simple">
@@ -223,7 +225,7 @@ own forwarding makes them resolve.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=26ffa1e9"></script>
+<script src="../_static/documentation_options.js?v=828725f0"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

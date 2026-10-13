@@ -1,4 +1,4 @@
-> built 2026-10-13 22:39 UTC from 7c8f67c (main) · reci 0.0.28. Details: build_info.json
+> built 2026-10-13 22:44 UTC from 6e7b48a (main) · reci 0.0.29. Details: build_info.json
 
 # index.html.md
 
@@ -1172,8 +1172,10 @@ Required input has no source at any level.
 An output is declared but never consumed downstream.
 
 Consumed means: matched by an input of a later step (by name, honouring
-`bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (same
-job) in a step’s `with:`, `env:`, `run:` or `if:`.  `needs.` references
+`bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (dot or
+bracket syntax, ids compared case-insensitively) in a step of the same job:
+its `with:`, `env:`, `run:`, `if:` or `name:` (job-level fields
+cannot read `steps`).  `needs.` references
 are not counted: a recipe cannot declare job outputs, so only the compiler’s
 own forwarding makes them resolve.
 
@@ -1311,20 +1313,20 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-13 22:39 UTC** from commit <a href="https://github.com/i2mint/reci/commit/7c8f67cbef4cf239cc6da5a460f7d139d5d250f9"><code>7c8f67c</code></a> on branch <code>main</code>, for **reci 0.0.28** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 22:44 UTC** from commit <a href="https://github.com/i2mint/reci/commit/6e7b48a1908d59844adefaee418309ee926c531d"><code>6e7b48a</code></a> on branch <code>main</code>, for **reci 0.0.29** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.0.28) is ahead of the latest release on PyPI (0.0.27): these docs describe unreleased code.
+- The documented version (0.0.29) is ahead of the latest release on PyPI (0.0.27): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/7c8f67cbef4cf239cc6da5a460f7d139d5d250f9"><code>7c8f67cbef4cf239cc6da5a460f7d139d5d250f9</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/6e7b48a1908d59844adefaee418309ee926c531d"><code>6e7b48a1908d59844adefaee418309ee926c531d</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.28</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.29</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1333,9 +1335,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38479075085">38479075085</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38479574152">38479574152</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>e38378e60a5c19d60b6a9a4b70065f5918a6918c</code> (in the history of the built commit) |
+| Event commit | <code>dcfb82ee4623c8125bc38c84ff0f7647eec499a4</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1360,13 +1362,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.27/">0.0.27</a>, older than the documented version (0.0.28).
+Latest release: <a href="https://pypi.org/project/reci/0.0.27/">0.0.27</a>, older than the documented version (0.0.29).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 7c8f67cbef4cf239cc6da5a460f7d139d5d250f9
+git checkout 6e7b48a1908d59844adefaee418309ee926c531d
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

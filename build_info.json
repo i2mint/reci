@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T22:39:51Z",
+  "built_at": "2026-10-13T22:44:23Z",
   "package": {
     "name": "reci",
-    "version": "0.0.28",
+    "version": "0.0.29",
     "display_name": "reci",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "7c8f67cbef4cf239cc6da5a460f7d139d5d250f9",
-    "short_commit": "7c8f67c",
+    "commit": "6e7b48a1908d59844adefaee418309ee926c531d",
+    "short_commit": "6e7b48a",
     "branch": "main",
     "tags": [
-      "0.0.28"
+      "0.0.29"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/reci",
-    "commit_url": "https://github.com/i2mint/reci/commit/7c8f67cbef4cf239cc6da5a460f7d139d5d250f9",
+    "commit_url": "https://github.com/i2mint/reci/commit/6e7b48a1908d59844adefaee418309ee926c531d",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/reci",
-    "sha": "e38378e60a5c19d60b6a9a4b70065f5918a6918c",
+    "sha": "dcfb82ee4623c8125bc38c84ff0f7647eec499a4",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "38479075085",
-    "run_url": "https://github.com/i2mint/reci/actions/runs/38479075085",
+    "run_id": "38479574152",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/38479574152",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -66,12 +66,12 @@
     "relation": "ahead",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 7c8f67cbef4cf239cc6da5a460f7d139d5d250f9\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 6e7b48a1908d59844adefaee418309ee926c531d\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": false,
     "notes": [
-      "The documented version (0.0.28) is ahead of the latest release on PyPI (0.0.27): these docs describe unreleased code."
+      "The documented version (0.0.29) is ahead of the latest release on PyPI (0.0.27): these docs describe unreleased code."
     ]
   }
 }

@@ -44,8 +44,10 @@ Required input has no source at any level.
 An output is declared but never consumed downstream.
 
 Consumed means: matched by an input of a later step (by name, honouring
-`bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (same
-job) in a step’s `with:`, `env:`, `run:` or `if:`.  `needs.` references
+`bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (dot or
+bracket syntax, ids compared case-insensitively) in a step of the same job:
+its `with:`, `env:`, `run:`, `if:` or `name:` (job-level fields
+cannot read `steps`).  `needs.` references
 are not counted: a recipe cannot declare job outputs, so only the compiler’s
 own forwarding makes them resolve.
 
