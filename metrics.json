@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.342032194137573,
-  "commit_message": "Merge c94fbb1184729cef04397bb736a2bafe66fdf64c into af8cf6ec44cb36a46314752e4e85c1b892192d20",
-  "commit_sha": "beb70514b044b5afe501f9a084bff3c6295281eb",
+  "collection_duration_seconds": 4.562962770462036,
+  "commit_message": "fix: review of #63: YAML numbers normalised, tagged scalars, toml bool arrays, scaffold case-insensitive refs\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "c94fbb1184729cef04397bb736a2bafe66fdf64c",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14901,
-      "comment_lines_ratio": 0.05135017781821189,
-      "docs_lines": 21496,
-      "empty_lines": 34244,
-      "empty_lines_ratio": 0.11800788465249634,
-      "files_analyzed": 727,
-      "function_lines": 113713,
-      "function_lines_ratio": 0.39186516141482647,
-      "mean_lines_per_function": 14.591684845374054,
-      "num_classes": 1971,
-      "num_functions": 7793,
-      "pypi_version": "0.0.30",
-      "total_lines": 290184
+      "comment_lines": 15047,
+      "comment_lines_ratio": 0.051470361869447874,
+      "docs_lines": 21529,
+      "empty_lines": 34577,
+      "empty_lines_ratio": 0.11827545041270016,
+      "files_analyzed": 737,
+      "function_lines": 115272,
+      "function_lines_ratio": 0.3943039511806337,
+      "mean_lines_per_function": 14.611737862847002,
+      "num_classes": 1982,
+      "num_functions": 7889,
+      "pypi_version": "0.0.29",
+      "total_lines": 292343
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:07:24.041421Z",
+  "timestamp": "2026-10-13T23:07:28.794835Z",
   "workflow_status": {}
 }
