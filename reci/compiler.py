@@ -116,20 +116,32 @@ def _build_setup_job(config: dict[str, Any]) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def _declared_input_name(
-    key: str, with_: dict[str, Any], action_spec: ActionSpec | None
-) -> str:
-    """The spelling GitHub will match for explicit ``with:`` key *key*.
+def _declared_with_keys(
+    step: StepSpec, action_spec: ActionSpec | None
+) -> dict[str, str]:
+    """``{recipe key: key to emit}`` for the explicit ``with:`` of *step*.
 
     Matching is normalized (``root_dir`` satisfies input ``root-dir``) but GitHub
     only maps the declared spelling, so a key that names a declared input is
-    rewritten to it.  Keys that match nothing, or whose declared spelling the
-    recipe also writes itself, are left as written.
+    rewritten to it; other keys are left as written.  Two keys naming the same
+    input would collapse into one and silently drop a value, so that is refused.
     """
-    spec = action_spec.inputs.get(normalize_name(key)) if action_spec else None
-    if spec is None or spec.emitted_name in with_:
-        return key
-    return spec.emitted_name
+    emitted = {k: k for k in step.with_}
+    if action_spec is None:
+        return emitted
+    by_input: dict[str, list[str]] = {}
+    for key in step.with_:
+        spec = action_spec.inputs.get(normalize_name(key))
+        if spec is not None:
+            emitted[key] = spec.emitted_name
+            by_input.setdefault(spec.name, []).append(key)
+    for name, keys in by_input.items():
+        if len(keys) > 1:
+            raise CompilationError(
+                f"Step '{step.id}': with: keys {keys} all name input "
+                f"'{action_spec.inputs[name].emitted_name}'; write it once."
+            )
+    return emitted
 
 
 def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dict:
@@ -150,10 +162,8 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
     if step.if_:
         d["if"] = _rewrite_config_refs(step.if_)
     if step.with_:
-        d["with"] = {
-            _declared_input_name(k, step.with_, action_spec): _rewrite_config_refs(v)
-            for k, v in step.with_.items()
-        }
+        keys = _declared_with_keys(step, action_spec)
+        d["with"] = {keys[k]: _rewrite_config_refs(v) for k, v in step.with_.items()}
     if step.env:
         d["env"] = {k: _rewrite_config_refs(v) for k, v in step.env.items()}
 

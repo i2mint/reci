@@ -114,14 +114,22 @@ def test_explicit_with_key_is_emitted_in_the_declared_spelling():
     assert w == {"root-dir": "x", "other_key": "y"}
 
 
-def test_explicit_with_keeps_both_spellings_when_the_recipe_writes_both():
-    w = _step_with(
-        {},
-        extra="\n        with: {root_dir: x, root-dir: y}",
-        s_inputs={"root-dir": {"required": True}},
-        up_outputs=(),
-    )
-    assert w == {"root_dir": "x", "root-dir": "y"}
+@pytest.mark.parametrize(
+    "with_, declared",
+    [
+        ("{root_dir: x, root-dir: y}", "root-dir"),
+        ("{root_dir: x, Root_Dir: y}", "root-dir"),
+        ("{root_dir: x, root-dir: y}", "Root-Dir"),
+    ],
+)
+def test_two_explicit_with_keys_for_one_input_are_refused(with_, declared):
+    with pytest.raises(CompilationError, match="all name input"):
+        _step_with(
+            {},
+            extra=f"\n        with: {with_}",
+            s_inputs={declared: {"required": True}},
+            up_outputs=(),
+        )
 
 
 def test_upstream_output_beats_config():
