@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.322711706161499,
-  "commit_message": "Merge 8ca70d33d8734eff5ef78ae954c012687b6077aa into af8cf6ec44cb36a46314752e4e85c1b892192d20",
-  "commit_sha": "4e46448de9d75057dbd1690df97a71c785104164",
+  "collection_duration_seconds": 4.602643728256226,
+  "commit_message": "fix: config values export faithfully; unsupported config refs reported; bare if rewritten; scaffold safe (#51, #45, #43, #56)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "8ca70d33d8734eff5ef78ae954c012687b6077aa",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14898,
-      "comment_lines_ratio": 0.05134373212205595,
-      "docs_lines": 21496,
-      "empty_lines": 34243,
-      "empty_lines_ratio": 0.11801338562596067,
-      "files_analyzed": 727,
-      "function_lines": 113694,
-      "function_lines_ratio": 0.39182939185696264,
-      "mean_lines_per_function": 14.589246759912742,
-      "num_classes": 1971,
-      "num_functions": 7793,
-      "pypi_version": "0.0.30",
-      "total_lines": 290162
+      "comment_lines": 15044,
+      "comment_lines_ratio": 0.0514639728243951,
+      "docs_lines": 21529,
+      "empty_lines": 34576,
+      "empty_lines_ratio": 0.11828093089446191,
+      "files_analyzed": 737,
+      "function_lines": 115253,
+      "function_lines_ratio": 0.3942686293492428,
+      "mean_lines_per_function": 14.60932944606414,
+      "num_classes": 1982,
+      "num_functions": 7889,
+      "pypi_version": "0.0.29",
+      "total_lines": 292321
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:02:34.378969Z",
+  "timestamp": "2026-10-13T23:02:37.493220Z",
   "workflow_status": {}
 }
