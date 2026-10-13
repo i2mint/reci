@@ -1,28 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:49:34.168346Z
-commit_sha,0b4cb0263b0036e2d2b9559629a404be3560635b
-commit_message,"fix: FLOW004 counts explicit steps./needs. output references in with, env, run and if (#18)
+timestamp,2026-10-13T17:51:16.882438Z
+commit_sha,505ea67027bdd5abccc5562911c081bd7c06fb2e
+commit_message,"fix: FLOW004 no longer counts needs. references; test job-scoped step ids
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7848
-metrics.umpyre_stats.num_classes,1981
-metrics.umpyre_stats.total_lines,291427
-metrics.umpyre_stats.empty_lines,34435
-metrics.umpyre_stats.comment_lines,15021
-metrics.umpyre_stats.docs_lines,21341
-metrics.umpyre_stats.function_lines,114527
-metrics.umpyre_stats.empty_lines_ratio,0.11815995086248014
-metrics.umpyre_stats.comment_lines_ratio,0.05154292498636022
-metrics.umpyre_stats.function_lines_ratio,0.3929869229687023
-metrics.umpyre_stats.mean_lines_per_function,14.593144750254842
-metrics.umpyre_stats.files_analyzed,736
+metrics.umpyre_stats.num_functions,7752
+metrics.umpyre_stats.num_classes,1970
+metrics.umpyre_stats.total_lines,289265
+metrics.umpyre_stats.empty_lines,34102
+metrics.umpyre_stats.comment_lines,14875
+metrics.umpyre_stats.docs_lines,21309
+metrics.umpyre_stats.function_lines,112966
+metrics.umpyre_stats.empty_lines_ratio,0.11789189843223342
+metrics.umpyre_stats.comment_lines_ratio,0.05142343525832714
+metrics.umpyre_stats.function_lines_ratio,0.3905277167994745
+metrics.umpyre_stats.mean_lines_per_function,14.572497420020639
+metrics.umpyre_stats.files_analyzed,726
 metrics.umpyre_stats.pypi_version,0.0.15
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T17:47:36Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T17:50:25Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38441327239
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38441837883
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.200051546096802
+collection_duration_seconds,3.8519139289855957
