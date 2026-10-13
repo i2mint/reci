@@ -1,10 +1,8 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:25:21.724092Z
-commit_sha,bf772719135d1ea3d8d55e98f02885feb43a5dcf
-commit_message,"fix: numeric spelling ignores anchors/tags; avoid ruamel's padded underscored floats (#32)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-13T22:25:32.742717Z
+commit_sha,e52ab5c4898d2e5d4a7857d57062f9306e9d38d3
+commit_message,Merge bf772719135d1ea3d8d55e98f02885feb43a5dcf into c3d0def83662ae300952b919db02ebf92428a73f
 python_version,3.10
 metrics.umpyre_stats.num_functions,7873
 metrics.umpyre_stats.num_classes,1982
@@ -18,7 +16,7 @@ metrics.umpyre_stats.comment_lines_ratio,0.05151846232357102
 metrics.umpyre_stats.function_lines_ratio,0.39380353662838685
 metrics.umpyre_stats.mean_lines_per_function,14.604343960370889
 metrics.umpyre_stats.files_analyzed,737
-metrics.umpyre_stats.pypi_version,0.0.24
+metrics.umpyre_stats.pypi_version,0.0.25
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T22:23:45Z
 metrics.workflow_status.recent_failure_count,0
@@ -38,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.5308940410614014
+collection_duration_seconds,4.401435613632202
