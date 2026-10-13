@@ -234,7 +234,7 @@
 </span><span id="line-59">                <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW001"</span><span class="p">,</span>
 </span><span id="line-60">                <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
 </span><span id="line-61">                <span class="n">message</span><span class="o">=</span><span class="p">(</span>
-</span><span id="line-62">                    <span class="sa">f</span><span class="s2">"Required input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
+</span><span id="line-62">                    <span class="sa">f</span><span class="s2">"Required input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
 </span><span id="line-63">                    <span class="sa">f</span><span class="s2">"has no source (no explicit with:, upstream output, "</span>
 </span><span id="line-64">                    <span class="sa">f</span><span class="s2">"config value, or default)."</span>
 </span><span id="line-65">                <span class="p">),</span>
@@ -265,7 +265,7 @@
 </span><span id="line-87">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW002"</span><span class="p">,</span>
 </span><span id="line-88">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
 </span><span id="line-89">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
-</span><span id="line-90">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' matches "</span>
+</span><span id="line-90">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' matches "</span>
 </span><span id="line-91">                        <span class="sa">f</span><span class="s2">"outputs from multiple upstream steps: "</span>
 </span><span id="line-92">                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span><span class="si">}</span><span class="s2">. Using nearest predecessor."</span>
 </span><span id="line-93">                    <span class="p">),</span>
@@ -326,7 +326,7 @@
 </span><span id="line-142">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW005"</span><span class="p">,</span>
 </span><span id="line-143">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
 </span><span id="line-144">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
-</span><span id="line-145">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
+</span><span id="line-145">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
 </span><span id="line-146">                        <span class="sa">f</span><span class="s2">"appears boolean (default='</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">') "</span>
 </span><span id="line-147">                        <span class="sa">f</span><span class="s2">"but will receive a string from upstream output. "</span>
 </span><span id="line-148">                        <span class="sa">f</span><span class="s2">"Use == 'true' comparison."</span>
@@ -362,7 +362,7 @@
 </footer>
     </div>
     
-    <script src="../../../../_static/documentation_options.js?v=0c446633"></script>
+    <script src="../../../../_static/documentation_options.js?v=3bbcec59"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>

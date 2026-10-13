@@ -34,6 +34,13 @@ steps.
 
 All normalized output names this node produces.
 
+#### *property* output_spellings *: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), [str](https://docs.python.org/3/builtins/stdtypes.html#str)]*
+
+`{normalized output name: spelling to emit}` for this node.
+
+Declared (recipe) outputs come first; the action’s own `action.yml`
+spelling wins when both name the same output.
+
 ### *class* reci.graph.CrossJobEdge(source_job, source_step_id, source_output, target_job, target_step_id, target_input)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)

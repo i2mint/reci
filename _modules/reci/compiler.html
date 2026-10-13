@@ -441,191 +441,194 @@
 </span><span id="line-271">        <span class="c1"># Level 2: upstream output name match</span>
 </span><span id="line-272">        <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">upstream_outputs</span><span class="p">:</span>
 </span><span id="line-273">            <span class="n">outputs_path</span><span class="p">,</span> <span class="n">out_name</span> <span class="o">=</span> <span class="n">upstream_outputs</span><span class="p">[</span><span class="n">search_name</span><span class="p">]</span>
-</span><span id="line-274">            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> </span><span class="si">{</span><span class="n">outputs_path</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
+</span><span id="line-274">            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> </span><span class="si">{</span><span class="n">outputs_path</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">out_name</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
 </span><span id="line-275">            <span class="k">continue</span>
 </span><span id="line-276">
 </span><span id="line-277">        <span class="c1"># Level 3: config (scoped then shared)</span>
 </span><span id="line-278">        <span class="n">config_key</span> <span class="o">=</span> <span class="n">_resolve_config_key</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
 </span><span id="line-279">        <span class="k">if</span> <span class="n">config_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-280">            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> needs.setup.outputs.</span><span class="si">{</span><span class="n">config_key</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
-</span><span id="line-281">            <span class="k">continue</span>
-</span><span id="line-282">
-</span><span id="line-283">        <span class="c1"># Level 4: default exists → omit (GitHub Actions uses the default)</span>
-</span><span id="line-284">        <span class="c1"># Level 5: required + no source → skip here, caught by validation</span>
-</span><span id="line-285">
-</span><span id="line-286">    <span class="k">return</span> <span class="n">wired</span>
+</span><span id="line-280">            <span class="n">wired</span><span class="p">[</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-281">                <span class="sa">f</span><span class="s2">"$</span><span class="se">{{{{</span><span class="s2"> needs.setup.outputs.</span><span class="si">{</span><span class="n">config_key</span><span class="si">}</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2">"</span>
+</span><span id="line-282">            <span class="p">)</span>
+</span><span id="line-283">            <span class="k">continue</span>
+</span><span id="line-284">
+</span><span id="line-285">        <span class="c1"># Level 4: default exists → omit (GitHub Actions uses the default)</span>
+</span><span id="line-286">        <span class="c1"># Level 5: required + no source → skip here, caught by validation</span>
 </span><span id="line-287">
-</span><span id="line-288">
-</span><span id="line-289"><span class="k">def</span><span class="w"> </span><span class="nf">_build_upstream_outputs</span><span class="p">(</span>
-</span><span id="line-290">    <span class="n">graph</span><span class="p">:</span> <span class="n">RecipeGraph</span><span class="p">,</span>
-</span><span id="line-291">    <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="line-292">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-293">    <span class="n">up_to_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="line-294"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
-</span><span id="line-295"><span class="w">    </span><span class="sd">"""Collect all output names from steps preceding *up_to_key* in the same job.</span>
-</span><span id="line-296">
-</span><span id="line-297"><span class="sd">    Returns ``{normalized_name: (outputs_path, normalized_name)}`` with</span>
-</span><span id="line-298"><span class="sd">    *outputs_path* ``steps.&lt;step_id&gt;.outputs``.</span>
-</span><span id="line-299"><span class="sd">    Nearest predecessor wins (later entries overwrite earlier).</span>
-</span><span id="line-300"><span class="sd">    """</span>
-</span><span id="line-301">    <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-302">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
-</span><span id="line-303">        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">up_to_key</span><span class="p">:</span>
-</span><span id="line-304">            <span class="k">break</span>
-</span><span id="line-305">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
-</span><span id="line-306">            <span class="n">outputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"steps.</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.outputs"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</span><span id="line-307">    <span class="k">return</span> <span class="n">outputs</span>
-</span><span id="line-308">
-</span><span id="line-309">
-</span><span id="line-310"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-311"><span class="c1"># Cross-job edge detection (Phase 5)</span>
-</span><span id="line-312"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-313">
-</span><span id="line-314">
-</span><span id="line-315"><span class="k">def</span><span class="w"> </span><span class="nf">_detect_cross_job_edges</span><span class="p">(</span>
-</span><span id="line-316">    <span class="n">graph</span><span class="p">:</span> <span class="n">RecipeGraph</span><span class="p">,</span>
-</span><span id="line-317">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-</span><span id="line-318"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">]:</span>
-</span><span id="line-319"><span class="w">    </span><span class="sd">"""Find data-flow edges between steps in different jobs."""</span>
-</span><span id="line-320">    <span class="n">edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-321">
-</span><span id="line-322">    <span class="c1"># Build a map of all outputs per job</span>
-</span><span id="line-323">    <span class="n">job_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-324">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
-</span><span id="line-325">        <span class="n">outs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-326">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
-</span><span id="line-327">            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
-</span><span id="line-328">                <span class="n">outs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</span><span id="line-329">        <span class="n">job_outputs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">outs</span>
-</span><span id="line-330">
-</span><span id="line-331">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
-</span><span id="line-332">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
-</span><span id="line-333">            <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-334">                <span class="c1"># Skip if already wired explicitly or from intra-job output</span>
-</span><span id="line-335">                <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}:</span>
-</span><span id="line-336">                    <span class="k">continue</span>
-</span><span id="line-337">                <span class="n">search_name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
-</span><span id="line-338">
-</span><span id="line-339">                <span class="c1"># Check intra-job first</span>
-</span><span id="line-340">                <span class="n">intra</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">up_to_key</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
-</span><span id="line-341">                <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">intra</span><span class="p">:</span>
-</span><span id="line-342">                    <span class="k">continue</span>
-</span><span id="line-343">
-</span><span id="line-344">                <span class="c1"># Check config</span>
-</span><span id="line-345">                <span class="k">if</span> <span class="n">_resolve_config_key</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-346">                    <span class="k">continue</span>
-</span><span id="line-347">
-</span><span id="line-348">                <span class="c1"># Search other jobs</span>
-</span><span id="line-349">                <span class="k">for</span> <span class="n">other_job_id</span><span class="p">,</span> <span class="n">other_outs</span> <span class="ow">in</span> <span class="n">job_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-350">                    <span class="k">if</span> <span class="n">other_job_id</span> <span class="o">==</span> <span class="n">job_id</span><span class="p">:</span>
-</span><span id="line-351">                        <span class="k">continue</span>
-</span><span id="line-352">                    <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">other_outs</span><span class="p">:</span>
-</span><span id="line-353">                        <span class="n">src_step_id</span><span class="p">,</span> <span class="n">src_output</span> <span class="o">=</span> <span class="n">other_outs</span><span class="p">[</span><span class="n">search_name</span><span class="p">]</span>
-</span><span id="line-354">                        <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="line-355">                            <span class="n">CrossJobEdge</span><span class="p">(</span>
-</span><span id="line-356">                                <span class="n">source_job</span><span class="o">=</span><span class="n">other_job_id</span><span class="p">,</span>
-</span><span id="line-357">                                <span class="n">source_step_id</span><span class="o">=</span><span class="n">src_step_id</span><span class="p">,</span>
-</span><span id="line-358">                                <span class="n">source_output</span><span class="o">=</span><span class="n">src_output</span><span class="p">,</span>
-</span><span id="line-359">                                <span class="n">target_job</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
-</span><span id="line-360">                                <span class="n">target_step_id</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span>
-</span><span id="line-361">                                <span class="n">target_input</span><span class="o">=</span><span class="n">norm_name</span><span class="p">,</span>
-</span><span id="line-362">                            <span class="p">)</span>
-</span><span id="line-363">                        <span class="p">)</span>
-</span><span id="line-364">                        <span class="k">break</span>  <span class="c1"># first match wins</span>
-</span><span id="line-365">
-</span><span id="line-366">    <span class="k">return</span> <span class="n">edges</span>
-</span><span id="line-367">
+</span><span id="line-288">    <span class="k">return</span> <span class="n">wired</span>
+</span><span id="line-289">
+</span><span id="line-290">
+</span><span id="line-291"><span class="k">def</span><span class="w"> </span><span class="nf">_build_upstream_outputs</span><span class="p">(</span>
+</span><span id="line-292">    <span class="n">graph</span><span class="p">:</span> <span class="n">RecipeGraph</span><span class="p">,</span>
+</span><span id="line-293">    <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="line-294">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-295">    <span class="n">up_to_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="line-296"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+</span><span id="line-297"><span class="w">    </span><span class="sd">"""Collect all output names from steps preceding *up_to_key* in the same job.</span>
+</span><span id="line-298">
+</span><span id="line-299"><span class="sd">    Returns ``{normalized_name: (outputs_path, spelling)}`` with</span>
+</span><span id="line-300"><span class="sd">    *outputs_path* ``steps.&lt;step_id&gt;.outputs`` and *spelling* the output id as</span>
+</span><span id="line-301"><span class="sd">    the action declares it (GitHub does not equate ``_`` and ``-``).</span>
+</span><span id="line-302"><span class="sd">    Nearest predecessor wins (later entries overwrite earlier).</span>
+</span><span id="line-303"><span class="sd">    """</span>
+</span><span id="line-304">    <span class="n">outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-305">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+</span><span id="line-306">        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">up_to_key</span><span class="p">:</span>
+</span><span id="line-307">            <span class="k">break</span>
+</span><span id="line-308">        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spelling</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">output_spellings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-309">            <span class="n">outputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"steps.</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.outputs"</span><span class="p">,</span> <span class="n">spelling</span><span class="p">)</span>
+</span><span id="line-310">    <span class="k">return</span> <span class="n">outputs</span>
+</span><span id="line-311">
+</span><span id="line-312">
+</span><span id="line-313"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-314"><span class="c1"># Cross-job edge detection (Phase 5)</span>
+</span><span id="line-315"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-316">
+</span><span id="line-317">
+</span><span id="line-318"><span class="k">def</span><span class="w"> </span><span class="nf">_detect_cross_job_edges</span><span class="p">(</span>
+</span><span id="line-319">    <span class="n">graph</span><span class="p">:</span> <span class="n">RecipeGraph</span><span class="p">,</span>
+</span><span id="line-320">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span id="line-321"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">]:</span>
+</span><span id="line-322"><span class="w">    </span><span class="sd">"""Find data-flow edges between steps in different jobs."""</span>
+</span><span id="line-323">    <span class="n">edges</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">CrossJobEdge</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-324">
+</span><span id="line-325">    <span class="c1"># Build a map of all outputs per job</span>
+</span><span id="line-326">    <span class="n">job_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-327">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
+</span><span id="line-328">        <span class="n">outs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-329">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+</span><span id="line-330">            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spelling</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">output_spellings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-331">                <span class="n">outs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">spelling</span><span class="p">)</span>
+</span><span id="line-332">        <span class="n">job_outputs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">outs</span>
+</span><span id="line-333">
+</span><span id="line-334">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
+</span><span id="line-335">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+</span><span id="line-336">            <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-337">                <span class="c1"># Skip if already wired explicitly or from intra-job output</span>
+</span><span id="line-338">                <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}:</span>
+</span><span id="line-339">                    <span class="k">continue</span>
+</span><span id="line-340">                <span class="n">search_name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
+</span><span id="line-341">
+</span><span id="line-342">                <span class="c1"># Check intra-job first</span>
+</span><span id="line-343">                <span class="n">intra</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">up_to_key</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+</span><span id="line-344">                <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">intra</span><span class="p">:</span>
+</span><span id="line-345">                    <span class="k">continue</span>
+</span><span id="line-346">
+</span><span id="line-347">                <span class="c1"># Check config</span>
+</span><span id="line-348">                <span class="k">if</span> <span class="n">_resolve_config_key</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">ref</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-349">                    <span class="k">continue</span>
+</span><span id="line-350">
+</span><span id="line-351">                <span class="c1"># Search other jobs</span>
+</span><span id="line-352">                <span class="k">for</span> <span class="n">other_job_id</span><span class="p">,</span> <span class="n">other_outs</span> <span class="ow">in</span> <span class="n">job_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-353">                    <span class="k">if</span> <span class="n">other_job_id</span> <span class="o">==</span> <span class="n">job_id</span><span class="p">:</span>
+</span><span id="line-354">                        <span class="k">continue</span>
+</span><span id="line-355">                    <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">other_outs</span><span class="p">:</span>
+</span><span id="line-356">                        <span class="n">src_step_id</span><span class="p">,</span> <span class="n">src_output</span> <span class="o">=</span> <span class="n">other_outs</span><span class="p">[</span><span class="n">search_name</span><span class="p">]</span>
+</span><span id="line-357">                        <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="line-358">                            <span class="n">CrossJobEdge</span><span class="p">(</span>
+</span><span id="line-359">                                <span class="n">source_job</span><span class="o">=</span><span class="n">other_job_id</span><span class="p">,</span>
+</span><span id="line-360">                                <span class="n">source_step_id</span><span class="o">=</span><span class="n">src_step_id</span><span class="p">,</span>
+</span><span id="line-361">                                <span class="n">source_output</span><span class="o">=</span><span class="n">src_output</span><span class="p">,</span>
+</span><span id="line-362">                                <span class="n">target_job</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+</span><span id="line-363">                                <span class="n">target_step_id</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span>
+</span><span id="line-364">                                <span class="n">target_input</span><span class="o">=</span><span class="n">norm_name</span><span class="p">,</span>
+</span><span id="line-365">                            <span class="p">)</span>
+</span><span id="line-366">                        <span class="p">)</span>
+</span><span id="line-367">                        <span class="k">break</span>  <span class="c1"># first match wins</span>
 </span><span id="line-368">
-</span><span id="line-369"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-370"><span class="c1"># Main entry point</span>
-</span><span id="line-371"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-372">
-</span><span id="line-373">
+</span><span id="line-369">    <span class="k">return</span> <span class="n">edges</span>
+</span><span id="line-370">
+</span><span id="line-371">
+</span><span id="line-372"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-373"><span class="c1"># Main entry point</span>
+</span><span id="line-374"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-375">
+</span><span id="line-376">
 <div class="viewcode-block" id="CompilationError">
 <a class="viewcode-back" href="../../_autosummary/reci.compiler.html#reci.compiler.CompilationError">[docs]</a>
-</span><span id="line-374"><span class="k">class</span><span class="w"> </span><span class="nc">CompilationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-</span><span id="line-375"><span class="w">    </span><span class="sd">"""Raised when compilation fails."""</span></div>
+</span><span id="line-377"><span class="k">class</span><span class="w"> </span><span class="nc">CompilationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+</span><span id="line-378"><span class="w">    </span><span class="sd">"""Raised when compilation fails."""</span></div>
 
-</span><span id="line-376">
-</span><span id="line-377">
+</span><span id="line-379">
+</span><span id="line-380">
 <div class="viewcode-block" id="compile_recipe">
 <a class="viewcode-back" href="../../_autosummary/reci.compiler.html#reci.compiler.compile_recipe">[docs]</a>
-</span><span id="line-378"><span class="k">def</span><span class="w"> </span><span class="nf">compile_recipe</span><span class="p">(</span>
-</span><span id="line-379">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span>
-</span><span id="line-380">    <span class="n">action_specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">],</span>
-</span><span id="line-381">    <span class="o">*</span><span class="p">,</span>
-</span><span id="line-382">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-383"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="line-384"><span class="w">    </span><span class="sd">"""Compile a recipe into a GitHub Actions workflow dict.</span>
-</span><span id="line-385">
-</span><span id="line-386"><span class="sd">    Parameters</span>
-</span><span id="line-387"><span class="sd">    ----------</span>
-</span><span id="line-388"><span class="sd">    recipe:</span>
-</span><span id="line-389"><span class="sd">        Parsed recipe.</span>
-</span><span id="line-390"><span class="sd">    action_specs:</span>
-</span><span id="line-391"><span class="sd">        Action specs keyed by ref string.</span>
-</span><span id="line-392"><span class="sd">    config:</span>
-</span><span id="line-393"><span class="sd">        Flat config dict (optional).  If non-empty, a ``setup`` job is</span>
-</span><span id="line-394"><span class="sd">        injected, jobs depend on it, and config references are wired.</span>
-</span><span id="line-395"><span class="sd">        Cross-job data-flow wiring happens either way.</span>
-</span><span id="line-396"><span class="sd">    """</span>
-</span><span id="line-397">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span id="line-398">    <span class="n">graph</span> <span class="o">=</span> <span class="n">RecipeGraph</span><span class="o">.</span><span class="n">from_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">action_specs</span><span class="p">)</span>
-</span><span id="line-399">
-</span><span id="line-400">    <span class="c1"># Detect cross-job edges (independent of config: data flow between jobs</span>
-</span><span id="line-401">    <span class="c1"># exists whether or not any config was supplied)</span>
-</span><span id="line-402">    <span class="n">cross_job_edges</span> <span class="o">=</span> <span class="n">_detect_cross_job_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-</span><span id="line-403">
-</span><span id="line-404">    <span class="c1"># Compute wired inputs for all nodes</span>
-</span><span id="line-405">    <span class="n">all_wired</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-406">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
-</span><span id="line-407">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
-</span><span id="line-408">            <span class="n">upstream</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">up_to_key</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
-</span><span id="line-409">
-</span><span id="line-410">            <span class="c1"># Add cross-job sources</span>
-</span><span id="line-411">            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">cross_job_edges</span><span class="p">:</span>
-</span><span id="line-412">                <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">target_job</span> <span class="o">==</span> <span class="n">job_id</span> <span class="ow">and</span> <span class="n">edge</span><span class="o">.</span><span class="n">target_step_id</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="p">:</span>
-</span><span id="line-413">                    <span class="n">upstream</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-414">                        <span class="sa">f</span><span class="s2">"needs.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">.outputs"</span><span class="p">,</span>  <span class="c1"># job-level outputs</span>
-</span><span id="line-415">                        <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">,</span>
-</span><span id="line-416">                    <span class="p">)</span>
-</span><span id="line-417">
-</span><span id="line-418">            <span class="n">wired</span> <span class="o">=</span> <span class="n">_wire_step_inputs</span><span class="p">(</span>
-</span><span id="line-419">                <span class="n">node</span><span class="p">,</span>
-</span><span id="line-420">                <span class="n">upstream_outputs</span><span class="o">=</span><span class="n">upstream</span><span class="p">,</span>
-</span><span id="line-421">                <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
-</span><span id="line-422">            <span class="p">)</span>
-</span><span id="line-423">            <span class="k">if</span> <span class="n">wired</span><span class="p">:</span>
-</span><span id="line-424">                <span class="n">all_wired</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">wired</span>
-</span><span id="line-425">
-</span><span id="line-426">    <span class="c1"># Build workflow</span>
-</span><span id="line-427">    <span class="n">workflow</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-428">    <span class="n">workflow</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">"CI"</span>
-</span><span id="line-429">    <span class="n">workflow</span><span class="p">[</span><span class="s2">"on"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">on</span>
-</span><span id="line-430">
-</span><span id="line-431">    <span class="k">if</span> <span class="n">recipe</span><span class="o">.</span><span class="n">env</span><span class="p">:</span>
-</span><span id="line-432">        <span class="n">workflow</span><span class="p">[</span><span class="s2">"env"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">env</span>
+</span><span id="line-381"><span class="k">def</span><span class="w"> </span><span class="nf">compile_recipe</span><span class="p">(</span>
+</span><span id="line-382">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span>
+</span><span id="line-383">    <span class="n">action_specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">],</span>
+</span><span id="line-384">    <span class="o">*</span><span class="p">,</span>
+</span><span id="line-385">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-386"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="line-387"><span class="w">    </span><span class="sd">"""Compile a recipe into a GitHub Actions workflow dict.</span>
+</span><span id="line-388">
+</span><span id="line-389"><span class="sd">    Parameters</span>
+</span><span id="line-390"><span class="sd">    ----------</span>
+</span><span id="line-391"><span class="sd">    recipe:</span>
+</span><span id="line-392"><span class="sd">        Parsed recipe.</span>
+</span><span id="line-393"><span class="sd">    action_specs:</span>
+</span><span id="line-394"><span class="sd">        Action specs keyed by ref string.</span>
+</span><span id="line-395"><span class="sd">    config:</span>
+</span><span id="line-396"><span class="sd">        Flat config dict (optional).  If non-empty, a ``setup`` job is</span>
+</span><span id="line-397"><span class="sd">        injected, jobs depend on it, and config references are wired.</span>
+</span><span id="line-398"><span class="sd">        Cross-job data-flow wiring happens either way.</span>
+</span><span id="line-399"><span class="sd">    """</span>
+</span><span id="line-400">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span id="line-401">    <span class="n">graph</span> <span class="o">=</span> <span class="n">RecipeGraph</span><span class="o">.</span><span class="n">from_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">action_specs</span><span class="p">)</span>
+</span><span id="line-402">
+</span><span id="line-403">    <span class="c1"># Detect cross-job edges (independent of config: data flow between jobs</span>
+</span><span id="line-404">    <span class="c1"># exists whether or not any config was supplied)</span>
+</span><span id="line-405">    <span class="n">cross_job_edges</span> <span class="o">=</span> <span class="n">_detect_cross_job_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</span><span id="line-406">
+</span><span id="line-407">    <span class="c1"># Compute wired inputs for all nodes</span>
+</span><span id="line-408">    <span class="n">all_wired</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-409">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
+</span><span id="line-410">        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+</span><span id="line-411">            <span class="n">upstream</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">up_to_key</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+</span><span id="line-412">
+</span><span id="line-413">            <span class="c1"># Add cross-job sources</span>
+</span><span id="line-414">            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">cross_job_edges</span><span class="p">:</span>
+</span><span id="line-415">                <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">target_job</span> <span class="o">==</span> <span class="n">job_id</span> <span class="ow">and</span> <span class="n">edge</span><span class="o">.</span><span class="n">target_step_id</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="p">:</span>
+</span><span id="line-416">                    <span class="n">upstream</span><span class="p">[</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-417">                        <span class="sa">f</span><span class="s2">"needs.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">.outputs"</span><span class="p">,</span>  <span class="c1"># job-level outputs</span>
+</span><span id="line-418">                        <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">,</span>
+</span><span id="line-419">                    <span class="p">)</span>
+</span><span id="line-420">
+</span><span id="line-421">            <span class="n">wired</span> <span class="o">=</span> <span class="n">_wire_step_inputs</span><span class="p">(</span>
+</span><span id="line-422">                <span class="n">node</span><span class="p">,</span>
+</span><span id="line-423">                <span class="n">upstream_outputs</span><span class="o">=</span><span class="n">upstream</span><span class="p">,</span>
+</span><span id="line-424">                <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+</span><span id="line-425">            <span class="p">)</span>
+</span><span id="line-426">            <span class="k">if</span> <span class="n">wired</span><span class="p">:</span>
+</span><span id="line-427">                <span class="n">all_wired</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">wired</span>
+</span><span id="line-428">
+</span><span id="line-429">    <span class="c1"># Build workflow</span>
+</span><span id="line-430">    <span class="n">workflow</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-431">    <span class="n">workflow</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="s2">"CI"</span>
+</span><span id="line-432">    <span class="n">workflow</span><span class="p">[</span><span class="s2">"on"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">on</span>
 </span><span id="line-433">
-</span><span id="line-434">    <span class="n">jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-435">
-</span><span id="line-436">    <span class="c1"># Setup job (always present when config is provided)</span>
-</span><span id="line-437">    <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
-</span><span id="line-438">        <span class="n">jobs</span><span class="p">[</span><span class="s2">"setup"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_setup_job</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</span><span id="line-439">
-</span><span id="line-440">    <span class="c1"># Recipe jobs</span>
-</span><span id="line-441">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job_spec</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-442">        <span class="n">jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_job</span><span class="p">(</span>
-</span><span id="line-443">            <span class="n">job_spec</span><span class="p">,</span>
-</span><span id="line-444">            <span class="n">action_specs</span><span class="o">=</span><span class="n">action_specs</span><span class="p">,</span>
-</span><span id="line-445">            <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
-</span><span id="line-446">            <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
-</span><span id="line-447">            <span class="n">cross_job_edges</span><span class="o">=</span><span class="n">cross_job_edges</span><span class="p">,</span>
-</span><span id="line-448">            <span class="n">wired_inputs</span><span class="o">=</span><span class="n">all_wired</span><span class="p">,</span>
-</span><span id="line-449">            <span class="n">has_setup</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">config</span><span class="p">),</span>
-</span><span id="line-450">        <span class="p">)</span>
-</span><span id="line-451">
-</span><span id="line-452">    <span class="n">workflow</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">jobs</span>
-</span><span id="line-453">    <span class="k">return</span> <span class="n">workflow</span></div>
+</span><span id="line-434">    <span class="k">if</span> <span class="n">recipe</span><span class="o">.</span><span class="n">env</span><span class="p">:</span>
+</span><span id="line-435">        <span class="n">workflow</span><span class="p">[</span><span class="s2">"env"</span><span class="p">]</span> <span class="o">=</span> <span class="n">recipe</span><span class="o">.</span><span class="n">env</span>
+</span><span id="line-436">
+</span><span id="line-437">    <span class="n">jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-438">
+</span><span id="line-439">    <span class="c1"># Setup job (always present when config is provided)</span>
+</span><span id="line-440">    <span class="k">if</span> <span class="n">config</span><span class="p">:</span>
+</span><span id="line-441">        <span class="n">jobs</span><span class="p">[</span><span class="s2">"setup"</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_setup_job</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</span><span id="line-442">
+</span><span id="line-443">    <span class="c1"># Recipe jobs</span>
+</span><span id="line-444">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job_spec</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-445">        <span class="n">jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_job</span><span class="p">(</span>
+</span><span id="line-446">            <span class="n">job_spec</span><span class="p">,</span>
+</span><span id="line-447">            <span class="n">action_specs</span><span class="o">=</span><span class="n">action_specs</span><span class="p">,</span>
+</span><span id="line-448">            <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+</span><span id="line-449">            <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span>
+</span><span id="line-450">            <span class="n">cross_job_edges</span><span class="o">=</span><span class="n">cross_job_edges</span><span class="p">,</span>
+</span><span id="line-451">            <span class="n">wired_inputs</span><span class="o">=</span><span class="n">all_wired</span><span class="p">,</span>
+</span><span id="line-452">            <span class="n">has_setup</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">config</span><span class="p">),</span>
+</span><span id="line-453">        <span class="p">)</span>
+</span><span id="line-454">
+</span><span id="line-455">    <span class="n">workflow</span><span class="p">[</span><span class="s2">"jobs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">jobs</span>
+</span><span id="line-456">    <span class="k">return</span> <span class="n">workflow</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -640,7 +643,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=0c446633"></script>
+    <script src="../../_static/documentation_options.js?v=3bbcec59"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -1,4 +1,4 @@
-> built 2026-10-13 17:20 UTC from e76f2f0 (main) · reci 0.0.11. Details: build_info.json
+> built 2026-10-13 17:26 UTC from b2316b0 (main) · reci 0.0.12. Details: build_info.json
 
 # index.html.md
 
@@ -230,10 +230,10 @@ about data flow without fetching YAML at every step.
 
 ### Classes
 
-| [`ActionSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.ActionSpec)(ref[, inputs, outputs])                | The typed contract of a single GitHub Action.   |
-|----------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)(name[, required, default, description]) | One declared input of a GitHub Action.          |
-| [`OutputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.OutputSpec)(name[, description])                   | One declared output of a GitHub Action.         |
+| [`ActionSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.ActionSpec)(ref[, inputs, outputs])             | The typed contract of a single GitHub Action.                                                            |
+|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)(name[, required, default, ...])      | One declared input of a GitHub Action.                                                                   |
+| [`OutputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.OutputSpec)(name[, description, original_name]) | One declared output of a GitHub Action (see [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)). |
 
 ### Exceptions
 
@@ -254,17 +254,29 @@ The typed contract of a single GitHub Action.
 
 *inputs* and *outputs* are keyed by **normalized** name.
 
-### *class* reci.action_spec.InputSpec(name, required=False, default=None, description='')
+### *class* reci.action_spec.InputSpec(name, required=False, default=None, description='', original_name='')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 One declared input of a GitHub Action.
 
-### *class* reci.action_spec.OutputSpec(name, description='')
+*name* is normalized (used for matching); *original_name* is the spelling
+in `action.yml` (used when emitting, since GitHub does not map `_` to
+`-`).
+
+#### *property* emitted_name *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+The spelling to write into a workflow.
+
+### *class* reci.action_spec.OutputSpec(name, description='', original_name='')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
-One declared output of a GitHub Action.
+One declared output of a GitHub Action (see [`InputSpec`](_autosummary/reci.action_spec.html.md#reci.action_spec.InputSpec)).
+
+#### *property* emitted_name *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+The spelling to write into a workflow.
 
 ### reci.action_spec.action_local_name(ref)
 
@@ -607,6 +619,13 @@ steps.
 #### *property* output_names *: [list](https://docs.python.org/3/builtins/stdtypes.html#list)[[str](https://docs.python.org/3/builtins/stdtypes.html#str)]*
 
 All normalized output names this node produces.
+
+#### *property* output_spellings *: [dict](https://docs.python.org/3/builtins/stdtypes.html#dict)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), [str](https://docs.python.org/3/builtins/stdtypes.html#str)]*
+
+`{normalized output name: spelling to emit}` for this node.
+
+Declared (recipe) outputs come first; the action’s own `action.yml`
+spelling wins when both name the same output.
 
 ### *class* reci.graph.CrossJobEdge(source_job, source_step_id, source_output, target_job, target_step_id, target_input)
 
@@ -1056,7 +1075,7 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 17:20 UTC** from commit <a href="https://github.com/i2mint/reci/commit/e76f2f0a9c98f63ec05bb1b064005c7419645b18"><code>e76f2f0</code></a> on branch <code>main</code>, for **reci 0.0.11** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 17:26 UTC** from commit <a href="https://github.com/i2mint/reci/commit/b2316b089568e2a693374b4529fbb1503ad1ec83"><code>b2316b0</code></a> on branch <code>main</code>, for **reci 0.0.12** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1065,9 +1084,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/e76f2f0a9c98f63ec05bb1b064005c7419645b18"><code>e76f2f0a9c98f63ec05bb1b064005c7419645b18</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/b2316b089568e2a693374b4529fbb1503ad1ec83"><code>b2316b089568e2a693374b4529fbb1503ad1ec83</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.11</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.12</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1076,9 +1095,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38437534311">38437534311</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38438432347">38438432347</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>ac6819c4eb5056134918aa31eb61d3d3a9e14db1</code> (in the history of the built commit) |
+| Event commit | <code>b794df51766a9024a5dab95f8f705f6c0843a8a8</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1103,13 +1122,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.11/">0.0.11</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.12/">0.0.12</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout e76f2f0a9c98f63ec05bb1b064005c7419645b18
+git checkout b2316b089568e2a693374b4529fbb1503ad1ec83
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

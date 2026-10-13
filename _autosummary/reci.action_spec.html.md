@@ -18,10 +18,10 @@ about data flow without fetching YAML at every step.
 
 ### Classes
 
-| [`ActionSpec`](#reci.action_spec.ActionSpec)(ref[, inputs, outputs])                | The typed contract of a single GitHub Action.   |
-|----------------------------------------------------------------------------------------------------|-------------------------------------------------|
-| [`InputSpec`](#reci.action_spec.InputSpec)(name[, required, default, description]) | One declared input of a GitHub Action.          |
-| [`OutputSpec`](#reci.action_spec.OutputSpec)(name[, description])                   | One declared output of a GitHub Action.         |
+| [`ActionSpec`](#reci.action_spec.ActionSpec)(ref[, inputs, outputs])             | The typed contract of a single GitHub Action.                                                            |
+|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`InputSpec`](#reci.action_spec.InputSpec)(name[, required, default, ...])      | One declared input of a GitHub Action.                                                                   |
+| [`OutputSpec`](#reci.action_spec.OutputSpec)(name[, description, original_name]) | One declared output of a GitHub Action (see [`InputSpec`](#reci.action_spec.InputSpec)). |
 
 ### Exceptions
 
@@ -42,17 +42,29 @@ The typed contract of a single GitHub Action.
 
 *inputs* and *outputs* are keyed by **normalized** name.
 
-### *class* reci.action_spec.InputSpec(name, required=False, default=None, description='')
+### *class* reci.action_spec.InputSpec(name, required=False, default=None, description='', original_name='')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 One declared input of a GitHub Action.
 
-### *class* reci.action_spec.OutputSpec(name, description='')
+*name* is normalized (used for matching); *original_name* is the spelling
+in `action.yml` (used when emitting, since GitHub does not map `_` to
+`-`).
+
+#### *property* emitted_name *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+The spelling to write into a workflow.
+
+### *class* reci.action_spec.OutputSpec(name, description='', original_name='')
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
-One declared output of a GitHub Action.
+One declared output of a GitHub Action (see [`InputSpec`](#reci.action_spec.InputSpec)).
+
+#### *property* emitted_name *: [str](https://docs.python.org/3/builtins/stdtypes.html#str)*
+
+The spelling to write into a workflow.
 
 ### reci.action_spec.action_local_name(ref)
 
