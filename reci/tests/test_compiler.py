@@ -11,7 +11,7 @@ import sys
 
 import pytest
 
-from reci.compiler import _rewrite_config_refs, compile_recipe
+from reci.compiler import CompilationError, _rewrite_config_refs, compile_recipe
 from reci.recipe import parse_recipe_string
 from reci.yaml_gen import dump_workflow, load_yaml_string
 
@@ -601,3 +601,22 @@ def test_declared_specs_keep_original_spelling():
     )
     assert spec.inputs["root_dir"].emitted_name == "root-dir"
     assert spec.outputs["wheel_path"].emitted_name == "wheel-path"
+
+
+def test_a_needs_cycle_is_a_compilation_error_not_an_invalid_workflow():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", inputs={"w": {"required": True}}, outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"v": {"required": True}}, outputs=["w"]),
+    }
+    loop = (
+        "on: push\njobs:\n  a:\n    steps: [{id: s, uses: x/a@v1}]\n"
+        "  b:\n    steps: [{id: t, uses: x/b@v1}]\n"
+    )
+    with pytest.raises(CompilationError, match=r"cycle.*(a -> b -> a|b -> a -> b)"):
+        _compile(loop, specs)
+    explicit = (
+        "on: push\njobs:\n  a:\n    needs: b\n    steps: [{run: x}]\n"
+        "  b:\n    needs: a\n    steps: [{run: x}]\n"
+    )
+    with pytest.raises(CompilationError, match="cycle"):
+        _compile(explicit, {})

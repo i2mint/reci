@@ -6,6 +6,7 @@ from collections import Counter
 from graphlib import CycleError, TopologicalSorter
 from typing import Any, Iterable
 
+from reci.graph import find_cycle
 from reci.validation.report import Finding, Severity
 from reci.validation.rules import register_rule
 
@@ -23,6 +24,49 @@ def check_cycles(graph, config: dict[str, Any]) -> Iterable[Finding]:
             severity=Severity.ERROR,
             message=f"Cycle detected: {' -> '.join(str(n) for n in cycle)}",
         )
+
+
+@register_rule("DAG005")
+def check_data_flow_needs_cycles(graph, config: dict[str, Any]) -> Iterable[Finding]:
+    """Data flow between jobs must not make their ``needs`` form a cycle.
+
+    The compiler adds a ``needs`` edge from every consumer job to the job that
+    produces an output it reads.  Combined with explicit ``needs:`` (or with the
+    reverse flow) that can close a loop, which GitHub rejects.  A cycle made of
+    explicit ``needs:`` alone is DAG001's.
+    """
+    from reci.compiler import detect_cross_job_edges
+
+    explicit = {job_id: list(graph.job_needs(job_id)) for job_id in graph.job_ids()}
+    if find_cycle(explicit):
+        return
+    edges = detect_cross_job_edges(graph, config)
+    combined = {job_id: set(needs) for job_id, needs in explicit.items()}
+    for edge in edges:
+        combined[edge.target_job].add(edge.source_job)
+    cycle = find_cycle(combined)
+    if not cycle:
+        return
+    reasons = [
+        f"'{e.target_job}.{e.target_step_id}' reads '{e.source_output}' "
+        f"from '{e.source_job}.{e.source_step_id}'"
+        for e in edges
+        for consumer, producer in zip(cycle, cycle[1:])
+        if (e.target_job, e.source_job) == (consumer, producer)
+    ]
+    yield Finding(
+        rule_id="DAG005",
+        severity=Severity.ERROR,
+        message=(
+            f"Job dependencies form a cycle: {' -> '.join(cycle)} "
+            f"(inferred from data flow: {'; '.join(reasons) or 'n/a'})."
+        ),
+        location=cycle[0],
+        suggestion=(
+            "Break the loop: pass the value through config or an explicit "
+            "with:, or move a step into the other job."
+        ),
+    )
 
 
 @register_rule("DAG002")

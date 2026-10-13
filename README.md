@@ -149,6 +149,7 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 |------|----------|----------------|
 | DAG001 | Structure | Cycle detected |
 | DAG002 | Structure | Duplicate output name in a job |
+| DAG005 | Structure | Data flow between jobs makes their `needs` form a cycle |
 | FLOW001 | Data flow | Required input has no source |
 | FLOW002 | Data flow | Ambiguous wiring (multiple upstream matches) |
 | FLOW006 | Data flow | Matrix job output consumed downstream (non-deterministic) |

@@ -410,3 +410,53 @@ def test_DAG002_reports_the_job_as_location():
     specs = {"x/a@v1": mk_spec("x/a@v1", outputs=["v"])}
     g = mk_graph(_steps("{id: one, uses: x/a@v1}", "{id: two, uses: x/a@v1}"), specs)
     assert _only("DAG002", g)[0].location == "j"
+
+
+# -- DAG005: needs cycles made by data flow -------------------------------------
+
+_LOOP_SPECS = {
+    "x/a@v1": mk_spec("x/a@v1", inputs={"w": {"required": True}}, outputs=["v"]),
+    "x/b@v1": mk_spec("x/b@v1", inputs={"v": {"required": True}}, outputs=["w"]),
+}
+
+
+def test_DAG005_jobs_that_consume_each_others_outputs_form_a_cycle():
+    recipe = (
+        "on: push\njobs:\n  a:\n    steps: [{id: s, uses: x/a@v1}]\n"
+        "  b:\n    steps: [{id: t, uses: x/b@v1}]\n"
+    )
+    (f,) = _only("DAG005", mk_graph(recipe, _LOOP_SPECS))
+    assert "a -> b -> a" in f.message or "b -> a -> b" in f.message
+    assert "'b.t' reads 'v' from 'a.s'" in f.message
+    assert f.severity is Severity.ERROR
+
+
+def test_DAG005_explicit_needs_against_the_data_flow_direction_is_a_cycle():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  build:\n    needs: test\n"
+        "    steps: [{id: p, uses: x/a@v1}]\n"
+        "  test:\n    steps: [{id: c, uses: x/b@v1}]\n"
+    )
+    assert len(_only("DAG005", mk_graph(recipe, specs))) == 1
+
+
+def test_DAG005_one_way_flow_and_purely_explicit_cycles_are_not_its_business():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"v": {"required": True}}),
+    }
+    ok = (
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/a@v1}]\n"
+        "  test:\n    needs: build\n    steps: [{id: c, uses: x/b@v1}]\n"
+    )
+    assert _only("DAG005", mk_graph(ok, specs)) == []
+    explicit = (
+        "on: push\njobs:\n  a:\n    needs: b\n    steps: [{run: x}]\n"
+        "  b:\n    needs: a\n    steps: [{run: x}]\n"
+    )
+    g = mk_graph(explicit, {})
+    assert _only("DAG005", g) == [] and len(_only("DAG001", g)) == 1
