@@ -1,24 +1,22 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T23:19:31.185410Z
-commit_sha,0f26d39426a52c44ef7a4bb2e3b23cad120300ba
-commit_message,"fix: FLOW004 reads only expressions, later steps and exact output spellings; new FLOW007 for empty output references (#38)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-13T23:19:34.865774Z
+commit_sha,23b51e5486f2fb661fc4e976c218188200417d58
+commit_message,Merge 0f26d39426a52c44ef7a4bb2e3b23cad120300ba into ffc29cddc172159dd79ed5477985852246f0e808
 python_version,3.10
-metrics.umpyre_stats.num_functions,7802
-metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,290498
-metrics.umpyre_stats.empty_lines,34275
-metrics.umpyre_stats.comment_lines,14906
-metrics.umpyre_stats.docs_lines,21528
-metrics.umpyre_stats.function_lines,113998
-metrics.umpyre_stats.empty_lines_ratio,0.11798704294005466
-metrics.umpyre_stats.comment_lines_ratio,0.051311885107642737
-metrics.umpyre_stats.function_lines_ratio,0.39242266728170244
-metrics.umpyre_stats.mean_lines_per_function,14.61138169700077
-metrics.umpyre_stats.files_analyzed,727
-metrics.umpyre_stats.pypi_version,0.0.31
+metrics.umpyre_stats.num_functions,7898
+metrics.umpyre_stats.num_classes,1982
+metrics.umpyre_stats.total_lines,292657
+metrics.umpyre_stats.empty_lines,34608
+metrics.umpyre_stats.comment_lines,15052
+metrics.umpyre_stats.docs_lines,21561
+metrics.umpyre_stats.function_lines,115557
+metrics.umpyre_stats.empty_lines_ratio,0.11825447537561036
+metrics.umpyre_stats.comment_lines_ratio,0.05143222270439456
+metrics.umpyre_stats.function_lines_ratio,0.39485472754794865
+metrics.umpyre_stats.mean_lines_per_function,14.631172448721195
+metrics.umpyre_stats.files_analyzed,737
+metrics.umpyre_stats.pypi_version,0.0.32
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T23:18:46Z
 metrics.workflow_status.recent_failure_count,0
@@ -38,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.272589683532715
+collection_duration_seconds,4.313270568847656
