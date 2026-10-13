@@ -97,6 +97,17 @@ def config_names(text: str) -> list[str]:
     return names
 
 
+# A GitHub job-output id: letters, digits, ``_`` and ``-``, not starting with a digit.
+_OUTPUT_ID_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_\-]*")
+# What the setup job can carry verbatim in a YAML ``run:`` block and a
+# GITHUB_OUTPUT file: tab and newline plus everything printable.  CR, NEL, the
+# Unicode line/paragraph separators, NUL and other C0 controls are YAML line
+# breaks or invalid, so they would be altered or break the file.
+_UNEXPORTABLE_CHAR_RE = re.compile(
+    "[\x00-\x08\x0b-\x1f\x7f\x80-\x9f\u2028\u2029\ufeff\ufffe\uffff]"
+)
+
+
 @dataclass(frozen=True)
 class RecipeProblem:
     """One problem found by :func:`find_recipe_problems`."""
@@ -170,6 +181,8 @@ def find_recipe_problems(
       or that sits where the ``needs`` context is unavailable.
     * ``DAG006`` — ``needs:`` naming a job that does not exist (``setup`` exists
       only when config is supplied).
+    * ``CONF005`` — a config key that is not a valid output id, or a string value
+      holding characters the setup job cannot export unchanged.
     * ``DAG007`` — a recipe job named ``setup`` while config is supplied: it
       would replace the generated setup job.
     """
@@ -206,6 +219,31 @@ def find_recipe_problems(
                         job_id,
                     )
                 )
+
+    for key, value in config.items():
+        if not _OUTPUT_ID_RE.fullmatch(str(key)):
+            problems.append(
+                RecipeProblem(
+                    "CONF005",
+                    f"Config key '{key}' is not a valid job-output id (letters, "
+                    f"digits, '_' and '-'; not starting with a digit), so the "
+                    f"setup job cannot export it.",
+                    "config",
+                )
+            )
+        if isinstance(value, (dict, list)):
+            continue  # exported as JSON, which escapes control characters
+        bad = _UNEXPORTABLE_CHAR_RE.search(str(value))
+        if bad:
+            problems.append(
+                RecipeProblem(
+                    "CONF005",
+                    f"The value of config key '{key}' contains the character "
+                    f"{bad.group()!r}, which cannot be exported through "
+                    f"$GITHUB_OUTPUT unchanged.",
+                    "config",
+                )
+            )
 
     if config and SETUP_JOB_ID in recipe.jobs:
         problems.append(

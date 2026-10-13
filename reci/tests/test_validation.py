@@ -643,3 +643,10 @@ def test_CONF004_sees_a_config_ref_in_continue_on_error():
     )
     (f,) = _only("CONF004", mk_graph(recipe), {"other": 1})
     assert "config.lenient" in f.message and f.location == "j"
+
+
+def test_CONF005_reports_unusable_keys_and_unexportable_values():
+    g = mk_graph(_steps("{id: r, run: e}"))
+    found = _only("CONF005", g, {"a.b": 1, "ok": "x\ry", "fine": "x\ty", "lst": ["\r"]})
+    assert sorted(f.message.split("'")[1] for f in found) == ["a.b", "ok"]
+    assert all(f.severity is Severity.ERROR and f.location == "config" for f in found)

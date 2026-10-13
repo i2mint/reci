@@ -157,6 +157,7 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 | FLOW006 | Data flow | Matrix job output consumed downstream (non-deterministic) |
 | CONF001 | Config | Required config key missing |
 | CONF004 | Config | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`) |
+| CONF005 | Config | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |
 | PURE001 | Purity | `run:` step breaks typed contract |
 | ACT002 | Action | Referenced action not found |
 
