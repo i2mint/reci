@@ -184,16 +184,67 @@ jobs:
         with: {a: "${{ config.a }}"}
 """
     config = dict.fromkeys(["gate", "e", "versions", "cmd", "s_if", "k", "a"], "v")
-    # lint=False: config.X inside fromJson(...) is not rewritten yet (#19)
-    wf = _compile(recipe, {"x/s@v1": mk_spec("x/s@v1")}, config=config, lint=False)
+    wf = _compile(recipe, {"x/s@v1": mk_spec("x/s@v1")}, config=config)
     j = wf["jobs"]["j"]
     n = "needs.setup.outputs"
+    assert j["strategy"]["matrix"]["py"] == f"${{{{ fromJson({n}.versions) }}}}"
     assert j["if"] == f"${{{{ {n}.gate }}}}"
     assert j["env"] == {"E": f"${{{{ {n}.e }}}}"}
     assert j["steps"][0]["run"] == f"echo ${{{{ {n}.cmd }}}}"
     assert j["steps"][0]["if"] == f"${{{{ {n}.s_if }}}}"
     assert j["steps"][0]["env"] == {"K": f"${{{{ {n}.k }}}}"}
     assert j["steps"][1]["with"] == {"a": f"${{{{ {n}.a }}}}"}
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("${{ fromJson(config.v) }}", "${{ fromJson(needs.setup.outputs.v) }}"),
+        ("${{ !config.flag }}", "${{ !needs.setup.outputs.flag }}"),
+        (
+            "${{ config.a == 'x' && config.b }}",
+            "${{ needs.setup.outputs.a == 'x' && needs.setup.outputs.b }}",
+        ),
+        (
+            "${{ config.test-on-windows == 'true' }}",
+            "${{ needs.setup.outputs.test-on-windows == 'true' }}",
+        ),
+        # not config references: left alone
+        ("${{ github.event.config.x }}", "${{ github.event.config.x }}"),
+        ("${{ format('{0}', 'config.x') }}", "${{ format('{0}', 'config.x') }}"),
+        ("cat config.json ${{ github.sha }}", "cat config.json ${{ github.sha }}"),
+        ("${{ myconfig.x }} ${{ secrets.config.y }}", "${{ myconfig.x }} ${{ secrets.config.y }}"),
+        ("${{ steps.my-config.outputs.x }}", "${{ steps.my-config.outputs.x }}"),
+        ("${{ config.x.y }} ${{ config.z[0] }}", "${{ config.x.y }} ${{ config.z[0] }}"),
+        ("${{ config.1x }}", "${{ config.1x }}"),
+        # untouched expressions stay verbatim (spacing included)
+        ("${{  github.sha  }} ${{ config.a }}", "${{  github.sha  }} ${{ needs.setup.outputs.a }}"),
+        # a `}}` inside a string literal does not end the expression
+        (
+            "${{ format('{{{0}}}', config.x) }}",
+            "${{ format('{{{0}}}', needs.setup.outputs.x) }}",
+        ),
+        ("${{ format('{0} }}', config.y) }}", "${{ format('{0} }}', needs.setup.outputs.y) }}"),
+        # multiline expression
+        ("${{\n  config.a ||\n  config.b\n}}", "${{ needs.setup.outputs.a ||\n  needs.setup.outputs.b }}"),
+        ("${{ unterminated config.a", "${{ unterminated config.a"),
+    ],
+)
+def test_config_refs_are_rewritten_wherever_they_are_expression_code(text, expected):
+    assert _rewrite_config_refs(text) == expected
+
+
+def test_expression_with_config_inside_fromjson_and_comparison_lints_clean():
+    recipe = (
+        "on: push\njobs:\n  j:\n    if: ${{ config.run && !config.skip }}\n"
+        "    strategy:\n      matrix:\n        py: ${{ fromJson(config.versions) }}\n"
+        "    steps: [{run: echo}]\n"
+    )
+    config = {"run": True, "skip": False, "versions": ["3.10", "3.12"]}
+    job = _compile(recipe, {}, config=config)["jobs"]["j"]
+    assert job["if"] == (
+        "${{ needs.setup.outputs.run && !needs.setup.outputs.skip }}"
+    )
 
 
 def test_rewrite_config_refs_tolerates_whitespace_and_leaves_other_contexts():

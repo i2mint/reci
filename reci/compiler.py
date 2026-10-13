@@ -14,14 +14,12 @@ from typing import Any
 
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
 from reci.recipe import Recipe, StepSpec, JobSpec
-from reci.recipe_checks import CONFIG_REF_RE, find_recipe_problems
+from reci.recipe_checks import find_recipe_problems, sub_config_refs
 from reci.graph import RecipeGraph, ActionNode, CrossJobEdge, find_cycle
 
 # ---------------------------------------------------------------------------
 # Config reference rewriting
 # ---------------------------------------------------------------------------
-
-_CONFIG_REF_RE = CONFIG_REF_RE
 
 
 def _rewrite_config_refs(value: str) -> str:
@@ -30,7 +28,7 @@ def _rewrite_config_refs(value: str) -> str:
     >>> _rewrite_config_refs('${{ config.python_versions }}')
     '${{ needs.setup.outputs.python_versions }}'
     """
-    return _CONFIG_REF_RE.sub(r"${{ needs.setup.outputs.\1 }}", value)
+    return sub_config_refs(value, lambda m: f"needs.setup.outputs.{m.group(1)}")
 
 
 def _rewrite_all_config_refs(obj: Any) -> Any:
