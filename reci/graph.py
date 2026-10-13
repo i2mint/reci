@@ -135,6 +135,7 @@ class RecipeGraph:
         self._deps: dict[str, set[str]] = {}  # key -> set of predecessor keys
         self._jobs: dict[str, list[str]] = {}  # job_id -> ordered node keys
         self._job_needs: dict[str, list[str]] = {}  # job_id -> explicit needs:
+        self.recipe: Recipe | None = None  # set by from_recipe
 
     # -- construction -------------------------------------------------------
 
@@ -155,6 +156,7 @@ class RecipeGraph:
         *action_specs* is keyed by action ref (e.g. ``"actions/checkout@v4"``).
         """
         graph = cls()
+        graph.recipe = recipe
         graph._job_needs = {
             job_id: list(job.needs) for job_id, job in recipe.jobs.items()
         }

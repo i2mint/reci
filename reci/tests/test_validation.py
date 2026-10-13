@@ -460,3 +460,60 @@ def test_DAG005_one_way_flow_and_purely_explicit_cycles_are_not_its_business():
     )
     g = mk_graph(explicit, {})
     assert _only("DAG005", g) == [] and len(_only("DAG001", g)) == 1
+
+
+# -- recipe-level checks: CONF004, DAG006, DAG007 -------------------------------
+
+
+def test_CONF004_config_reference_to_a_missing_key():
+    recipe = _steps("{id: r, run: 'echo ${{ config.x }} ${{ config.y }}'}")
+    g = mk_graph(recipe)
+    assert [f.location for f in _only("CONF004", g, {"x": 1})] == ["j.r"]
+    assert "config.y" in _only("CONF004", g, {"x": 1})[0].message
+    assert _only("CONF004", g, {"x": 1, "y": 2}) == []
+    assert len(_only("CONF004", g, {})) == 2  # no config at all: both missing
+
+
+def test_CONF004_sees_references_in_every_rewritten_field():
+    recipe = (
+        "on: push\njobs:\n  j:\n"
+        "    if: ${{ config.a }}\n    runs-on: ${{ config.os }}\n"
+        "    env: {E: '${{ config.e }}'}\n"
+        "    strategy: {matrix: {py: ['${{ config.m }}']}}\n"
+        "    steps:\n      - {id: s, name: 'n ${{ config.n }}', if: '${{ config.i }}',\n"
+        "         run: 'x', env: {K: '${{ config.k }}'}}\n"
+    )
+    missing = {
+        f.message.split("config.")[1].split(",")[0]
+        for f in _only("CONF004", mk_graph(recipe), {"unrelated": 1})
+    }
+    assert missing == {"a", "os", "e", "m", "n", "i", "k"}
+
+
+def test_CONF004_config_in_workflow_env_or_permissions_is_never_valid():
+    recipe = (
+        "on: push\nenv: {W: '${{ config.w }}'}\njobs:\n  j:\n"
+        "    permissions: {contents: '${{ config.p }}'}\n    steps: [{run: e}]\n"
+    )
+    found = _only("CONF004", mk_graph(recipe), {"w": 1, "p": 2})  # keys exist
+    assert sorted(f.location for f in found) == ["j permissions", "workflow env"]
+    assert all("no 'needs' context" in f.message for f in found)
+
+
+def test_DAG006_needs_unknown_job_but_setup_exists_only_with_config():
+    recipe = (
+        "on: push\njobs:\n  a:\n    needs: [setup, ghost]\n"
+        "    steps: [{run: echo}]\n"
+    )
+    g = mk_graph(recipe)
+    no_config = [f.message for f in _only("DAG006", g)]
+    assert len(no_config) == 2 and any("setup job exists only" in m for m in no_config)
+    with_config = [f.message for f in _only("DAG006", g, {"k": 1})]
+    assert len(with_config) == 1 and "'ghost'" in with_config[0]
+
+
+def test_DAG007_job_named_setup_is_only_a_clash_when_config_is_supplied():
+    g = mk_graph("on: push\njobs:\n  setup:\n    steps: [{run: echo}]\n")
+    assert _only("DAG007", g) == []
+    (f,) = _only("DAG007", g, {"k": 1})
+    assert f.severity is Severity.ERROR and f.location == "setup"
