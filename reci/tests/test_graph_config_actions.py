@@ -159,10 +159,10 @@ def test_collect_required_config_keys_skips_upstream_fed_inputs():
     }
 
 
-def test_collect_required_config_keys_cross_job_consumer_follows_written_key():
-    # Another step needs `wheel` from config, so scaffold writes the key and the
-    # compiler (config beats another job's output) feeds the cross-job consumer
-    # from it too: the key must stay required, not become an empty optional.
+def test_collect_required_config_keys_cross_job_consumer_adds_no_requirement():
+    # Scaffold writes only required keys, so a consumer fed by another job's
+    # output must not turn another step's optional `wheel` into a written key
+    # (it would override the cross-job output with a placeholder).
     specs = {
         "x/p@v1": mk_spec("x/p@v1", inputs={"wheel": {}}, outputs=["wheel"]),
         "x/c@v1": mk_spec("x/c@v1", inputs={"wheel": {"required": True}}),
@@ -171,7 +171,7 @@ def test_collect_required_config_keys_cross_job_consumer_follows_written_key():
         "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/p@v1}]\n"
         "  test:\n    steps: [{id: c, uses: x/c@v1}]\n"
     )
-    assert collect_required_config_keys(recipe, specs) == {"wheel": True}
+    assert collect_required_config_keys(recipe, specs) == {"wheel": False}
 
 
 def test_upstream_output_names_is_scoped_by_job_even_for_equal_step_ids():
