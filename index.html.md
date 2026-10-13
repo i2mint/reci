@@ -147,20 +147,21 @@ For each action input, the compiler resolves its value using this precedence:
 
 ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 
-| Rule    | Category   | What it catches                                                                                                                          |
-|---------|------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| DAG001  | Structure  | Cycle detected                                                                                                                           |
-| DAG002  | Structure  | Duplicate output name in a job                                                                                                           |
-| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                  |
-| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                               |
-| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                   |
-| FLOW001 | Data flow  | Required input has no source                                                                                                             |
-| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)                                                                                             |
-| FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic)                                                                                |
-| CONF001 | Config     | Required config key missing                                                                                                              |
-| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`) |
-| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                        |
-| ACT002  | Action     | Referenced action not found                                                                                                              |
+| Rule    | Category   | What it catches                                                                                                                              |
+|---------|------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| DAG001  | Structure  | Cycle detected                                                                                                                               |
+| DAG002  | Structure  | Duplicate output name in a job                                                                                                               |
+| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                      |
+| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                   |
+| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                       |
+| FLOW001 | Data flow  | Required input has no source                                                                                                                 |
+| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)                                                                                                 |
+| FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic)                                                                                    |
+| CONF001 | Config     | Required config key missing                                                                                                                  |
+| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)     |
+| CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |
+| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                            |
+| ACT002  | Action     | Referenced action not found                                                                                                                  |
 
 ## Config adapters
 

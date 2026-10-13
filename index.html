@@ -313,11 +313,15 @@ and other tools, see the standard’s
 <td><p>Config</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">config.X</span> <span class="pre">}}</span></code> names a key that is not in the config, or sits where GitHub has no <code class="docutils literal notranslate"><span class="pre">needs</span></code> context (workflow <code class="docutils literal notranslate"><span class="pre">env</span></code>, job <code class="docutils literal notranslate"><span class="pre">permissions</span></code>)</p></td>
 </tr>
-<tr class="row-even"><td><p>PURE001</p></td>
+<tr class="row-even"><td><p>CONF005</p></td>
+<td><p>Config</p></td>
+<td><p>A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged</p></td>
+</tr>
+<tr class="row-odd"><td><p>PURE001</p></td>
 <td><p>Purity</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">run:</span></code> step breaks typed contract</p></td>
 </tr>
-<tr class="row-odd"><td><p>ACT002</p></td>
+<tr class="row-even"><td><p>ACT002</p></td>
 <td><p>Action</p></td>
 <td><p>Referenced action not found</p></td>
 </tr>
@@ -389,7 +393,7 @@ and other tools, see the standard’s
 
 </section>
 </section>
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 18:29 UTC from <a href="https://github.com/i2mint/reci/commit/7cff011c0ac06cf83e15244d249b4f28e4ae4d30">7cff011</a> (main) · reci 0.0.22 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 22:13 UTC from <a href="https://github.com/i2mint/reci/commit/8511e9c594f73087f79b09a2f2ed5b261c5bf148">8511e9c</a> (main) · reci 0.0.23 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
@@ -418,7 +422,7 @@ and other tools, see the standard’s
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=96ec9c95"></script>
+<script src="_static/documentation_options.js?v=3294188c"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>

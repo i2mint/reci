@@ -1,4 +1,4 @@
-> built 2026-10-13 18:29 UTC from 7cff011 (main) · reci 0.0.22. Details: build_info.json
+> built 2026-10-13 22:13 UTC from 8511e9c (main) · reci 0.0.23. Details: build_info.json
 
 # index.html.md
 
@@ -151,20 +151,21 @@ For each action input, the compiler resolves its value using this precedence:
 
 ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 
-| Rule    | Category   | What it catches                                                                                                                          |
-|---------|------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| DAG001  | Structure  | Cycle detected                                                                                                                           |
-| DAG002  | Structure  | Duplicate output name in a job                                                                                                           |
-| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                  |
-| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                               |
-| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                   |
-| FLOW001 | Data flow  | Required input has no source                                                                                                             |
-| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)                                                                                             |
-| FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic)                                                                                |
-| CONF001 | Config     | Required config key missing                                                                                                              |
-| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`) |
-| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                        |
-| ACT002  | Action     | Referenced action not found                                                                                                              |
+| Rule    | Category   | What it catches                                                                                                                              |
+|---------|------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| DAG001  | Structure  | Cycle detected                                                                                                                               |
+| DAG002  | Structure  | Duplicate output name in a job                                                                                                               |
+| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                      |
+| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                   |
+| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                       |
+| FLOW001 | Data flow  | Required input has no source                                                                                                                 |
+| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)                                                                                                 |
+| FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic)                                                                                    |
+| CONF001 | Config     | Required config key missing                                                                                                                  |
+| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)     |
+| CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |
+| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                            |
+| ACT002  | Action     | Referenced action not found                                                                                                                  |
 
 ## Config adapters
 
@@ -889,6 +890,8 @@ Problems that would make the compiled workflow invalid.
   or that sits where the `needs` context is unavailable.
 * `DAG006` — `needs:` naming a job that does not exist (`setup` exists
   only when config is supplied).
+* `CONF005` — a config key that is not a valid output id, or a string value
+  holding characters the setup job cannot export unchanged.
 * `DAG007` — a recipe job named `setup` while config is supplied: it
   would replace the generated setup job.
 
@@ -1022,10 +1025,18 @@ Config validation rules (CONF001–CONF003).
 
 ### Functions
 
-| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)     | Config keys that are required but not present.        |
-|---------------------------------------------------------------------------------------------------|-------------------------------------------------------|
-| [`check_undefined_config_references`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_undefined_config_references)(graph, config) | `${{ config.X }}` where `X` is not a config key.      |
-| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)               | Config keys present but not referenced by any action. |
+| [`check_exportable_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_exportable_config)(graph, config)           | Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.   |
+|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
+| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)     | Config keys that are required but not present.                              |
+| [`check_undefined_config_references`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_undefined_config_references)(graph, config) | `${{ config.X }}` where `X` is not a config key.                            |
+| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)               | Config keys present but not referenced by any action.                       |
+
+### reci.validation.rules.config_rules.check_exportable_config(graph, config)
+
+Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
 
 ### reci.validation.rules.config_rules.check_missing_required_config(graph, config)
 
@@ -1278,18 +1289,20 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 18:29 UTC** from commit <a href="https://github.com/i2mint/reci/commit/7cff011c0ac06cf83e15244d249b4f28e4ae4d30"><code>7cff011</code></a> on branch <code>main</code>, for **reci 0.0.22** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 22:13 UTC** from commit <a href="https://github.com/i2mint/reci/commit/8511e9c594f73087f79b09a2f2ed5b261c5bf148"><code>8511e9c</code></a> on branch <code>main</code>, for **reci 0.0.23** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.0.23) is ahead of the latest release on PyPI (0.0.22): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/7cff011c0ac06cf83e15244d249b4f28e4ae4d30"><code>7cff011c0ac06cf83e15244d249b4f28e4ae4d30</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/8511e9c594f73087f79b09a2f2ed5b261c5bf148"><code>8511e9c594f73087f79b09a2f2ed5b261c5bf148</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.22</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.23</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1298,9 +1311,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38446875597">38446875597</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38476113924">38476113924</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>a34649835fa02a1e09daa73ad998bb158634b11d</code> (in the history of the built commit) |
+| Event commit | <code>eb2362bec39165944aabec67f3f9d4d6a3833622</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1325,13 +1338,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.22/">0.0.22</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.22/">0.0.22</a>, older than the documented version (0.0.23).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 7cff011c0ac06cf83e15244d249b4f28e4ae4d30
+git checkout 8511e9c594f73087f79b09a2f2ed5b261c5bf148
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

@@ -64,6 +64,8 @@ Problems that would make the compiled workflow invalid.
   or that sits where the `needs` context is unavailable.
 * `DAG006` — `needs:` naming a job that does not exist (`setup` exists
   only when config is supplied).
+* `CONF005` — a config key that is not a valid output id, or a string value
+  holding characters the setup job cannot export unchanged.
 * `DAG007` — a recipe job named `setup` while config is supplied: it
   would replace the generated setup job.
 

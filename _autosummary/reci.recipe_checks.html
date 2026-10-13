@@ -208,6 +208,8 @@ rewritten <code class="docutils literal notranslate"><span class="pre">needs.set
 or that sits where the <code class="docutils literal notranslate"><span class="pre">needs</span></code> context is unavailable.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DAG006</span></code> — <code class="docutils literal notranslate"><span class="pre">needs:</span></code> naming a job that does not exist (<code class="docutils literal notranslate"><span class="pre">setup</span></code> exists
 only when config is supplied).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONF005</span></code> — a config key that is not a valid output id, or a string value
+holding characters the setup job cannot export unchanged.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">DAG007</span></code> — a recipe job named <code class="docutils literal notranslate"><span class="pre">setup</span></code> while config is supplied: it
 would replace the generated setup job.</p></li>
 </ul>
@@ -259,7 +261,7 @@ changes is re-emitted as <code class="docutils literal notranslate"><span class=
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=96ec9c95"></script>
+<script src="../_static/documentation_options.js?v=3294188c"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
