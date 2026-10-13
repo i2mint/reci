@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T22:18:07Z",
+  "built_at": "2026-10-13T22:23:06Z",
   "package": {
     "name": "reci",
-    "version": "0.0.24",
+    "version": "0.0.25",
     "display_name": "reci",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "235ee06993c222650ddf6ea96890df24a6b955ec",
-    "short_commit": "235ee06",
+    "commit": "c3d0def83662ae300952b919db02ebf92428a73f",
+    "short_commit": "c3d0def",
     "branch": "main",
     "tags": [
-      "0.0.24"
+      "0.0.25"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/reci",
-    "commit_url": "https://github.com/i2mint/reci/commit/235ee06993c222650ddf6ea96890df24a6b955ec",
+    "commit_url": "https://github.com/i2mint/reci/commit/c3d0def83662ae300952b919db02ebf92428a73f",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/reci",
-    "sha": "89854112f544a5b7901d9fa033eacd358ed7987e",
+    "sha": "db11c523f4c2b55c6c0514b9caf77c83312b9d15",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "38476613207",
-    "run_url": "https://github.com/i2mint/reci/actions/runs/38476613207",
+    "run_id": "38477183325",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/38477183325",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -62,11 +62,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.0.24",
+    "latest": "0.0.25",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 235ee06993c222650ddf6ea96890df24a6b955ec\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout c3d0def83662ae300952b919db02ebf92428a73f\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,
