@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.360381126403809,
-  "commit_message": "test: skip the JSON-export xfail on Windows too\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "07056f147f3cee54b4351044e7ba3f6c0573b86f",
+  "collection_duration_seconds": 3.549989938735962,
+  "commit_message": "Merge 07056f147f3cee54b4351044e7ba3f6c0573b86f into e1aca33d1b574beb4024fa17bf5bde96909c69b4",
+  "commit_sha": "15b36e81d8787228cced8a939fdd3a144c9d9a00",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:04:12.088443Z",
+  "timestamp": "2026-10-13T17:04:17.458998Z",
   "workflow_status": {}
 }
