@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 4.092440843582153,
+  "collection_duration_seconds": 4.519830942153931,
   "commit_message": "fix: refuse config keys/values the setup job cannot export: CONF005 (#29) (#50)\n\n* fix: refuse config keys/values the setup job cannot export (CONF005) (#29)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: CONF005 also refuses case-colliding and non-string keys and lone surrogates (#29)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "eb2362bec39165944aabec67f3f9d4d6a3833622",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14894,
-      "comment_lines_ratio": 0.051404707668944574,
-      "docs_lines": 21389,
-      "empty_lines": 34181,
-      "empty_lines_ratio": 0.1179712845999862,
-      "files_analyzed": 727,
-      "function_lines": 113354,
-      "function_lines_ratio": 0.3912266169669359,
-      "mean_lines_per_function": 14.579292604501608,
-      "num_classes": 1971,
-      "num_functions": 7775,
+      "comment_lines": 15040,
+      "comment_lines_ratio": 0.05152467120476603,
+      "docs_lines": 21422,
+      "empty_lines": 34514,
+      "empty_lines_ratio": 0.11823952805593715,
+      "files_analyzed": 737,
+      "function_lines": 114913,
+      "function_lines_ratio": 0.39367383923891486,
+      "mean_lines_per_function": 14.599542624825308,
+      "num_classes": 1982,
+      "num_functions": 7871,
       "pypi_version": "0.0.22",
-      "total_lines": 289740
+      "total_lines": 291899
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:12:59.458395Z",
+  "timestamp": "2026-10-13T22:13:00.853123Z",
   "workflow_status": {}
 }
