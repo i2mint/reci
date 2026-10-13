@@ -7,7 +7,7 @@ and the validation rules (which report them), so both always agree.
 from __future__ import annotations
 
 import re
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Any
 
@@ -17,9 +17,53 @@ from reci.recipe import Recipe
 #: when config is supplied.
 SETUP_JOB_ID = "setup"
 
-#: ``${{ config.X }}`` — the one form the compiler rewrites (see reci#19 for refs
-#: inside larger expressions).  Plain text such as ``config.json`` does not match.
-CONFIG_REF_RE = re.compile(r"\$\{\{\s*config\.(\w+)\s*\}\}")
+_EXPRESSION_RE = re.compile(r"\$\{\{(.*?)\}\}", re.DOTALL)
+_STRING_LITERAL_RE = re.compile(r"'(?:[^']|'')*'")  # GitHub strings: '...' with ''
+# ``config.key`` as a whole reference: not a suffix of another path
+# (``github.event.config.x``) or word (``myconfig.x``); keys may contain hyphens.
+_CONFIG_NAME_RE = re.compile(r"(?<![\w.\-])config\.([A-Za-z_][\w\-]*)")
+
+
+def sub_config_refs(text: str, repl: Callable[[re.Match], str]) -> str:
+    """Substitute every ``config.<key>`` inside a ``${{ ... }}`` in *text*.
+
+    *repl* receives the match (``group(1)`` is the key).  Only expression code is
+    touched, never string literals inside an expression (``'config.json'``) and
+    never text outside ``${{ }}`` (``cat config.json``).  An expression that
+    changes is re-emitted as ``${{ <code> }}``; the others are left verbatim.
+
+    >>> sub_config_refs("${{ fromJson(config.v) }} cat config.json",
+    ...                 lambda m: "NEEDS." + m.group(1))
+    '${{ fromJson(NEEDS.v) }} cat config.json'
+    """
+
+    def in_expression(match: re.Match) -> str:
+        body, pieces, pos = match.group(1), [], 0
+        for literal in _STRING_LITERAL_RE.finditer(body):
+            pieces.append(_CONFIG_NAME_RE.sub(repl, body[pos : literal.start()]))
+            pieces.append(literal.group())
+            pos = literal.end()
+        pieces.append(_CONFIG_NAME_RE.sub(repl, body[pos:]))
+        new_body = "".join(pieces)
+        return match.group(0) if new_body == body else "${{ " + new_body.strip() + " }}"
+
+    return _EXPRESSION_RE.sub(in_expression, text)
+
+
+def config_names(text: str) -> list[str]:
+    """The config keys referenced in *text*'s ``${{ ... }}`` expressions, in order.
+
+    >>> config_names("${{ config.a }} ${{ !config.b && 'config.c' }} config.d")
+    ['a', 'b']
+    """
+    names: list[str] = []
+
+    def collect(match: re.Match) -> str:
+        names.append(match.group(1))
+        return match.group(0)
+
+    sub_config_refs(text, collect)
+    return names
 
 
 @dataclass(frozen=True)
@@ -72,7 +116,7 @@ def config_references(recipe: Recipe) -> list[tuple[str, str, bool]]:
     seen: set[tuple[str, str]] = set()
     refs: list[tuple[str, str, bool]] = []
     for location, text, needs_ok in _recipe_strings(recipe):
-        for name in CONFIG_REF_RE.findall(text):
+        for name in config_names(text):
             if (location, name) not in seen:
                 seen.add((location, name))
                 refs.append((location, name, needs_ok))

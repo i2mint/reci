@@ -537,3 +537,13 @@ def test_CONF004_sees_with_values_and_reports_a_repeated_reference_once():
     )
     found = _only("CONF004", mk_graph(recipe, specs))
     assert sorted(f.location for f in found) == ["j.r", "j.s"]
+
+
+def test_CONF004_sees_config_refs_inside_expressions_and_hyphenated_keys():
+    recipe = _steps(
+        "{id: r, if: '${{ fromJson(config.versions) && config.test-on-windows }}', run: e}"
+    )
+    found = _only("CONF004", mk_graph(recipe), {"versions": 1})
+    assert [f.message for f in found] == [
+        "'j.r' references config.test-on-windows, which is not a config key."
+    ]
