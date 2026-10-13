@@ -610,3 +610,27 @@ def test_validation_and_compiler_agree_on_which_required_inputs_are_sourced():
         )
         flagged = bool(_only("FLOW001", mk_graph(text, _XJOB_SPECS)))
         assert flagged != wired, name
+
+
+def test_FLOW001_looks_at_every_step_of_a_producer_job_not_just_one():
+    specs = {
+        **_XJOB_SPECS,
+        "x/d@v1": mk_spec("x/d@v1", outputs=["unrelated"]),
+    }
+    for order in ("x/a@v1, x/d@v1", "x/d@v1, x/a@v1"):  # producer first or last
+        steps = ", ".join(f"{{id: s{i}, uses: {u}}}" for i, u in enumerate(order.split(", ")))
+        recipe = (
+            f"on: push\njobs:\n  build:\n    steps: [{steps}]\n"
+            "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
+        )
+        assert _only("FLOW001", mk_graph(recipe, specs)) == [], order
+
+
+def test_FLOW001_bind_replaces_the_name_searched_for():
+    # `wheel` is produced elsewhere, but the input is bound to a name nobody makes
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/a@v1}]\n"
+        "  test:\n    steps: [{id: t, uses: x/b@v1, bind: {wheel: nothing}}]\n"
+    )
+    g = mk_graph(recipe, _XJOB_SPECS)
+    assert len(_only("FLOW001", g)) == 1 and len(_only("CONF001", g)) == 1
