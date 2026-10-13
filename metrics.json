@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.211369514465332,
-  "commit_message": "fix: never place a scoped key over an existing table of that name (#36)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "892b05bb7d85d08f4c88de2eb45b1eef56d5a391",
+  "collection_duration_seconds": 4.855647325515747,
+  "commit_message": "fix: adapters add a new scoped key inside its existing table (#36) (#59)\n\n* fix: adapters add a new scoped key inside its existing table (#36)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: never place a scoped key over an existing table of that name (#36)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "e38378e60a5c19d60b6a9a4b70065f5918a6918c",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15042,
-      "comment_lines_ratio": 0.05151422788590294,
-      "docs_lines": 21454,
-      "empty_lines": 34529,
-      "empty_lines_ratio": 0.11825121490974222,
-      "files_analyzed": 737,
-      "function_lines": 115000,
-      "function_lines_ratio": 0.393839662736261,
-      "mean_lines_per_function": 14.603174603174603,
-      "num_classes": 1982,
-      "num_functions": 7875,
-      "pypi_version": "0.0.26",
-      "total_lines": 291997
+      "comment_lines": 14896,
+      "comment_lines_ratio": 0.05139422711997737,
+      "docs_lines": 21421,
+      "empty_lines": 34196,
+      "empty_lines_ratio": 0.11798314920748833,
+      "files_analyzed": 727,
+      "function_lines": 113441,
+      "function_lines_ratio": 0.39139450313623475,
+      "mean_lines_per_function": 14.582979817457257,
+      "num_classes": 1971,
+      "num_functions": 7779,
+      "pypi_version": "0.0.27",
+      "total_lines": 289838
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T22:35:27Z",
+      "last_success_timestamp": "2026-10-13T22:37:45Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38478755167",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38478930269",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:37:40.758045Z",
+  "timestamp": "2026-10-13T22:39:04.618410Z",
   "workflow_status": {}
 }
