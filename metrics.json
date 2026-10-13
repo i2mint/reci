@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.407562017440796,
-  "commit_message": "Merge 66b5096024f045eea67f24a7ea2bfc75ad51626c into 131e5a0bbf0136ed1a198c3897b92492864b816e",
-  "commit_sha": "f5b7c36ea6ab1345be98665f03d06e1758a8c47f",
+  "collection_duration_seconds": 4.340153932571411,
+  "commit_message": "fix: refuse recipes that compile to an invalid workflow: undefined config refs, needs on missing jobs, job named setup (#22)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "66b5096024f045eea67f24a7ea2bfc75ad51626c",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.59598015519654,
       "num_classes": 1982,
       "num_functions": 7861,
-      "pypi_version": "0.0.18",
+      "pypi_version": "0.0.17",
       "total_lines": 291705
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T18:02:58.617058Z",
+  "timestamp": "2026-10-13T18:03:00.194844Z",
   "workflow_status": {}
 }
