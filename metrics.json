@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.305080413818359,
-  "commit_message": "Merge 07056f147f3cee54b4351044e7ba3f6c0573b86f into e1aca33d1b574beb4024fa17bf5bde96909c69b4",
-  "commit_sha": "15b36e81d8787228cced8a939fdd3a144c9d9a00",
+  "collection_duration_seconds": 3.7609755992889404,
+  "commit_message": "test: behavioural suite for compiler, validation, graph, config, adapters, CLI; add CHANGELOG (#11)\n\nRefs #4",
+  "commit_sha": "34d6a6acf10eab7a7238a532db3bcbb66fbfebfc",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15005,
-      "comment_lines_ratio": 0.05161838515812323,
-      "docs_lines": 21243,
-      "empty_lines": 34276,
-      "empty_lines_ratio": 0.11791214726290115,
-      "files_analyzed": 724,
-      "function_lines": 114047,
-      "function_lines_ratio": 0.39233068791259446,
-      "mean_lines_per_function": 14.610171662823468,
-      "num_classes": 1975,
-      "num_functions": 7806,
+      "comment_lines": 14859,
+      "comment_lines_ratio": 0.05149862060360723,
+      "docs_lines": 21210,
+      "empty_lines": 33943,
+      "empty_lines_ratio": 0.11764033105513426,
+      "files_analyzed": 714,
+      "function_lines": 112488,
+      "function_lines_ratio": 0.3898631694231489,
+      "mean_lines_per_function": 14.58988326848249,
+      "num_classes": 1964,
+      "num_functions": 7710,
       "pypi_version": "0.0.8",
-      "total_lines": 290691
+      "total_lines": 288532
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T17:04:19Z",
+      "last_success_timestamp": "2026-10-13T17:04:36Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38435520618",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38435527917",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:04:28.594140Z",
+  "timestamp": "2026-10-13T17:05:52.652688Z",
   "workflow_status": {}
 }
