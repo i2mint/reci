@@ -16,7 +16,7 @@ input renaming, and `outputs:` annotations on `run:` steps.
 
 | [`JobSpec`](#reci.recipe.JobSpec)(id[, steps, needs, if_, runs_on, ...])   | One job inside a recipe.   |
 |---------------------------------------------------------------------------------------------------|----------------------------|
-| [`Recipe`](#reci.recipe.Recipe)(name, on[, jobs, env, defaults])          | A complete reci recipe.    |
+| [`Recipe`](#reci.recipe.Recipe)(name, on[, jobs, env, defaults, extra])   | A complete reci recipe.    |
 | [`StepSpec`](#reci.recipe.StepSpec)(id[, uses, run, with_, if_, name, ...]) | One step inside a job.     |
 
 ### Exceptions
@@ -24,13 +24,13 @@ input renaming, and `outputs:` annotations on `run:` steps.
 | [`RecipeParseError`](#reci.recipe.RecipeParseError)   | Raised when a recipe YAML is structurally invalid.   |
 |---------------------------------------------------------------------|------------------------------------------------------|
 
-### *class* reci.recipe.JobSpec(id, steps=<factory>, needs=<factory>, if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=<factory>)
+### *class* reci.recipe.JobSpec(id, steps=<factory>, needs=<factory>, if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=<factory>, extra=<factory>)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 One job inside a recipe.
 
-### *class* reci.recipe.Recipe(name, on, jobs=<factory>, env=<factory>, defaults=None)
+### *class* reci.recipe.Recipe(name, on, jobs=<factory>, env=<factory>, defaults=None, extra=<factory>)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -42,7 +42,7 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when a recipe YAML is structurally invalid.
 
-### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=<factory>, if_=None, name=None, outputs=<factory>, bind=<factory>, env=<factory>)
+### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=<factory>, if_=None, name=None, outputs=<factory>, bind=<factory>, env=<factory>, continue_on_error=False, extra=<factory>)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 

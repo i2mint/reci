@@ -179,315 +179,408 @@
 </span><span id="line-8"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="line-9">
 </span><span id="line-10"><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
-</span><span id="line-11"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-</span><span id="line-12"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
-</span><span id="line-13">
-</span><span id="line-14"><span class="kn">from</span><span class="w"> </span><span class="nn">ruamel.yaml.scalarbool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarBoolean</span>
-</span><span id="line-15">
-</span><span id="line-16"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.action_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_name</span>
-</span><span id="line-17"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.yaml_gen</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_yaml</span><span class="p">,</span> <span class="n">load_yaml_string</span><span class="p">,</span> <span class="n">scalar_source_text</span>
-</span><span id="line-18">
+</span><span id="line-11"><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span id="line-12"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">replace</span>
+</span><span id="line-13"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+</span><span id="line-14">
+</span><span id="line-15"><span class="kn">from</span><span class="w"> </span><span class="nn">ruamel.yaml.scalarbool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ScalarBoolean</span>
+</span><span id="line-16">
+</span><span id="line-17"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.action_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_name</span>
+</span><span id="line-18"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.yaml_gen</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_yaml</span><span class="p">,</span> <span class="n">load_yaml_string</span><span class="p">,</span> <span class="n">scalar_source_text</span>
 </span><span id="line-19">
-</span><span id="line-20"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-21"><span class="c1"># Data classes</span>
-</span><span id="line-22"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-23">
+</span><span id="line-20">
+</span><span id="line-21"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-22"><span class="c1"># Data classes</span>
+</span><span id="line-23"><span class="c1"># ---------------------------------------------------------------------------</span>
 </span><span id="line-24">
+</span><span id="line-25">
 <div class="viewcode-block" id="StepSpec">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe.html#reci.recipe.StepSpec">[docs]</a>
-</span><span id="line-25"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-26"><span class="k">class</span><span class="w"> </span><span class="nc">StepSpec</span><span class="p">:</span>
-</span><span id="line-27"><span class="w">    </span><span class="sd">"""One step inside a job."""</span>
-</span><span id="line-28">
-</span><span id="line-29">    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="line-30">    <span class="n">uses</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-31">    <span class="n">run</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-32">    <span class="n">with_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-33">    <span class="n">if_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-34">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-35">    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="line-36">    <span class="n">bind</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-37">    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+</span><span id="line-26"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-27"><span class="k">class</span><span class="w"> </span><span class="nc">StepSpec</span><span class="p">:</span>
+</span><span id="line-28"><span class="w">    </span><span class="sd">"""One step inside a job."""</span>
+</span><span id="line-29">
+</span><span id="line-30">    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="line-31">    <span class="n">uses</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-32">    <span class="n">run</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-33">    <span class="n">with_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-34">    <span class="n">if_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-35">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-36">    <span class="n">outputs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="line-37">    <span class="n">bind</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-38">    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-39">    <span class="n">continue_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># a bool, or an expression string</span>
+</span><span id="line-40">    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># other keys, kept verbatim</span></div>
 
-</span><span id="line-38">
-</span><span id="line-39">
+</span><span id="line-41">
+</span><span id="line-42">
 <div class="viewcode-block" id="JobSpec">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe.html#reci.recipe.JobSpec">[docs]</a>
-</span><span id="line-40"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-41"><span class="k">class</span><span class="w"> </span><span class="nc">JobSpec</span><span class="p">:</span>
-</span><span id="line-42"><span class="w">    </span><span class="sd">"""One job inside a recipe."""</span>
-</span><span id="line-43">
-</span><span id="line-44">    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="line-45">    <span class="n">steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="line-46">    <span class="n">needs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
-</span><span id="line-47">    <span class="n">if_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-48">    <span class="n">runs_on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"ubuntu-latest"</span>
-</span><span id="line-49">    <span class="n">strategy</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-50">    <span class="n">permissions</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-51">    <span class="n">continue_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># a bool, or an expression string</span>
-</span><span id="line-52">    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+</span><span id="line-43"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-44"><span class="k">class</span><span class="w"> </span><span class="nc">JobSpec</span><span class="p">:</span>
+</span><span id="line-45"><span class="w">    </span><span class="sd">"""One job inside a recipe."""</span>
+</span><span id="line-46">
+</span><span id="line-47">    <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="line-48">    <span class="n">steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="line-49">    <span class="n">needs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+</span><span id="line-50">    <span class="n">if_</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-51">    <span class="n">runs_on</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">dict</span> <span class="o">=</span> <span class="s2">"ubuntu-latest"</span>
+</span><span id="line-52">    <span class="n">strategy</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-53">    <span class="n">permissions</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-54">    <span class="n">continue_on_error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># a bool, or an expression string</span>
+</span><span id="line-55">    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-56">    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># other keys, kept verbatim</span></div>
 
-</span><span id="line-53">
-</span><span id="line-54">
+</span><span id="line-57">
+</span><span id="line-58">
 <div class="viewcode-block" id="Recipe">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe.html#reci.recipe.Recipe">[docs]</a>
-</span><span id="line-55"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-56"><span class="k">class</span><span class="w"> </span><span class="nc">Recipe</span><span class="p">:</span>
-</span><span id="line-57"><span class="w">    </span><span class="sd">"""A complete reci recipe."""</span>
-</span><span id="line-58">
-</span><span id="line-59">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="line-60">    <span class="n">on</span><span class="p">:</span> <span class="n">Any</span>  <span class="c1"># str | list | dict — GitHub Actions trigger spec</span>
-</span><span id="line-61">    <span class="n">jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">JobSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-62">    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-</span><span id="line-63">    <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+</span><span id="line-59"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-60"><span class="k">class</span><span class="w"> </span><span class="nc">Recipe</span><span class="p">:</span>
+</span><span id="line-61"><span class="w">    </span><span class="sd">"""A complete reci recipe."""</span>
+</span><span id="line-62">
+</span><span id="line-63">    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="line-64">    <span class="n">on</span><span class="p">:</span> <span class="n">Any</span>  <span class="c1"># str | list | dict — GitHub Actions trigger spec</span>
+</span><span id="line-65">    <span class="n">jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">JobSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-66">    <span class="n">env</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+</span><span id="line-67">    <span class="n">defaults</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-68">    <span class="n">extra</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>  <span class="c1"># other keys, kept verbatim</span></div>
 
-</span><span id="line-64">
-</span><span id="line-65">
-</span><span id="line-66"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-67"><span class="c1"># Parsing</span>
-</span><span id="line-68"><span class="c1"># ---------------------------------------------------------------------------</span>
 </span><span id="line-69">
 </span><span id="line-70">
+</span><span id="line-71"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-72"><span class="c1"># Parsing</span>
+</span><span id="line-73"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-74">
+</span><span id="line-75">
 <div class="viewcode-block" id="RecipeParseError">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe.html#reci.recipe.RecipeParseError">[docs]</a>
-</span><span id="line-71"><span class="k">class</span><span class="w"> </span><span class="nc">RecipeParseError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-</span><span id="line-72"><span class="w">    </span><span class="sd">"""Raised when a recipe YAML is structurally invalid."""</span></div>
+</span><span id="line-76"><span class="k">class</span><span class="w"> </span><span class="nc">RecipeParseError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+</span><span id="line-77"><span class="w">    </span><span class="sd">"""Raised when a recipe YAML is structurally invalid."""</span></div>
 
-</span><span id="line-73">
-</span><span id="line-74">
-</span><span id="line-75"><span class="k">def</span><span class="w"> </span><span class="nf">_auto_step_id</span><span class="p">(</span><span class="n">step_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-76"><span class="w">    </span><span class="sd">"""Derive a step ID when the recipe doesn't provide one.</span>
-</span><span id="line-77">
-</span><span id="line-78"><span class="sd">    Uses the action's last path segment (normalized) or ``step_{index}``.</span>
-</span><span id="line-79"><span class="sd">    """</span>
-</span><span id="line-80">    <span class="k">if</span> <span class="n">uses</span> <span class="o">:=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"uses"</span><span class="p">):</span>
-</span><span id="line-81">        <span class="n">last</span> <span class="o">=</span> <span class="n">uses</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"@"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</span><span id="line-82">        <span class="k">return</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
-</span><span id="line-83">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"step_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-84">
-</span><span id="line-85">
-</span><span id="line-86"><span class="k">def</span><span class="w"> </span><span class="nf">_scalar_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-87"><span class="w">    </span><span class="sd">"""Render a YAML scalar the way GitHub Actions passes it on.</span>
-</span><span id="line-88">
-</span><span id="line-89"><span class="sd">    GitHub sees ``true`` / ``false`` / empty, not Python's ``True`` / ``None``.</span>
+</span><span id="line-78">
+</span><span id="line-79">
+</span><span id="line-80"><span class="k">def</span><span class="w"> </span><span class="nf">_auto_step_id</span><span class="p">(</span><span class="n">step_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-81"><span class="w">    </span><span class="sd">"""Derive a step ID when the recipe doesn't provide one.</span>
+</span><span id="line-82">
+</span><span id="line-83"><span class="sd">    Uses the action's last path segment (normalized) or ``step_{index}``.</span>
+</span><span id="line-84"><span class="sd">    """</span>
+</span><span id="line-85">    <span class="k">if</span> <span class="n">uses</span> <span class="o">:=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"uses"</span><span class="p">):</span>
+</span><span id="line-86">        <span class="n">last</span> <span class="o">=</span> <span class="n">uses</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"@"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span id="line-87">        <span class="k">return</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+</span><span id="line-88">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"step_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-89">
 </span><span id="line-90">
-</span><span id="line-91"><span class="sd">    &gt;&gt;&gt; _scalar_to_str(True), _scalar_to_str(False), _scalar_to_str(None)</span>
-</span><span id="line-92"><span class="sd">    ('true', 'false', '')</span>
-</span><span id="line-93"><span class="sd">    &gt;&gt;&gt; _scalar_to_str(3), _scalar_to_str("x")</span>
-</span><span id="line-94"><span class="sd">    ('3', 'x')</span>
-</span><span id="line-95"><span class="sd">    &gt;&gt;&gt; _scalar_to_str(load_yaml_string("v: 3.10")["v"])</span>
-</span><span id="line-96"><span class="sd">    '3.10'</span>
-</span><span id="line-97"><span class="sd">    """</span>
-</span><span id="line-98">    <span class="c1"># ruamel returns an anchored/aliased boolean as ScalarBoolean (an int subclass)</span>
-</span><span id="line-99">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ScalarBoolean</span><span class="p">)):</span>
-</span><span id="line-100">        <span class="k">return</span> <span class="s2">"true"</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">"false"</span>
-</span><span id="line-101">    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-102">        <span class="k">return</span> <span class="s2">""</span>
-</span><span id="line-103">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-</span><span id="line-104">        <span class="c1"># Keep the spelling the author wrote: str() turns 3.10 into 3.1</span>
-</span><span id="line-105">        <span class="k">return</span> <span class="n">scalar_source_text</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-106">    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-107">
-</span><span id="line-108">
-</span><span id="line-109"><span class="k">def</span><span class="w"> </span><span class="nf">_require_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-110">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-</span><span id="line-111">        <span class="n">kind</span> <span class="o">=</span> <span class="s2">"mapping"</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"list"</span>
-</span><span id="line-112">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2"> must be a scalar, got a </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+</span><span id="line-91"><span class="k">def</span><span class="w"> </span><span class="nf">_scalar_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-92"><span class="w">    </span><span class="sd">"""Render a YAML scalar the way GitHub Actions passes it on.</span>
+</span><span id="line-93">
+</span><span id="line-94"><span class="sd">    GitHub sees ``true`` / ``false`` / empty, not Python's ``True`` / ``None``.</span>
+</span><span id="line-95">
+</span><span id="line-96"><span class="sd">    &gt;&gt;&gt; _scalar_to_str(True), _scalar_to_str(False), _scalar_to_str(None)</span>
+</span><span id="line-97"><span class="sd">    ('true', 'false', '')</span>
+</span><span id="line-98"><span class="sd">    &gt;&gt;&gt; _scalar_to_str(3), _scalar_to_str("x")</span>
+</span><span id="line-99"><span class="sd">    ('3', 'x')</span>
+</span><span id="line-100"><span class="sd">    &gt;&gt;&gt; _scalar_to_str(load_yaml_string("v: 3.10")["v"])</span>
+</span><span id="line-101"><span class="sd">    '3.10'</span>
+</span><span id="line-102"><span class="sd">    """</span>
+</span><span id="line-103">    <span class="c1"># ruamel returns an anchored/aliased boolean as ScalarBoolean (an int subclass)</span>
+</span><span id="line-104">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ScalarBoolean</span><span class="p">)):</span>
+</span><span id="line-105">        <span class="k">return</span> <span class="s2">"true"</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">"false"</span>
+</span><span id="line-106">    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-107">        <span class="k">return</span> <span class="s2">""</span>
+</span><span id="line-108">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+</span><span id="line-109">        <span class="c1"># Keep the spelling the author wrote: str() turns 3.10 into 3.1</span>
+</span><span id="line-110">        <span class="k">return</span> <span class="n">scalar_source_text</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-111">    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-112">
 </span><span id="line-113">
-</span><span id="line-114">
-</span><span id="line-115"><span class="k">def</span><span class="w"> </span><span class="nf">_if_condition</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-116"><span class="w">    </span><span class="sd">"""An ``if:`` value as expression text (``if: false`` is the expression ``false``).</span>
-</span><span id="line-117">
-</span><span id="line-118"><span class="sd">    &gt;&gt;&gt; _if_condition(False, where="x"), _if_condition(None, where="x")</span>
-</span><span id="line-119"><span class="sd">    ('false', None)</span>
-</span><span id="line-120"><span class="sd">    &gt;&gt;&gt; _if_condition("always()", where="x")</span>
-</span><span id="line-121"><span class="sd">    'always()'</span>
-</span><span id="line-122"><span class="sd">    """</span>
-</span><span id="line-123">    <span class="n">_require_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span>
-</span><span id="line-124">    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_scalar_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-125">
-</span><span id="line-126">
-</span><span id="line-127"><span class="k">def</span><span class="w"> </span><span class="nf">_continue_on_error</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-128"><span class="w">    </span><span class="sd">"""``continue-on-error``: a boolean, or an expression kept as text.</span>
-</span><span id="line-129">
-</span><span id="line-130"><span class="sd">    &gt;&gt;&gt; _continue_on_error(True, where="x")</span>
-</span><span id="line-131"><span class="sd">    True</span>
-</span><span id="line-132"><span class="sd">    &gt;&gt;&gt; _continue_on_error("${{ matrix.exp }}", where="x")</span>
-</span><span id="line-133"><span class="sd">    '${{ matrix.exp }}'</span>
-</span><span id="line-134"><span class="sd">    &gt;&gt;&gt; _continue_on_error("false", where="x"), _continue_on_error(None, where="x")</span>
-</span><span id="line-135"><span class="sd">    (False, False)</span>
-</span><span id="line-136"><span class="sd">    """</span>
-</span><span id="line-137">    <span class="n">_require_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span>
-</span><span id="line-138">    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-139">        <span class="k">return</span> <span class="kc">False</span>
-</span><span id="line-140">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-141">        <span class="n">lowered</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-</span><span id="line-142">        <span class="k">return</span> <span class="p">{</span><span class="s2">"true"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">lowered</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-</span><span id="line-143">    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-144">
-</span><span id="line-145">
-</span><span id="line-146"><span class="k">def</span><span class="w"> </span><span class="nf">_str_map</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-147"><span class="w">    </span><span class="sd">"""A ``with:`` / ``env:`` mapping with every key and value a string.</span>
-</span><span id="line-148">
-</span><span id="line-149"><span class="sd">    *where* names the mapping in the error for a non-scalar value (GitHub</span>
-</span><span id="line-150"><span class="sd">    accepts only scalars there).</span>
-</span><span id="line-151">
-</span><span id="line-152"><span class="sd">    &gt;&gt;&gt; _str_map({"a": True, "b": 2}, where="x")</span>
-</span><span id="line-153"><span class="sd">    {'a': 'true', 'b': '2'}</span>
-</span><span id="line-154"><span class="sd">    """</span>
-</span><span id="line-155">    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-156">    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">mapping</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-157">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-</span><span id="line-158">            <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
-</span><span id="line-159">                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' must be a scalar, got a "</span>
-</span><span id="line-160">                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'mapping'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="nb">dict</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'list'</span><span class="si">}</span><span class="s2">."</span>
-</span><span id="line-161">            <span class="p">)</span>
-</span><span id="line-162">        <span class="n">result</span><span class="p">[</span><span class="n">_scalar_to_str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_scalar_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</span><span id="line-163">    <span class="k">return</span> <span class="n">result</span>
-</span><span id="line-164">
-</span><span id="line-165">
-</span><span id="line-166"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_step</span><span class="p">(</span><span class="n">step_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepSpec</span><span class="p">:</span>
-</span><span id="line-167">    <span class="n">uses</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"uses"</span><span class="p">)</span>
-</span><span id="line-168">    <span class="n">run</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"run"</span><span class="p">)</span>
-</span><span id="line-169">    <span class="k">if</span> <span class="n">uses</span> <span class="ow">and</span> <span class="n">run</span><span class="p">:</span>
-</span><span id="line-170">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
-</span><span id="line-171">            <span class="sa">f</span><span class="s2">"Step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> in job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' has both 'uses' and 'run'."</span>
-</span><span id="line-172">        <span class="p">)</span>
-</span><span id="line-173">    <span class="k">if</span> <span class="ow">not</span> <span class="n">uses</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">run</span><span class="p">:</span>
-</span><span id="line-174">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
-</span><span id="line-175">            <span class="sa">f</span><span class="s2">"Step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> in job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' has neither 'uses' nor 'run'."</span>
-</span><span id="line-176">        <span class="p">)</span>
-</span><span id="line-177">
-</span><span id="line-178">    <span class="n">step_id</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_auto_step_id</span><span class="p">(</span>
-</span><span id="line-179">        <span class="n">step_data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span>
-</span><span id="line-180">    <span class="p">)</span>
-</span><span id="line-181">
-</span><span id="line-182">    <span class="n">outputs</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outputs"</span><span class="p">,</span> <span class="p">[])</span>
-</span><span id="line-183">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-184">        <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">outputs</span><span class="p">]</span>
-</span><span id="line-185">
-</span><span id="line-186">    <span class="n">bind</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bind"</span><span class="p">,</span> <span class="p">{})</span>
-</span><span id="line-187">    <span class="n">with_</span> <span class="o">=</span> <span class="n">_str_map</span><span class="p">(</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"with"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> with:"</span><span class="p">)</span>
-</span><span id="line-188">
-</span><span id="line-189">    <span class="k">return</span> <span class="n">StepSpec</span><span class="p">(</span>
-</span><span id="line-190">        <span class="nb">id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
-</span><span id="line-191">        <span class="n">uses</span><span class="o">=</span><span class="n">uses</span><span class="p">,</span>
-</span><span id="line-192">        <span class="n">run</span><span class="o">=</span><span class="n">run</span><span class="p">,</span>
-</span><span id="line-193">        <span class="n">with_</span><span class="o">=</span><span class="n">with_</span><span class="p">,</span>
-</span><span id="line-194">        <span class="n">if_</span><span class="o">=</span><span class="n">_if_condition</span><span class="p">(</span>
-</span><span id="line-195">            <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"if"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> if:"</span>
-</span><span id="line-196">        <span class="p">),</span>
-</span><span id="line-197">        <span class="n">name</span><span class="o">=</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
-</span><span id="line-198">        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
-</span><span id="line-199">        <span class="n">bind</span><span class="o">=</span><span class="n">bind</span><span class="p">,</span>
-</span><span id="line-200">        <span class="n">env</span><span class="o">=</span><span class="n">_str_map</span><span class="p">(</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> env:"</span><span class="p">),</span>
-</span><span id="line-201">    <span class="p">)</span>
-</span><span id="line-202">
-</span><span id="line-203">
-</span><span id="line-204"><span class="k">def</span><span class="w"> </span><span class="nf">_ensure_unique_step_ids</span><span class="p">(</span><span class="n">steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]:</span>
-</span><span id="line-205"><span class="w">    </span><span class="sd">"""Deduplicate step IDs within a job by appending a numeric suffix."""</span>
-</span><span id="line-206">    <span class="n">seen</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-207">    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-208">    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
-</span><span id="line-209">        <span class="n">base</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">id</span>
-</span><span id="line-210">        <span class="n">count</span> <span class="o">=</span> <span class="n">seen</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="line-211">        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="line-212">            <span class="n">new_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">base</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-213">            <span class="n">step</span> <span class="o">=</span> <span class="n">StepSpec</span><span class="p">(</span>
-</span><span id="line-214">                <span class="nb">id</span><span class="o">=</span><span class="n">new_id</span><span class="p">,</span>
-</span><span id="line-215">                <span class="n">uses</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">,</span>
-</span><span id="line-216">                <span class="n">run</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
-</span><span id="line-217">                <span class="n">with_</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span>
-</span><span id="line-218">                <span class="n">if_</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span>
-</span><span id="line-219">                <span class="n">name</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="line-220">                <span class="n">outputs</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">outputs</span><span class="p">,</span>
-</span><span id="line-221">                <span class="n">bind</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">bind</span><span class="p">,</span>
-</span><span id="line-222">                <span class="n">env</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
-</span><span id="line-223">            <span class="p">)</span>
-</span><span id="line-224">        <span class="n">seen</span><span class="p">[</span><span class="n">base</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
-</span><span id="line-225">        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
-</span><span id="line-226">    <span class="k">return</span> <span class="n">result</span>
-</span><span id="line-227">
-</span><span id="line-228">
-</span><span id="line-229"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_job</span><span class="p">(</span><span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">job_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobSpec</span><span class="p">:</span>
-</span><span id="line-230">    <span class="n">raw_steps</span> <span class="o">=</span> <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"steps"</span><span class="p">,</span> <span class="p">[])</span>
-</span><span id="line-231">    <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_steps</span><span class="p">:</span>
-</span><span id="line-232">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' has no steps."</span><span class="p">)</span>
-</span><span id="line-233">
-</span><span id="line-234">    <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">_parse_step</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_steps</span><span class="p">)]</span>
-</span><span id="line-235">    <span class="n">steps</span> <span class="o">=</span> <span class="n">_ensure_unique_step_ids</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+</span><span id="line-114"><span class="k">def</span><span class="w"> </span><span class="nf">_require_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-115">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+</span><span id="line-116">        <span class="n">kind</span> <span class="o">=</span> <span class="s2">"mapping"</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"list"</span>
+</span><span id="line-117">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2"> must be a scalar, got a </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+</span><span id="line-118">
+</span><span id="line-119">
+</span><span id="line-120"><span class="k">def</span><span class="w"> </span><span class="nf">_if_condition</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-121"><span class="w">    </span><span class="sd">"""An ``if:`` value as expression text (``if: false`` is the expression ``false``).</span>
+</span><span id="line-122">
+</span><span id="line-123"><span class="sd">    &gt;&gt;&gt; _if_condition(False, where="x"), _if_condition(None, where="x")</span>
+</span><span id="line-124"><span class="sd">    ('false', None)</span>
+</span><span id="line-125"><span class="sd">    &gt;&gt;&gt; _if_condition("always()", where="x")</span>
+</span><span id="line-126"><span class="sd">    'always()'</span>
+</span><span id="line-127"><span class="sd">    """</span>
+</span><span id="line-128">    <span class="n">_require_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span>
+</span><span id="line-129">    <span class="k">return</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_scalar_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-130">
+</span><span id="line-131">
+</span><span id="line-132"><span class="k">def</span><span class="w"> </span><span class="nf">_continue_on_error</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-133"><span class="w">    </span><span class="sd">"""``continue-on-error``: a boolean, or an expression kept as text.</span>
+</span><span id="line-134">
+</span><span id="line-135"><span class="sd">    &gt;&gt;&gt; _continue_on_error(True, where="x")</span>
+</span><span id="line-136"><span class="sd">    True</span>
+</span><span id="line-137"><span class="sd">    &gt;&gt;&gt; _continue_on_error("${{ matrix.exp }}", where="x")</span>
+</span><span id="line-138"><span class="sd">    '${{ matrix.exp }}'</span>
+</span><span id="line-139"><span class="sd">    &gt;&gt;&gt; _continue_on_error("false", where="x"), _continue_on_error(None, where="x")</span>
+</span><span id="line-140"><span class="sd">    (False, False)</span>
+</span><span id="line-141"><span class="sd">    """</span>
+</span><span id="line-142">    <span class="n">_require_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="n">where</span><span class="p">)</span>
+</span><span id="line-143">    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-144">        <span class="k">return</span> <span class="kc">False</span>
+</span><span id="line-145">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-146">        <span class="n">lowered</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span id="line-147">        <span class="k">if</span> <span class="n">lowered</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">):</span>
+</span><span id="line-148">            <span class="k">return</span> <span class="n">lowered</span> <span class="o">==</span> <span class="s2">"true"</span>
+</span><span id="line-149">        <span class="k">if</span> <span class="s2">"${{"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="line-150">            <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
+</span><span id="line-151">                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2"> must be a boolean or a $</span><span class="se">{{{{</span><span class="s2"> </span><span class="se">}}}}</span><span class="s2"> expression, got </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">."</span>
+</span><span id="line-152">            <span class="p">)</span>
+</span><span id="line-153">        <span class="k">return</span> <span class="n">value</span>
+</span><span id="line-154">    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-155">
+</span><span id="line-156">
+</span><span id="line-157"><span class="n">_DECIMAL_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[+-]?\d*\.\d+"</span><span class="p">)</span>
+</span><span id="line-158">
+</span><span id="line-159">
+</span><span id="line-160"><span class="k">def</span><span class="w"> </span><span class="nf">_spell_numbers</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">decimals_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="line-161"><span class="w">    </span><span class="sd">"""*obj* with each number whose source spelling ``str()`` loses kept as text.</span>
+</span><span id="line-162">
+</span><span id="line-163"><span class="sd">    GitHub reads an unquoted ``3.10`` in a matrix as the number 3.1; quoting the</span>
+</span><span id="line-164"><span class="sd">    author's spelling keeps ``3.10``.  Other numbers are left alone.  With</span>
+</span><span id="line-165"><span class="sd">    *decimals_only*, only decimal spellings (``3.10``, ``1.50``) count: hex or</span>
+</span><span id="line-166"><span class="sd">    exponent numbers keep meaning what YAML says they mean.</span>
+</span><span id="line-167">
+</span><span id="line-168"><span class="sd">    &gt;&gt;&gt; _spell_numbers(load_yaml_string("m: [3.10, 3.9, 7, 0x10, x]")["m"],</span>
+</span><span id="line-169"><span class="sd">    ...                decimals_only=True)</span>
+</span><span id="line-170"><span class="sd">    ['3.10', 3.9, 7, 16, 'x']</span>
+</span><span id="line-171"><span class="sd">    """</span>
+</span><span id="line-172">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-173">        <span class="k">return</span> <span class="p">{</span>
+</span><span id="line-174">            <span class="n">k</span><span class="p">:</span> <span class="n">_spell_numbers</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">decimals_only</span><span class="o">=</span><span class="n">decimals_only</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="line-175">        <span class="p">}</span>
+</span><span id="line-176">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="line-177">        <span class="k">return</span> <span class="p">[</span><span class="n">_spell_numbers</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">decimals_only</span><span class="o">=</span><span class="n">decimals_only</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+</span><span id="line-178">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ScalarBoolean</span><span class="p">)):</span>
+</span><span id="line-179">        <span class="n">text</span> <span class="o">=</span> <span class="n">scalar_source_text</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</span><span id="line-180">        <span class="k">if</span> <span class="n">text</span> <span class="o">!=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">decimals_only</span> <span class="ow">or</span> <span class="n">_DECIMAL_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">text</span><span class="p">)):</span>
+</span><span id="line-181">            <span class="k">return</span> <span class="n">text</span>
+</span><span id="line-182">    <span class="k">return</span> <span class="n">obj</span>
+</span><span id="line-183">
+</span><span id="line-184">
+</span><span id="line-185"><span class="k">def</span><span class="w"> </span><span class="nf">_spell_env_numbers</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="line-186"><span class="w">    </span><span class="sd">"""*obj* with the numbers under any ``env`` key spelled as written.</span>
+</span><span id="line-187">
+</span><span id="line-188"><span class="sd">    ``env`` values are strings for GitHub (``container.env``, ``services.&lt;id&gt;.env``);</span>
+</span><span id="line-189"><span class="sd">    other keys (``timeout-minutes``, ``ports``) are typed and keep their numbers.</span>
+</span><span id="line-190"><span class="sd">    """</span>
+</span><span id="line-191">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-192">        <span class="k">return</span> <span class="p">{</span>
+</span><span id="line-193">            <span class="n">k</span><span class="p">:</span> <span class="n">_spell_numbers</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">"env"</span> <span class="k">else</span> <span class="n">_spell_env_numbers</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="line-194">            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="line-195">        <span class="p">}</span>
+</span><span id="line-196">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="line-197">        <span class="k">return</span> <span class="p">[</span><span class="n">_spell_env_numbers</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+</span><span id="line-198">    <span class="k">return</span> <span class="n">obj</span>
+</span><span id="line-199">
+</span><span id="line-200">
+</span><span id="line-201"><span class="k">def</span><span class="w"> </span><span class="nf">_strategy</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-202"><span class="w">    </span><span class="sd">"""A ``strategy:`` mapping with the numbers of its ``matrix`` spelled as written."""</span>
+</span><span id="line-203">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"matrix"</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="line-204">        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">value</span><span class="p">,</span> <span class="s2">"matrix"</span><span class="p">:</span> <span class="n">_spell_numbers</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s2">"matrix"</span><span class="p">],</span> <span class="n">decimals_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)}</span>
+</span><span id="line-205">    <span class="k">return</span> <span class="n">value</span>
+</span><span id="line-206">
+</span><span id="line-207">
+</span><span id="line-208"><span class="k">def</span><span class="w"> </span><span class="nf">_extra</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">known</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="line-209"><span class="w">    </span><span class="sd">"""The keys of *data* reci does not model, kept so they reach the workflow.</span>
+</span><span id="line-210">
+</span><span id="line-211"><span class="sd">    ``timeout-minutes``, ``container``, ``services``, ``concurrency``, ``shell``,</span>
+</span><span id="line-212"><span class="sd">    ``working-directory``... are plain GitHub keys with no recipe meaning;</span>
+</span><span id="line-213"><span class="sd">    dropping them silently would change what the workflow does.  Keys starting</span>
+</span><span id="line-214"><span class="sd">    with ``x-`` or ``.`` are the YAML idiom for holding anchors and are dropped:</span>
+</span><span id="line-215"><span class="sd">    GitHub rejects them.</span>
+</span><span id="line-216">
+</span><span id="line-217"><span class="sd">    &gt;&gt;&gt; _extra({"id": "a", "shell": "bash", "x-common": {"k": 1}}, frozenset({"id"}))</span>
+</span><span id="line-218"><span class="sd">    {'shell': 'bash'}</span>
+</span><span id="line-219"><span class="sd">    """</span>
+</span><span id="line-220">    <span class="k">return</span> <span class="p">{</span>
+</span><span id="line-221">        <span class="n">k</span><span class="p">:</span> <span class="n">_spell_env_numbers</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="line-222">        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="line-223">        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s2">"x-"</span><span class="p">,</span> <span class="s2">"."</span><span class="p">)))</span>
+</span><span id="line-224">    <span class="p">}</span>
+</span><span id="line-225">
+</span><span id="line-226">
+</span><span id="line-227"><span class="n">_STEP_KEYS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+</span><span id="line-228">    <span class="p">{</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"uses"</span><span class="p">,</span> <span class="s2">"run"</span><span class="p">,</span> <span class="s2">"with"</span><span class="p">,</span> <span class="s2">"if"</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"outputs"</span><span class="p">,</span> <span class="s2">"bind"</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">}</span>
+</span><span id="line-229">    <span class="o">|</span> <span class="p">{</span><span class="s2">"continue-on-error"</span><span class="p">}</span>
+</span><span id="line-230"><span class="p">)</span>
+</span><span id="line-231"><span class="n">_JOB_KEYS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
+</span><span id="line-232">    <span class="p">{</span><span class="s2">"steps"</span><span class="p">,</span> <span class="s2">"needs"</span><span class="p">,</span> <span class="s2">"if"</span><span class="p">,</span> <span class="s2">"runs-on"</span><span class="p">,</span> <span class="s2">"strategy"</span><span class="p">,</span> <span class="s2">"permissions"</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">}</span>
+</span><span id="line-233">    <span class="o">|</span> <span class="p">{</span><span class="s2">"continue-on-error"</span><span class="p">}</span>
+</span><span id="line-234"><span class="p">)</span>
+</span><span id="line-235"><span class="n">_RECIPE_KEYS</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"on"</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">"jobs"</span><span class="p">,</span> <span class="s2">"env"</span><span class="p">,</span> <span class="s2">"defaults"</span><span class="p">})</span>
 </span><span id="line-236">
-</span><span id="line-237">    <span class="n">needs</span> <span class="o">=</span> <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"needs"</span><span class="p">,</span> <span class="p">[])</span>
-</span><span id="line-238">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">needs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-239">        <span class="n">needs</span> <span class="o">=</span> <span class="p">[</span><span class="n">needs</span><span class="p">]</span>
+</span><span id="line-237">
+</span><span id="line-238"><span class="k">def</span><span class="w"> </span><span class="nf">_str_map</span><span class="p">(</span><span class="n">mapping</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">where</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-239"><span class="w">    </span><span class="sd">"""A ``with:`` / ``env:`` mapping with every key and value a string.</span>
 </span><span id="line-240">
-</span><span id="line-241">    <span class="k">return</span> <span class="n">JobSpec</span><span class="p">(</span>
-</span><span id="line-242">        <span class="nb">id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
-</span><span id="line-243">        <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
-</span><span id="line-244">        <span class="n">needs</span><span class="o">=</span><span class="n">needs</span><span class="p">,</span>
-</span><span id="line-245">        <span class="n">if_</span><span class="o">=</span><span class="n">_if_condition</span><span class="p">(</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"if"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' if:"</span><span class="p">),</span>
-</span><span id="line-246">        <span class="n">runs_on</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"runs-on"</span><span class="p">,</span> <span class="s2">"ubuntu-latest"</span><span class="p">),</span>
-</span><span id="line-247">        <span class="n">strategy</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"strategy"</span><span class="p">),</span>
-</span><span id="line-248">        <span class="n">permissions</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"permissions"</span><span class="p">),</span>
-</span><span id="line-249">        <span class="n">continue_on_error</span><span class="o">=</span><span class="n">_continue_on_error</span><span class="p">(</span>
-</span><span id="line-250">            <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"continue-on-error"</span><span class="p">),</span>
-</span><span id="line-251">            <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' continue-on-error:"</span><span class="p">,</span>
-</span><span id="line-252">        <span class="p">),</span>
-</span><span id="line-253">        <span class="n">env</span><span class="o">=</span><span class="n">_str_map</span><span class="p">(</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' env:"</span><span class="p">),</span>
-</span><span id="line-254">    <span class="p">)</span>
-</span><span id="line-255">
+</span><span id="line-241"><span class="sd">    *where* names the mapping in the error for a non-scalar value (GitHub</span>
+</span><span id="line-242"><span class="sd">    accepts only scalars there).</span>
+</span><span id="line-243">
+</span><span id="line-244"><span class="sd">    &gt;&gt;&gt; _str_map({"a": True, "b": 2}, where="x")</span>
+</span><span id="line-245"><span class="sd">    {'a': 'true', 'b': '2'}</span>
+</span><span id="line-246"><span class="sd">    """</span>
+</span><span id="line-247">    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-248">    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="n">mapping</span> <span class="ow">or</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-249">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+</span><span id="line-250">            <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
+</span><span id="line-251">                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">: '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' must be a scalar, got a "</span>
+</span><span id="line-252">                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'mapping'</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="nb">dict</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'list'</span><span class="si">}</span><span class="s2">."</span>
+</span><span id="line-253">            <span class="p">)</span>
+</span><span id="line-254">        <span class="n">result</span><span class="p">[</span><span class="n">_scalar_to_str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">_scalar_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-255">    <span class="k">return</span> <span class="n">result</span>
 </span><span id="line-256">
+</span><span id="line-257">
+</span><span id="line-258"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_step</span><span class="p">(</span><span class="n">step_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepSpec</span><span class="p">:</span>
+</span><span id="line-259">    <span class="n">uses</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"uses"</span><span class="p">)</span>
+</span><span id="line-260">    <span class="n">run</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"run"</span><span class="p">)</span>
+</span><span id="line-261">    <span class="k">if</span> <span class="n">uses</span> <span class="ow">and</span> <span class="n">run</span><span class="p">:</span>
+</span><span id="line-262">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
+</span><span id="line-263">            <span class="sa">f</span><span class="s2">"Step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> in job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' has both 'uses' and 'run'."</span>
+</span><span id="line-264">        <span class="p">)</span>
+</span><span id="line-265">    <span class="k">if</span> <span class="ow">not</span> <span class="n">uses</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">run</span><span class="p">:</span>
+</span><span id="line-266">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
+</span><span id="line-267">            <span class="sa">f</span><span class="s2">"Step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> in job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' has neither 'uses' nor 'run'."</span>
+</span><span id="line-268">        <span class="p">)</span>
+</span><span id="line-269">
+</span><span id="line-270">    <span class="n">step_id</span> <span class="o">=</span> <span class="n">_scalar_to_str</span><span class="p">(</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_auto_step_id</span><span class="p">(</span>
+</span><span id="line-271">        <span class="n">step_data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span>
+</span><span id="line-272">    <span class="p">)</span>
+</span><span id="line-273">
+</span><span id="line-274">    <span class="n">outputs</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outputs"</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="line-275">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-276">        <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">outputs</span><span class="p">]</span>
+</span><span id="line-277">
+</span><span id="line-278">    <span class="n">bind</span> <span class="o">=</span> <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"bind"</span><span class="p">,</span> <span class="p">{})</span>
+</span><span id="line-279">    <span class="n">with_</span> <span class="o">=</span> <span class="n">_str_map</span><span class="p">(</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"with"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> with:"</span><span class="p">)</span>
+</span><span id="line-280">
+</span><span id="line-281">    <span class="k">return</span> <span class="n">StepSpec</span><span class="p">(</span>
+</span><span id="line-282">        <span class="nb">id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+</span><span id="line-283">        <span class="n">uses</span><span class="o">=</span><span class="n">uses</span><span class="p">,</span>
+</span><span id="line-284">        <span class="n">run</span><span class="o">=</span><span class="n">run</span><span class="p">,</span>
+</span><span id="line-285">        <span class="n">with_</span><span class="o">=</span><span class="n">with_</span><span class="p">,</span>
+</span><span id="line-286">        <span class="n">if_</span><span class="o">=</span><span class="n">_if_condition</span><span class="p">(</span>
+</span><span id="line-287">            <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"if"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> if:"</span>
+</span><span id="line-288">        <span class="p">),</span>
+</span><span id="line-289">        <span class="n">name</span><span class="o">=</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
+</span><span id="line-290">        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
+</span><span id="line-291">        <span class="n">bind</span><span class="o">=</span><span class="n">bind</span><span class="p">,</span>
+</span><span id="line-292">        <span class="n">env</span><span class="o">=</span><span class="n">_str_map</span><span class="p">(</span><span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> env:"</span><span class="p">),</span>
+</span><span id="line-293">        <span class="n">continue_on_error</span><span class="o">=</span><span class="n">_continue_on_error</span><span class="p">(</span>
+</span><span id="line-294">            <span class="n">step_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"continue-on-error"</span><span class="p">),</span>
+</span><span id="line-295">            <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' step </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2"> continue-on-error:"</span><span class="p">,</span>
+</span><span id="line-296">        <span class="p">),</span>
+</span><span id="line-297">        <span class="n">extra</span><span class="o">=</span><span class="n">_extra</span><span class="p">(</span><span class="n">step_data</span><span class="p">,</span> <span class="n">_STEP_KEYS</span><span class="p">),</span>
+</span><span id="line-298">    <span class="p">)</span>
+</span><span id="line-299">
+</span><span id="line-300">
+</span><span id="line-301"><span class="k">def</span><span class="w"> </span><span class="nf">_ensure_unique_step_ids</span><span class="p">(</span>
+</span><span id="line-302">    <span class="n">steps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">explicit</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="line-303"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]:</span>
+</span><span id="line-304"><span class="w">    </span><span class="sd">"""Make step ids unique within a job (GitHub compares them case-insensitively).</span>
+</span><span id="line-305">
+</span><span id="line-306"><span class="sd">    A step id the author wrote is never changed: two of them that collide are an</span>
+</span><span id="line-307"><span class="sd">    error.  A derived id (from ``uses:``) that collides gets the first free</span>
+</span><span id="line-308"><span class="sd">    ``_1``, ``_2``... suffix, one that no other step uses.</span>
+</span><span id="line-309"><span class="sd">    """</span>
+</span><span id="line-310">    <span class="n">taken</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># casefolded id -&gt; spelling</span>
+</span><span id="line-311">    <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">written</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">explicit</span><span class="p">):</span>
+</span><span id="line-312">        <span class="k">if</span> <span class="n">written</span><span class="p">:</span>
+</span><span id="line-313">            <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">taken</span><span class="p">:</span>
+</span><span id="line-314">                <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span>
+</span><span id="line-315">                    <span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' has two steps with the id '</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">' "</span>
+</span><span id="line-316">                    <span class="sa">f</span><span class="s2">"(step ids are case-insensitive): "</span>
+</span><span id="line-317">                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">taken</span><span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">casefold</span><span class="p">()]</span><span class="si">!r}</span><span class="s2"> and </span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="si">!r}</span><span class="s2">."</span>
+</span><span id="line-318">                <span class="p">)</span>
+</span><span id="line-319">            <span class="n">taken</span><span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">casefold</span><span class="p">()]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">id</span>
+</span><span id="line-320">    <span class="n">result</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">StepSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-321">    <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">written</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">explicit</span><span class="p">):</span>
+</span><span id="line-322">        <span class="k">if</span> <span class="ow">not</span> <span class="n">written</span><span class="p">:</span>
+</span><span id="line-323">            <span class="n">new_id</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="mi">0</span>
+</span><span id="line-324">            <span class="k">while</span> <span class="n">new_id</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="ow">in</span> <span class="n">taken</span><span class="p">:</span>
+</span><span id="line-325">                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-326">                <span class="n">new_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-327">            <span class="n">taken</span><span class="p">[</span><span class="n">new_id</span><span class="o">.</span><span class="n">casefold</span><span class="p">()]</span> <span class="o">=</span> <span class="n">new_id</span>
+</span><span id="line-328">            <span class="n">step</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">new_id</span><span class="p">)</span>
+</span><span id="line-329">        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+</span><span id="line-330">    <span class="k">return</span> <span class="n">result</span>
+</span><span id="line-331">
+</span><span id="line-332">
+</span><span id="line-333"><span class="k">def</span><span class="w"> </span><span class="nf">_job_extra</span><span class="p">(</span><span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">job_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="line-334">    <span class="n">extra</span> <span class="o">=</span> <span class="n">_extra</span><span class="p">(</span><span class="n">job_data</span><span class="p">,</span> <span class="n">_JOB_KEYS</span><span class="p">)</span>
+</span><span id="line-335">    <span class="k">if</span> <span class="s2">"outputs"</span> <span class="ow">in</span> <span class="n">extra</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra</span><span class="p">[</span><span class="s2">"outputs"</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-336">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' outputs: must be a mapping."</span><span class="p">)</span>
+</span><span id="line-337">    <span class="k">return</span> <span class="n">extra</span>
+</span><span id="line-338">
+</span><span id="line-339">
+</span><span id="line-340"><span class="k">def</span><span class="w"> </span><span class="nf">_parse_job</span><span class="p">(</span><span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">job_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobSpec</span><span class="p">:</span>
+</span><span id="line-341">    <span class="n">raw_steps</span> <span class="o">=</span> <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"steps"</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="line-342">    <span class="k">if</span> <span class="ow">not</span> <span class="n">raw_steps</span><span class="p">:</span>
+</span><span id="line-343">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' has no steps."</span><span class="p">)</span>
+</span><span id="line-344">
+</span><span id="line-345">    <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="n">_parse_step</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">raw_steps</span><span class="p">)]</span>
+</span><span id="line-346">    <span class="n">steps</span> <span class="o">=</span> <span class="n">_ensure_unique_step_ids</span><span class="p">(</span>
+</span><span id="line-347">        <span class="n">steps</span><span class="p">,</span> <span class="n">explicit</span><span class="o">=</span><span class="p">[</span><span class="nb">bool</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"id"</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">raw_steps</span><span class="p">],</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span>
+</span><span id="line-348">    <span class="p">)</span>
+</span><span id="line-349">
+</span><span id="line-350">    <span class="n">needs</span> <span class="o">=</span> <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"needs"</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="line-351">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">needs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-352">        <span class="n">needs</span> <span class="o">=</span> <span class="p">[</span><span class="n">needs</span><span class="p">]</span>
+</span><span id="line-353">
+</span><span id="line-354">    <span class="k">return</span> <span class="n">JobSpec</span><span class="p">(</span>
+</span><span id="line-355">        <span class="nb">id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+</span><span id="line-356">        <span class="n">steps</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span>
+</span><span id="line-357">        <span class="n">needs</span><span class="o">=</span><span class="n">needs</span><span class="p">,</span>
+</span><span id="line-358">        <span class="n">if_</span><span class="o">=</span><span class="n">_if_condition</span><span class="p">(</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"if"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' if:"</span><span class="p">),</span>
+</span><span id="line-359">        <span class="n">runs_on</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"runs-on"</span><span class="p">,</span> <span class="s2">"ubuntu-latest"</span><span class="p">),</span>
+</span><span id="line-360">        <span class="n">strategy</span><span class="o">=</span><span class="n">_strategy</span><span class="p">(</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"strategy"</span><span class="p">)),</span>
+</span><span id="line-361">        <span class="n">permissions</span><span class="o">=</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"permissions"</span><span class="p">),</span>
+</span><span id="line-362">        <span class="n">continue_on_error</span><span class="o">=</span><span class="n">_continue_on_error</span><span class="p">(</span>
+</span><span id="line-363">            <span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"continue-on-error"</span><span class="p">),</span>
+</span><span id="line-364">            <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' continue-on-error:"</span><span class="p">,</span>
+</span><span id="line-365">        <span class="p">),</span>
+</span><span id="line-366">        <span class="n">env</span><span class="o">=</span><span class="n">_str_map</span><span class="p">(</span><span class="n">job_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' env:"</span><span class="p">),</span>
+</span><span id="line-367">        <span class="n">extra</span><span class="o">=</span><span class="n">_job_extra</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">job_data</span><span class="p">),</span>
+</span><span id="line-368">    <span class="p">)</span>
+</span><span id="line-369">
+</span><span id="line-370">
+</span><span id="line-371"><span class="k">def</span><span class="w"> </span><span class="nf">_recipe_from_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Recipe</span><span class="p">:</span>
+</span><span id="line-372">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-373">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> is not a YAML mapping."</span><span class="p">)</span>
+</span><span id="line-374">    <span class="n">jobs_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jobs"</span><span class="p">,</span> <span class="p">{})</span>
+</span><span id="line-375">    <span class="k">if</span> <span class="ow">not</span> <span class="n">jobs_data</span><span class="p">:</span>
+</span><span id="line-376">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2"> has no jobs."</span><span class="p">)</span>
+</span><span id="line-377">
+</span><span id="line-378">    <span class="k">return</span> <span class="n">Recipe</span><span class="p">(</span>
+</span><span id="line-379">        <span class="n">name</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">),</span>
+</span><span id="line-380">        <span class="n">on</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"on"</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="p">[])),</span>  <span class="c1"># PyYAML compat: `on:` → True key</span>
+</span><span id="line-381">        <span class="n">jobs</span><span class="o">=</span><span class="p">{</span><span class="n">jid</span><span class="p">:</span> <span class="n">_parse_job</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span><span class="p">)</span> <span class="k">for</span> <span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span> <span class="ow">in</span> <span class="n">jobs_data</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+</span><span id="line-382">        <span class="n">env</span><span class="o">=</span><span class="n">_str_map</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="s2">"Workflow env:"</span><span class="p">),</span>
+</span><span id="line-383">        <span class="n">defaults</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"defaults"</span><span class="p">),</span>
+</span><span id="line-384">        <span class="n">extra</span><span class="o">=</span><span class="n">_extra</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_RECIPE_KEYS</span><span class="p">),</span>
+</span><span id="line-385">    <span class="p">)</span>
+</span><span id="line-386">
+</span><span id="line-387">
 <div class="viewcode-block" id="parse_recipe">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe.html#reci.recipe.parse_recipe">[docs]</a>
-</span><span id="line-257"><span class="k">def</span><span class="w"> </span><span class="nf">parse_recipe</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Recipe</span><span class="p">:</span>
-</span><span id="line-258"><span class="w">    </span><span class="sd">"""Load a recipe YAML and return a :class:`Recipe`."""</span>
-</span><span id="line-259">    <span class="n">data</span> <span class="o">=</span> <span class="n">load_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</span><span id="line-260">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="line-261">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Recipe file '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">' is not a YAML mapping."</span><span class="p">)</span>
-</span><span id="line-262">
-</span><span id="line-263">    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-</span><span id="line-264">    <span class="n">on</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"on"</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="p">[]))</span>  <span class="c1"># PyYAML compat: `on:` → True key</span>
-</span><span id="line-265">    <span class="n">jobs_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jobs"</span><span class="p">,</span> <span class="p">{})</span>
-</span><span id="line-266">    <span class="k">if</span> <span class="ow">not</span> <span class="n">jobs_data</span><span class="p">:</span>
-</span><span id="line-267">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Recipe file '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">' has no jobs."</span><span class="p">)</span>
-</span><span id="line-268">
-</span><span id="line-269">    <span class="n">jobs</span> <span class="o">=</span> <span class="p">{</span><span class="n">jid</span><span class="p">:</span> <span class="n">_parse_job</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span><span class="p">)</span> <span class="k">for</span> <span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span> <span class="ow">in</span> <span class="n">jobs_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="line-270">
-</span><span id="line-271">    <span class="k">return</span> <span class="n">Recipe</span><span class="p">(</span>
-</span><span id="line-272">        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-</span><span id="line-273">        <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span>
-</span><span id="line-274">        <span class="n">jobs</span><span class="o">=</span><span class="n">jobs</span><span class="p">,</span>
-</span><span id="line-275">        <span class="n">env</span><span class="o">=</span><span class="n">_str_map</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="s2">"Workflow env:"</span><span class="p">),</span>
-</span><span id="line-276">        <span class="n">defaults</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"defaults"</span><span class="p">),</span>
-</span><span id="line-277">    <span class="p">)</span></div>
+</span><span id="line-388"><span class="k">def</span><span class="w"> </span><span class="nf">parse_recipe</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Recipe</span><span class="p">:</span>
+</span><span id="line-389"><span class="w">    </span><span class="sd">"""Load a recipe YAML and return a :class:`Recipe`."""</span>
+</span><span id="line-390">    <span class="k">return</span> <span class="n">_recipe_from_data</span><span class="p">(</span><span class="n">load_yaml</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">source</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Recipe file '</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span></div>
 
-</span><span id="line-278">
-</span><span id="line-279">
+</span><span id="line-391">
+</span><span id="line-392">
 <div class="viewcode-block" id="parse_recipe_string">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe.html#reci.recipe.parse_recipe_string">[docs]</a>
-</span><span id="line-280"><span class="k">def</span><span class="w"> </span><span class="nf">parse_recipe_string</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Recipe</span><span class="p">:</span>
-</span><span id="line-281"><span class="w">    </span><span class="sd">"""Parse a recipe from a YAML string (useful for testing)."""</span>
-</span><span id="line-282">    <span class="kn">from</span><span class="w"> </span><span class="nn">reci.yaml_gen</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_yaml_string</span>
-</span><span id="line-283">
-</span><span id="line-284">    <span class="n">data</span> <span class="o">=</span> <span class="n">load_yaml_string</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</span><span id="line-285">    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="line-286">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="s2">"Recipe is not a YAML mapping."</span><span class="p">)</span>
-</span><span id="line-287">
-</span><span id="line-288">    <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-</span><span id="line-289">    <span class="n">on</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"on"</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="p">[]))</span>
-</span><span id="line-290">    <span class="n">jobs_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jobs"</span><span class="p">,</span> <span class="p">{})</span>
-</span><span id="line-291">    <span class="k">if</span> <span class="ow">not</span> <span class="n">jobs_data</span><span class="p">:</span>
-</span><span id="line-292">        <span class="k">raise</span> <span class="n">RecipeParseError</span><span class="p">(</span><span class="s2">"Recipe has no jobs."</span><span class="p">)</span>
-</span><span id="line-293">
-</span><span id="line-294">    <span class="n">jobs</span> <span class="o">=</span> <span class="p">{</span><span class="n">jid</span><span class="p">:</span> <span class="n">_parse_job</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span><span class="p">)</span> <span class="k">for</span> <span class="n">jid</span><span class="p">,</span> <span class="n">jdata</span> <span class="ow">in</span> <span class="n">jobs_data</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-</span><span id="line-295">
-</span><span id="line-296">    <span class="k">return</span> <span class="n">Recipe</span><span class="p">(</span>
-</span><span id="line-297">        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-</span><span id="line-298">        <span class="n">on</span><span class="o">=</span><span class="n">on</span><span class="p">,</span>
-</span><span id="line-299">        <span class="n">jobs</span><span class="o">=</span><span class="n">jobs</span><span class="p">,</span>
-</span><span id="line-300">        <span class="n">env</span><span class="o">=</span><span class="n">_str_map</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"env"</span><span class="p">),</span> <span class="n">where</span><span class="o">=</span><span class="s2">"Workflow env:"</span><span class="p">),</span>
-</span><span id="line-301">        <span class="n">defaults</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"defaults"</span><span class="p">),</span>
-</span><span id="line-302">    <span class="p">)</span></div>
+</span><span id="line-393"><span class="k">def</span><span class="w"> </span><span class="nf">parse_recipe_string</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Recipe</span><span class="p">:</span>
+</span><span id="line-394"><span class="w">    </span><span class="sd">"""Parse a recipe from a YAML string (useful for testing)."""</span>
+</span><span id="line-395">    <span class="k">return</span> <span class="n">_recipe_from_data</span><span class="p">(</span><span class="n">load_yaml_string</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">source</span><span class="o">=</span><span class="s2">"Recipe"</span><span class="p">)</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -502,7 +595,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=828725f0"></script>
+    <script src="../../_static/documentation_options.js?v=61a342a2"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

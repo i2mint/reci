@@ -1,4 +1,4 @@
-> built 2026-10-13 22:44 UTC from 6e7b48a (main) · reci 0.0.29. Details: build_info.json
+> built 2026-10-13 23:00 UTC from af8cf6e (main) · reci 0.0.30. Details: build_info.json
 
 # index.html.md
 
@@ -775,7 +775,7 @@ input renaming, and `outputs:` annotations on `run:` steps.
 
 | [`JobSpec`](_autosummary/reci.recipe.html.md#reci.recipe.JobSpec)(id[, steps, needs, if_, runs_on, ...])   | One job inside a recipe.   |
 |---------------------------------------------------------------------------------------------------|----------------------------|
-| [`Recipe`](_autosummary/reci.recipe.html.md#reci.recipe.Recipe)(name, on[, jobs, env, defaults])          | A complete reci recipe.    |
+| [`Recipe`](_autosummary/reci.recipe.html.md#reci.recipe.Recipe)(name, on[, jobs, env, defaults, extra])   | A complete reci recipe.    |
 | [`StepSpec`](_autosummary/reci.recipe.html.md#reci.recipe.StepSpec)(id[, uses, run, with_, if_, name, ...]) | One step inside a job.     |
 
 ### Exceptions
@@ -783,13 +783,13 @@ input renaming, and `outputs:` annotations on `run:` steps.
 | [`RecipeParseError`](_autosummary/reci.recipe.html.md#reci.recipe.RecipeParseError)   | Raised when a recipe YAML is structurally invalid.   |
 |---------------------------------------------------------------------|------------------------------------------------------|
 
-### *class* reci.recipe.JobSpec(id, steps=<factory>, needs=<factory>, if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=<factory>)
+### *class* reci.recipe.JobSpec(id, steps=<factory>, needs=<factory>, if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=<factory>, extra=<factory>)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 One job inside a recipe.
 
-### *class* reci.recipe.Recipe(name, on, jobs=<factory>, env=<factory>, defaults=None)
+### *class* reci.recipe.Recipe(name, on, jobs=<factory>, env=<factory>, defaults=None, extra=<factory>)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -801,7 +801,7 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when a recipe YAML is structurally invalid.
 
-### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=<factory>, if_=None, name=None, outputs=<factory>, bind=<factory>, env=<factory>)
+### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=<factory>, if_=None, name=None, outputs=<factory>, bind=<factory>, env=<factory>, continue_on_error=False, extra=<factory>)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -1174,10 +1174,10 @@ An output is declared but never consumed downstream.
 Consumed means: matched by an input of a later step (by name, honouring
 `bind:`), or referenced explicitly as `steps.<id>.outputs.<name>` (dot or
 bracket syntax, ids compared case-insensitively) in a step of the same job:
-its `with:`, `env:`, `run:`, `if:` or `name:` (job-level fields
-cannot read `steps`).  `needs.` references
-are not counted: a recipe cannot declare job outputs, so only the compiler’s
-own forwarding makes them resolve.
+its `with:`, `env:`, `run:`, `if:`, `name:` or other keys, or in a
+job `outputs:` entry (a job’s other fields cannot read `steps`).
+`needs.` references are not counted: only the compiler’s own forwarding and
+the job `outputs:` the recipe declares make them resolve.
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
@@ -1313,20 +1313,20 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-13 22:44 UTC** from commit <a href="https://github.com/i2mint/reci/commit/6e7b48a1908d59844adefaee418309ee926c531d"><code>6e7b48a</code></a> on branch <code>main</code>, for **reci 0.0.29** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 23:00 UTC** from commit <a href="https://github.com/i2mint/reci/commit/af8cf6ec44cb36a46314752e4e85c1b892192d20"><code>af8cf6e</code></a> on branch <code>main</code>, for **reci 0.0.30** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.0.29) is ahead of the latest release on PyPI (0.0.27): these docs describe unreleased code.
+- The documented version (0.0.30) is ahead of the latest release on PyPI (0.0.29): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/6e7b48a1908d59844adefaee418309ee926c531d"><code>6e7b48a1908d59844adefaee418309ee926c531d</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/af8cf6ec44cb36a46314752e4e85c1b892192d20"><code>af8cf6ec44cb36a46314752e4e85c1b892192d20</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.29</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.30</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1335,9 +1335,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38479574152">38479574152</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38481316592">38481316592</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>dcfb82ee4623c8125bc38c84ff0f7647eec499a4</code> (in the history of the built commit) |
+| Event commit | <code>5a94dca768d388e9be220a88224ee20c4e286c1e</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1362,13 +1362,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.27/">0.0.27</a>, older than the documented version (0.0.29).
+Latest release: <a href="https://pypi.org/project/reci/0.0.29/">0.0.29</a>, older than the documented version (0.0.30).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 6e7b48a1908d59844adefaee418309ee926c531d
+git checkout af8cf6ec44cb36a46314752e4e85c1b892192d20
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
