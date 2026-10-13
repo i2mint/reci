@@ -1,8 +1,13 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:20:34.141006Z
-commit_sha,15ce06bdc5c895c2c7749404c29c464475deb309
-commit_message,Merge 817e2ca5c3be7786719418db49e1154bf39b60e8 into ac6819c4eb5056134918aa31eb61d3d3a9e14db1
+timestamp,2026-10-13T17:20:42.440303Z
+commit_sha,817e2ca5c3be7786719418db49e1154bf39b60e8
+commit_message,"fix: emit action input/output ids with their original spelling (#10)
+
+Matching stays normalized; InputSpec/OutputSpec keep original_name and the
+compiler writes it into with: and steps./needs.<job>.outputs references.
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7839
 metrics.umpyre_stats.num_classes,1981
@@ -36,4 +41,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.36786961555481
+collection_duration_seconds,4.380073308944702
