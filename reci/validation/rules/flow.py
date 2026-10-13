@@ -257,6 +257,14 @@ def check_output_references(graph, config: dict[str, Any]) -> Iterable[Finding]:
     from reci.compiler import detect_cross_job_edges
 
     edges = detect_cross_job_edges(graph, config)
+    seen: set[tuple[str, str]] = set()
+    for finding in _output_reference_findings(graph, edges):
+        if (finding.location, finding.message) not in seen:
+            seen.add((finding.location, finding.message))
+            yield finding
+
+
+def _output_reference_findings(graph, edges) -> Iterable[Finding]:
     for job_id, job in graph.recipe.jobs.items():
         nodes = graph.job_nodes(job_id)
         by_id = {n.step_id.casefold(): (i, n) for i, n in enumerate(nodes)}
@@ -294,13 +302,16 @@ def _check_step_ref(by_id, index, location, step_id, name):
     else:
         node = found[1]
         spellings = {s.casefold() for s in node.output_spellings.values()}
-        if node.action_spec is None or name.casefold() in spellings:
+        spec = node.action_spec
+        if spec is None or name.casefold() in spellings:
             return  # an undeclared run: output cannot be judged
         near = {normalize_name(s): s for s in node.output_spellings.values()}.get(
             normalize_name(name)
         )
+        if near is None and not spec.composite:
+            return  # a JavaScript/Docker action may set outputs it does not declare
         hint = f" (did you mean '{near}'?)" if near else ""
-        message = f"{read}, but '{node.key}' has no output '{name}'{hint}; it is empty."
+        message = f"{read}, but '{node.key}' declares no output '{name}'{hint}."
     yield Finding(
         rule_id="FLOW007",
         severity=Severity.WARNING,
@@ -320,7 +331,7 @@ def _check_needs_ref(graph, edges, needed, job_id, source, name):
         message = f"{read}, but '{source}' is not a job it needs."
     else:
         declared = {
-            k.casefold() for k in graph.recipe.jobs[job].extra.get("outputs", {})
+            str(k).casefold() for k in graph.recipe.jobs[job].extra.get("outputs", {})
         }
         forwarded = {e.source_output.casefold() for e in edges if e.source_job == job}
         if name.casefold() in declared | forwarded:

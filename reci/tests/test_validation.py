@@ -941,3 +941,39 @@ def test_FLOW007_accepts_an_output_the_compiler_forwards():
         "      - {id: r, run: 'echo ${{ needs.a.outputs.v }}'}\n"
     )  # b reads v through c, so the compiler forwards it and adds needs: a
     assert _flow007(recipe, specs) == []
+
+
+def test_FLOW007_only_a_composite_action_must_declare_every_output():
+    from reci.action_spec import parse_action_spec
+
+    def spec(using):
+        return {
+            "x/n@v1": parse_action_spec(
+                "x/n@v1",
+                action_yml_data={
+                    "runs": {"using": using},
+                    "outputs": {"declared": {}},
+                },
+            )
+        }
+
+    recipe = _steps(
+        "{id: p, uses: x/n@v1}", "{id: r, run: 'echo ${{ steps.p.outputs.dyn }}'}"
+    )
+    assert _flow007(recipe, spec("node20")) == []  # may set undeclared outputs
+    (f,) = _flow007(recipe, spec("composite"))
+    assert "declares no output 'dyn'" in f.message
+
+
+def test_FLOW007_reports_a_repeated_reference_once_and_tolerates_odd_output_keys():
+    twice = _steps(
+        "{id: r, run: 'echo ${{ steps.nope.outputs.a }} ${{ steps.nope.outputs.a }}'}"
+    )
+    assert len(_flow007(twice)) == 1
+    recipe = (
+        "on: push\njobs:\n  a:\n    outputs: {1: x}\n    steps: [{run: x}]\n"
+        "  b:\n    needs: a\n    steps:\n"
+        "      - {run: 'echo ${{ needs.a.outputs.v }}'}\n"
+        "      - {run: 'echo ${{ needs.a.outputs.v }}'}\n"
+    )
+    assert len(_flow007(recipe)) == 1
