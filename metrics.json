@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.21291184425354,
-  "commit_message": "test: behavioural suite for compiler, validation, graph, config, adapters; add CHANGELOG (#4)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "11921e8541e29a8f2b92d50dc354fdec1ceef890",
+  "collection_duration_seconds": 3.1107795238494873,
+  "commit_message": "test: CLI command bodies end to end (compile, validate, scaffold, inspect)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "21508f1cc95dddb3053c49f49c2bd8c681b1c77d",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T16:22:13Z",
+      "last_success_timestamp": "2026-10-13T16:41:38Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38429857216",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38432421318",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T16:41:32.182567Z",
+  "timestamp": "2026-10-13T16:41:52.565220Z",
   "workflow_status": {}
 }
