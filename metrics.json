@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 2.989391326904297,
+  "collection_duration_seconds": 3.6530086994171143,
   "commit_message": "fix: setup job writes config values to GITHUB_OUTPUT verbatim (#13) (#28)\n\n* fix: setup job writes config values to GITHUB_OUTPUT verbatim (#13)\n\nprintf with shell-quoted words instead of echo \"k=v\": lists, dicts, quotes,\n$VAR and backticks survive; newlines use the key<<DELIM form.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: shellcheck header covers SC2088/SC1003; test the multiline and delimiter-collision paths\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "c085bf2529f3ade3b6842fd6bb99c83e7674cd75",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14875,
-      "comment_lines_ratio": 0.051450292964021115,
-      "docs_lines": 21265,
-      "empty_lines": 34071,
-      "empty_lines_ratio": 0.11784624750098577,
-      "files_analyzed": 725,
-      "function_lines": 112847,
-      "function_lines_ratio": 0.39032008135199264,
-      "mean_lines_per_function": 14.570303421562299,
-      "num_classes": 1970,
-      "num_functions": 7745,
+      "comment_lines": 15021,
+      "comment_lines_ratio": 0.0515772594451865,
+      "docs_lines": 21278,
+      "empty_lines": 34396,
+      "empty_lines_ratio": 0.11810474774493275,
+      "files_analyzed": 735,
+      "function_lines": 114370,
+      "function_lines_ratio": 0.39270961738539245,
+      "mean_lines_per_function": 14.588010204081632,
+      "num_classes": 1981,
+      "num_functions": 7840,
       "pypi_version": "0.0.12",
-      "total_lines": 289114
+      "total_lines": 291233
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:33:03.530147Z",
+  "timestamp": "2026-10-13T17:33:18.644831Z",
   "workflow_status": {}
 }
