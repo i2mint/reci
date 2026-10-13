@@ -37,9 +37,6 @@ def test_with_values_are_coerced_to_strings():
     assert r.jobs["j"].steps[0].with_ == {"n": "3"}
 
 
-@pytest.mark.xfail(
-    strict=True, raises=AssertionError, reason="i2mint/reci#14: bools become 'True'"
-)
 def test_yaml_booleans_in_with_are_rendered_lowercase():
     r = parse_recipe_string(
         "on: push\njobs:\n  j:\n    steps:\n      - uses: a/b@v1\n        with: {flag: true}\n"
@@ -149,3 +146,31 @@ def test_workflow_defaults_are_parsed():
         "on: push\ndefaults: {run: {shell: bash}}\njobs:\n  j:\n    steps: [{run: echo}]\n"
     )
     assert r.defaults == {"run": {"shell": "bash"}}
+
+
+def test_yaml_scalars_in_with_and_env_are_rendered_as_github_sees_them():
+    r = parse_recipe_string(
+        "on: push\nenv: {W: true}\njobs:\n  j:\n    env: {J: false}\n    steps:\n"
+        "      - uses: a/b@v1\n        env: {E: true, N: 1.5, Z: }\n"
+        "        with: {on: true, off: false, empty: , n: 3}\n"
+    )
+    step = r.jobs["j"].steps[0]
+    assert step.with_ == {"on": "true", "off": "false", "empty": "", "n": "3"}
+    assert step.env == {"E": "true", "N": "1.5", "Z": ""}
+    assert r.jobs["j"].env == {"J": "false"} and r.env == {"W": "true"}
+
+
+def test_boolean_env_and_with_compile_to_valid_lowercase_workflow():
+    from reci.compiler import compile_recipe
+    from reci.tests._helpers import assert_valid_workflow, mk_spec
+
+    recipe = parse_recipe_string(
+        "on: push\njobs:\n  j:\n    env: {A: true}\n    steps:\n"
+        "      - {id: s, uses: x/s@v1, env: {B: false}, with: {flag: true}}\n"
+    )
+    wf = compile_recipe(recipe, {"x/s@v1": mk_spec("x/s@v1")})
+    assert_valid_workflow(wf)
+    job = wf["jobs"]["j"]
+    assert job["env"] == {"A": "true"}
+    assert job["steps"][0]["env"] == {"B": "false"}
+    assert job["steps"][0]["with"] == {"flag": "true"}
