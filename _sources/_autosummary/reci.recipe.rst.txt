@@ -1,0 +1,27 @@
+reci.recipe
+===========
+
+.. automodule:: reci.recipe
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      parse_recipe
+      parse_recipe_string
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      JobSpec
+      Recipe
+      StepSpec
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      RecipeParseError
+   

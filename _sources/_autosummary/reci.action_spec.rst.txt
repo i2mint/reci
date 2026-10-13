@@ -1,0 +1,31 @@
+reci.action\_spec
+=================
+
+.. automodule:: reci.action_spec
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      action_local_name
+      action_spec_from_declaration
+      action_spec_from_ref
+      fetch_action_yml
+      normalize_name
+      parse_action_spec
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ActionSpec
+      InputSpec
+      OutputSpec
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      ActionFetchError
+   

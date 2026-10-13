@@ -1,0 +1,12 @@
+reci.validation.rules.action
+============================
+
+.. automodule:: reci.validation.rules.action
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      check_action_not_found
+   

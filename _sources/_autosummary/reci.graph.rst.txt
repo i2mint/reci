@@ -1,0 +1,14 @@
+reci.graph
+==========
+
+.. automodule:: reci.graph
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ActionNode
+      CrossJobEdge
+      RecipeGraph
+   

@@ -1,0 +1,12 @@
+reci.adapters.yaml\_adapter
+===========================
+
+.. automodule:: reci.adapters.yaml_adapter
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      YamlAdapter
+   

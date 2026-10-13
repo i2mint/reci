@@ -1,0 +1,12 @@
+reci.adapters.package\_json
+===========================
+
+.. automodule:: reci.adapters.package_json
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      PackageJsonAdapter
+   

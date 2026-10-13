@@ -1,0 +1,13 @@
+reci.validation.rules.purity
+============================
+
+.. automodule:: reci.validation.rules.purity
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      check_run_step_outputs
+      check_run_steps
+   

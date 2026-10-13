@@ -1,0 +1,12 @@
+reci.adapters.base
+==================
+
+.. automodule:: reci.adapters.base
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      ConfigAdapter
+   

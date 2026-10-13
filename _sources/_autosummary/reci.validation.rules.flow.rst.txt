@@ -1,0 +1,16 @@
+reci.validation.rules.flow
+==========================
+
+.. automodule:: reci.validation.rules.flow
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      check_ambiguous_wiring
+      check_boolean_coercion
+      check_matrix_output
+      check_unsourced_required_inputs
+      check_unused_outputs
+   

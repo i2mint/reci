@@ -1,0 +1,20 @@
+﻿reci
+====
+
+.. automodule:: reci
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   action_spec
+   adapters
+   compiler
+   config
+   graph
+   recipe
+   validation
+   yaml_gen

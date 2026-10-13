@@ -1,0 +1,14 @@
+reci.validation.rules.dag
+=========================
+
+.. automodule:: reci.validation.rules.dag
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      check_cycles
+      check_duplicate_outputs
+      check_isolated_nodes
+   

@@ -1,0 +1,12 @@
+reci.adapters.wads
+==================
+
+.. automodule:: reci.adapters.wads
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      WadsAdapter
+   

@@ -1,4 +1,0 @@
-reci.adapters
-=============
-.. automodule:: reci.adapters
-   :members:

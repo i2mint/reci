@@ -1,4 +1,0 @@
-reci.validation.rules.dag
-=========================
-.. automodule:: reci.validation.rules.dag
-   :members:

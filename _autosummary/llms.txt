@@ -1,0 +1,33 @@
+# reci
+
+> Compile declarative CI recipes into fully-wired GitHub Actions workflows with typed data-flow validation.
+
+
+## Pages in this subsection
+
+- [reci](reci.html.md): reci — Compile declarative CI recipes into GitHub Actions workflows.
+- [reci.action_spec](reci.action_spec.html.md): Action contract model — parsed from &#96;action.yml&#96; metadata.
+- [reci.adapters](reci.adapters.html.md): Config adapter registry.
+- [reci.adapters.base](reci.adapters.base.html.md): ConfigAdapter protocol — interface for reading/writing CI config.
+- [reci.adapters.package_json](reci.adapters.package_json.html.md): PackageJsonAdapter — reads &#96;"ci"&#96; key from package.json.
+- [reci.adapters.pyproject](reci.adapters.pyproject.html.md): PyprojectTomlAdapter — reads &#96;&#91;tool.ci&#93;&#96; via tomlkit, round-trip preserving.
+- [reci.adapters.wads](reci.adapters.wads.html.md): WadsAdapter — reads &#96;&#91;tool.wads.ci&#93;&#96; for backward compatibility.
+- [reci.adapters.yaml_adapter](reci.adapters.yaml_adapter.html.md): YamlAdapter — reads &#96;.ci.yml&#96; via ruamel.yaml.
+- [reci.compiler](reci.compiler.html.md): Compiler — recipe + action specs + config → GitHub Actions workflow YAML.
+- [reci.config](reci.config.html.md): Config resolution — flat dict with scoped overrides.
+- [reci.graph](reci.graph.html.md): Recipe DAG — computational graph built on &#96;graphlib&#96;.
+- [reci.recipe](reci.recipe.html.md): Recipe model — declarative CI pipeline description.
+- [reci.validation](reci.validation.html.md): Validation system — ESLint-style severity, ruff-style rule prefixes.
+- [reci.validation.formatters](reci.validation.formatters.html.md): Output formatters for validation reports.
+- [reci.validation.report](reci.validation.report.html.md): Core validation data structures.
+- [reci.validation.rules](reci.validation.rules.html.md): Validation rule registry and runner.
+- [reci.validation.rules.action](reci.validation.rules.action.html.md): Action metadata validation rules (ACT001–ACT003).
+- [reci.validation.rules.config_rules](reci.validation.rules.config_rules.html.md): Config validation rules (CONF001–CONF003).
+- [reci.validation.rules.dag](reci.validation.rules.dag.html.md): DAG structure validation rules (DAG001–DAG004).
+- [reci.validation.rules.flow](reci.validation.rules.flow.html.md): Data-flow validation rules (FLOW001–FLOW006).
+- [reci.validation.rules.purity](reci.validation.rules.purity.html.md): Purity validation rules (PURE001–PURE003).
+- [reci.yaml_gen](reci.yaml_gen.html.md): YAML I/O wrapper using ruamel.yaml (YAML 1.2).
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.

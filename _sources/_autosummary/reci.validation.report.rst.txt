@@ -1,0 +1,14 @@
+reci.validation.report
+======================
+
+.. automodule:: reci.validation.report
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Finding
+      Severity
+      ValidationReport
+   

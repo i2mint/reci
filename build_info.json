@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "built_at": "2026-10-13T16:21:30Z",
+  "package": {
+    "name": "reci",
+    "version": "0.0.8",
+    "display_name": "reci",
+    "source": "pyproject.toml"
+  },
+  "git": {
+    "available": true,
+    "commit": "e1aca33d1b574beb4024fa17bf5bde96909c69b4",
+    "short_commit": "e1aca33",
+    "branch": "main",
+    "tags": [
+      "0.0.8"
+    ],
+    "dirty": false,
+    "remote_url": "https://github.com/i2mint/reci",
+    "commit_url": "https://github.com/i2mint/reci/commit/e1aca33d1b574beb4024fa17bf5bde96909c69b4",
+    "error": null
+  },
+  "ci": {
+    "provider": "github",
+    "repository": "i2mint/reci",
+    "sha": "27b1aafd3328b49da7a20b5000ca69988a1acb6d",
+    "sha_in_history": true,
+    "ref": "refs/heads/main",
+    "ref_name": "main",
+    "run_id": "38429553474",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/38429553474",
+    "server_url": "https://github.com"
+  },
+  "tools": {
+    "epythet": "0.2.17",
+    "sphinx": "9.1.0",
+    "docutils": "0.22.4",
+    "python": "3.12.15"
+  },
+  "config": {
+    "theme": "auto",
+    "html_theme": "sphinxawesome_theme",
+    "accent": "#753c86",
+    "mode": "auto",
+    "api_generator": "autosummary",
+    "ignore": [
+      "tests/",
+      "scrap/",
+      "examples/"
+    ],
+    "agent_outputs": true,
+    "aggregates": [
+      "md"
+    ],
+    "ai_artifacts": true,
+    "provenance": true,
+    "docs_dir": "docsrc"
+  },
+  "site": {
+    "modules_documented": 22,
+    "objects_documented": 63
+  },
+  "pypi": {
+    "checked": true,
+    "latest": "0.0.8",
+    "relation": "same",
+    "error": null
+  },
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout e1aca33d1b574beb4024fa17bf5bde96909c69b4\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "warnings": [],
+  "alignment": {
+    "aligned": true,
+    "notes": []
+  }
+}

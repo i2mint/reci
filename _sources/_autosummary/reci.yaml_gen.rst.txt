@@ -1,0 +1,14 @@
+reci.yaml\_gen
+==============
+
+.. automodule:: reci.yaml_gen
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      dump_workflow
+      load_yaml
+      load_yaml_string
+   

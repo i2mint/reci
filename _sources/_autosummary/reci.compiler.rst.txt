@@ -1,0 +1,18 @@
+reci.compiler
+=============
+
+.. automodule:: reci.compiler
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      compile_recipe
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      CompilationError
+   

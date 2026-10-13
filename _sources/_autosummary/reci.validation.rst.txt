@@ -1,0 +1,15 @@
+reci.validation
+===============
+
+.. automodule:: reci.validation
+
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   formatters
+   report
+   rules

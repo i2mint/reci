@@ -1,0 +1,14 @@
+reci.config
+===========
+
+.. automodule:: reci.config
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      collect_required_config_keys
+      flatten_config
+      resolve_config_for_input
+   

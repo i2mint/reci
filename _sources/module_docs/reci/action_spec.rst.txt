@@ -1,4 +1,0 @@
-reci.action_spec
-================
-.. automodule:: reci.action_spec
-   :members:

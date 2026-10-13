@@ -1,0 +1,14 @@
+reci.validation.formatters
+==========================
+
+.. automodule:: reci.validation.formatters
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      format_cli
+      format_github_annotations
+      format_json
+   

@@ -1,4 +1,0 @@
-reci.validation.report
-======================
-.. automodule:: reci.validation.report
-   :members:

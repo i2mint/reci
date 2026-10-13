@@ -1,0 +1,24 @@
+reci.validation.rules
+=====================
+
+.. automodule:: reci.validation.rules
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      register_rule
+      run_all_rules
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   action
+   config_rules
+   dag
+   flow
+   purity

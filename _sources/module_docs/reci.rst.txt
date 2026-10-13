@@ -1,4 +1,0 @@
-reci
-====
-.. automodule:: reci
-   :members:

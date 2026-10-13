@@ -1,4 +1,0 @@
-reci.config
-===========
-.. automodule:: reci.config
-   :members:

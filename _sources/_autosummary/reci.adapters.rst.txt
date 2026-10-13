@@ -1,0 +1,24 @@
+reci.adapters
+=============
+
+.. automodule:: reci.adapters
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      detect_adapter
+      get_adapter
+   
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   base
+   package_json
+   pyproject
+   wads
+   yaml_adapter

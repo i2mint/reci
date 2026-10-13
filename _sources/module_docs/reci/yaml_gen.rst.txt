@@ -1,4 +1,0 @@
-reci.yaml_gen
-=============
-.. automodule:: reci.yaml_gen
-   :members:
