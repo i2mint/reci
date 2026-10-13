@@ -75,6 +75,17 @@ Build a graph from a parsed recipe and fetched action specs.
 * **Return type:**
   [`RecipeGraph`](#reci.graph.RecipeGraph)
 
+#### upstream_output_names(node, , other_jobs=True)
+
+Normalized output names *node* can be fed from.
+
+Outputs of earlier steps in its own job, plus (unless *other_jobs* is
+false) outputs of any step in another job, which the compiler forwards
+through `needs`.
+
+* **Return type:**
+  [`set`](https://docs.python.org/3/builtins/stdtypes.html#set)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
 #### validate(config=None)
 
 Run all validation rules and return a ValidationReport.

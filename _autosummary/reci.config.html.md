@@ -23,7 +23,9 @@ Resolution order for input `root_dir` of action `run-tests`:
 Scan a recipe and return config keys needed by its actions.
 
 Returns `{key: required}` where *required* is True when the input
-has `required=True` and no default.
+has `required=True` and no default.  Inputs given by an explicit
+`with:` or fed by an upstream step output (`bind:` honoured) need no
+config key.
 
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]

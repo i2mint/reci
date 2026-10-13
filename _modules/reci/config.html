@@ -183,78 +183,94 @@
 </span><span id="line-13"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 </span><span id="line-14">
 </span><span id="line-15"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.action_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActionSpec</span><span class="p">,</span> <span class="n">normalize_name</span><span class="p">,</span> <span class="n">action_local_name</span>
-</span><span id="line-16"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.recipe</span><span class="w"> </span><span class="kn">import</span> <span class="n">Recipe</span>
-</span><span id="line-17">
+</span><span id="line-16"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecipeGraph</span>
+</span><span id="line-17"><span class="kn">from</span><span class="w"> </span><span class="nn">reci.recipe</span><span class="w"> </span><span class="kn">import</span> <span class="n">Recipe</span>
 </span><span id="line-18">
+</span><span id="line-19">
 <div class="viewcode-block" id="resolve_config_for_input">
 <a class="viewcode-back" href="../../_autosummary/reci.config.html#reci.config.resolve_config_for_input">[docs]</a>
-</span><span id="line-19"><span class="k">def</span><span class="w"> </span><span class="nf">resolve_config_for_input</span><span class="p">(</span>
-</span><span id="line-20">    <span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="line-21">    <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="line-22">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-</span><span id="line-23"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-24"><span class="w">    </span><span class="sd">"""Find a config value for an action input.</span>
-</span><span id="line-25">
-</span><span id="line-26"><span class="sd">    Returns ``(config_key, value)`` or ``None``.</span>
-</span><span id="line-27"><span class="sd">    """</span>
-</span><span id="line-28">    <span class="k">if</span> <span class="n">ref</span><span class="p">:</span>
-</span><span id="line-29">        <span class="n">local</span> <span class="o">=</span> <span class="n">action_local_name</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-</span><span id="line-30">        <span class="n">scoped</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-31">        <span class="k">if</span> <span class="n">scoped</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-</span><span id="line-32">            <span class="k">return</span> <span class="n">scoped</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="n">scoped</span><span class="p">]</span>
-</span><span id="line-33">    <span class="k">if</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-</span><span id="line-34">        <span class="k">return</span> <span class="n">input_name</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span>
-</span><span id="line-35">    <span class="k">return</span> <span class="kc">None</span></div>
+</span><span id="line-20"><span class="k">def</span><span class="w"> </span><span class="nf">resolve_config_for_input</span><span class="p">(</span>
+</span><span id="line-21">    <span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="line-22">    <span class="n">ref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="line-23">    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span id="line-24"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-25"><span class="w">    </span><span class="sd">"""Find a config value for an action input.</span>
+</span><span id="line-26">
+</span><span id="line-27"><span class="sd">    Returns ``(config_key, value)`` or ``None``.</span>
+</span><span id="line-28"><span class="sd">    """</span>
+</span><span id="line-29">    <span class="k">if</span> <span class="n">ref</span><span class="p">:</span>
+</span><span id="line-30">        <span class="n">local</span> <span class="o">=</span> <span class="n">action_local_name</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+</span><span id="line-31">        <span class="n">scoped</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">local</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-32">        <span class="k">if</span> <span class="n">scoped</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+</span><span id="line-33">            <span class="k">return</span> <span class="n">scoped</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="n">scoped</span><span class="p">]</span>
+</span><span id="line-34">    <span class="k">if</span> <span class="n">input_name</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+</span><span id="line-35">        <span class="k">return</span> <span class="n">input_name</span><span class="p">,</span> <span class="n">config</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span>
+</span><span id="line-36">    <span class="k">return</span> <span class="kc">None</span></div>
 
-</span><span id="line-36">
 </span><span id="line-37">
+</span><span id="line-38">
 <div class="viewcode-block" id="flatten_config">
 <a class="viewcode-back" href="../../_autosummary/reci.config.html#reci.config.flatten_config">[docs]</a>
-</span><span id="line-38"><span class="k">def</span><span class="w"> </span><span class="nf">flatten_config</span><span class="p">(</span><span class="n">nested</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="line-39"><span class="w">    </span><span class="sd">"""Convert a nested dict to a flat dict with ``__`` separators.</span>
-</span><span id="line-40">
-</span><span id="line-41"><span class="sd">    &gt;&gt;&gt; flatten_config({'testing': {'python_versions': ['3.10']}})</span>
-</span><span id="line-42"><span class="sd">    {'testing__python_versions': ['3.10']}</span>
-</span><span id="line-43"><span class="sd">    """</span>
-</span><span id="line-44">    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-45">    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">nested</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-46">        <span class="n">full_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="n">k</span>
-</span><span id="line-47">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="line-48">            <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">flatten_config</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">full_key</span><span class="p">))</span>
-</span><span id="line-49">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-50">            <span class="n">result</span><span class="p">[</span><span class="n">full_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-</span><span id="line-51">    <span class="k">return</span> <span class="n">result</span></div>
+</span><span id="line-39"><span class="k">def</span><span class="w"> </span><span class="nf">flatten_config</span><span class="p">(</span><span class="n">nested</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="line-40"><span class="w">    </span><span class="sd">"""Convert a nested dict to a flat dict with ``__`` separators.</span>
+</span><span id="line-41">
+</span><span id="line-42"><span class="sd">    &gt;&gt;&gt; flatten_config({'testing': {'python_versions': ['3.10']}})</span>
+</span><span id="line-43"><span class="sd">    {'testing__python_versions': ['3.10']}</span>
+</span><span id="line-44"><span class="sd">    """</span>
+</span><span id="line-45">    <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-46">    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">nested</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-47">        <span class="n">full_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="n">k</span>
+</span><span id="line-48">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-49">            <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">flatten_config</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">full_key</span><span class="p">))</span>
+</span><span id="line-50">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-51">            <span class="n">result</span><span class="p">[</span><span class="n">full_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+</span><span id="line-52">    <span class="k">return</span> <span class="n">result</span></div>
 
-</span><span id="line-52">
 </span><span id="line-53">
+</span><span id="line-54">
 <div class="viewcode-block" id="collect_required_config_keys">
 <a class="viewcode-back" href="../../_autosummary/reci.config.html#reci.config.collect_required_config_keys">[docs]</a>
-</span><span id="line-54"><span class="k">def</span><span class="w"> </span><span class="nf">collect_required_config_keys</span><span class="p">(</span>
-</span><span id="line-55">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span>
-</span><span id="line-56">    <span class="n">action_specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">],</span>
-</span><span id="line-57"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
-</span><span id="line-58"><span class="w">    </span><span class="sd">"""Scan a recipe and return config keys needed by its actions.</span>
-</span><span id="line-59">
-</span><span id="line-60"><span class="sd">    Returns ``{key: required}`` where *required* is True when the input</span>
-</span><span id="line-61"><span class="sd">    has ``required=True`` and no default.</span>
-</span><span id="line-62"><span class="sd">    """</span>
-</span><span id="line-63">    <span class="n">keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-64">    <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-</span><span id="line-65">        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
-</span><span id="line-66">            <span class="n">spec</span> <span class="o">=</span> <span class="n">action_specs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">)</span> <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="line-67">            <span class="k">if</span> <span class="ow">not</span> <span class="n">spec</span><span class="p">:</span>
-</span><span id="line-68">                <span class="k">continue</span>
-</span><span id="line-69">            <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-70">                <span class="c1"># Skip inputs that are explicitly provided</span>
-</span><span id="line-71">                <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">}:</span>
-</span><span id="line-72">                    <span class="k">continue</span>
-</span><span id="line-73">                <span class="n">is_required</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">required</span> <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="line-74">                <span class="c1"># Record the shared key name</span>
-</span><span id="line-75">                <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-</span><span id="line-76">                    <span class="n">keys</span><span class="p">[</span><span class="n">norm_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_required</span>
-</span><span id="line-77">                <span class="k">elif</span> <span class="n">is_required</span><span class="p">:</span>
-</span><span id="line-78">                    <span class="n">keys</span><span class="p">[</span><span class="n">norm_name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="line-79">    <span class="k">return</span> <span class="n">keys</span></div>
+</span><span id="line-55"><span class="k">def</span><span class="w"> </span><span class="nf">collect_required_config_keys</span><span class="p">(</span>
+</span><span id="line-56">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span>
+</span><span id="line-57">    <span class="n">action_specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">],</span>
+</span><span id="line-58"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="line-59"><span class="w">    </span><span class="sd">"""Scan a recipe and return config keys needed by its actions.</span>
+</span><span id="line-60">
+</span><span id="line-61"><span class="sd">    Returns ``{key: required}`` where *required* is True when the input</span>
+</span><span id="line-62"><span class="sd">    has ``required=True`` and no default.  Inputs given by an explicit</span>
+</span><span id="line-63"><span class="sd">    ``with:`` or fed by an upstream step output (``bind:`` honoured) need no</span>
+</span><span id="line-64"><span class="sd">    config key.</span>
+</span><span id="line-65"><span class="sd">    """</span>
+</span><span id="line-66">    <span class="n">graph</span> <span class="o">=</span> <span class="n">RecipeGraph</span><span class="o">.</span><span class="n">from_recipe</span><span class="p">(</span><span class="n">recipe</span><span class="p">,</span> <span class="n">action_specs</span><span class="p">)</span>
+</span><span id="line-67">    <span class="n">keys</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-68">
+</span><span id="line-69">    <span class="k">def</span><span class="w"> </span><span class="nf">record</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_required</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-70">        <span class="n">keys</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_required</span>
+</span><span id="line-71">
+</span><span id="line-72">    <span class="n">cross_job_fed</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-73">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+</span><span id="line-74">        <span class="n">provided</span> <span class="o">=</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}</span>
+</span><span id="line-75">        <span class="n">same_job</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">upstream_output_names</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">other_jobs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="line-76">        <span class="n">everywhere</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">upstream_output_names</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+</span><span id="line-77">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-78">            <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="n">provided</span><span class="p">:</span>
+</span><span id="line-79">                <span class="k">continue</span>
+</span><span id="line-80">            <span class="n">search</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
+</span><span id="line-81">            <span class="n">is_required</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">required</span> <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span id="line-82">            <span class="k">if</span> <span class="n">search</span> <span class="ow">in</span> <span class="n">same_job</span><span class="p">:</span>
+</span><span id="line-83">                <span class="k">continue</span>
+</span><span id="line-84">            <span class="k">if</span> <span class="n">search</span> <span class="ow">in</span> <span class="n">everywhere</span><span class="p">:</span>
+</span><span id="line-85">                <span class="n">cross_job_fed</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span><span class="p">))</span>
+</span><span id="line-86">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-87">                <span class="n">record</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span><span class="p">)</span>
+</span><span id="line-88">
+</span><span id="line-89">    <span class="c1"># The compiler lets a config value beat another job's output: if the key is</span>
+</span><span id="line-90">    <span class="c1"># written anyway (another step needs it), a cross-job consumer reads it too,</span>
+</span><span id="line-91">    <span class="c1"># so its requiredness must count.</span>
+</span><span id="line-92">    <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span> <span class="ow">in</span> <span class="n">cross_job_fed</span><span class="p">:</span>
+</span><span id="line-93">        <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+</span><span id="line-94">            <span class="n">record</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span><span class="p">)</span>
+</span><span id="line-95">    <span class="k">return</span> <span class="n">keys</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -269,7 +285,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=544df88d"></script>
+    <script src="../../_static/documentation_options.js?v=f0357c94"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

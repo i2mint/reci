@@ -214,6 +214,19 @@ Raises <code class="xref py py-class docutils literal notranslate"><span class="
 </dl>
 </dd></dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="reci.graph.RecipeGraph.upstream_output_names">
+<span class="sig-name descname"><span class="pre">upstream_output_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/graph.html#RecipeGraph.upstream_output_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.graph.RecipeGraph.upstream_output_names" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.graph.RecipeGraph.upstream_output_names'">¶</a></dt>
+<dd><p>Normalized output names <em>node</em> can be fed from.</p>
+<p>Outputs of earlier steps in its own job, plus (unless <em>other_jobs</em> is
+false) outputs of any step in another job, which the compiler forwards
+through <code class="docutils literal notranslate"><span class="pre">needs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#set" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
 <dt class="sig sig-object py" id="reci.graph.RecipeGraph.validate">
 <span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/graph.html#RecipeGraph.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.graph.RecipeGraph.validate" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.graph.RecipeGraph.validate'">¶</a></dt>
 <dd><p>Run all validation rules and return a ValidationReport.</p>
@@ -236,6 +249,7 @@ Raises <code class="xref py py-class docutils literal notranslate"><span class="
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph'" class="reference internal" href="#reci.graph.RecipeGraph"><code class="docutils literal notranslate"><span class="pre">RecipeGraph</span></code></a><ul>
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph.execution_waves'" class="reference internal" href="#reci.graph.RecipeGraph.execution_waves"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.execution_waves()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph.from_recipe'" class="reference internal" href="#reci.graph.RecipeGraph.from_recipe"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.from_recipe()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.graph.RecipeGraph.upstream_output_names'" class="reference internal" href="#reci.graph.RecipeGraph.upstream_output_names"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.upstream_output_names()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.graph.RecipeGraph.validate'" class="reference internal" href="#reci.graph.RecipeGraph.validate"><code class="docutils literal notranslate"><span class="pre">RecipeGraph.validate()</span></code></a></li>
 </ul>
 </li>
@@ -252,7 +266,7 @@ Raises <code class="xref py py-class docutils literal notranslate"><span class="
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=544df88d"></script>
+<script src="../_static/documentation_options.js?v=f0357c94"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
