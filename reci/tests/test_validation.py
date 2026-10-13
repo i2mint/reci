@@ -634,3 +634,12 @@ def test_FLOW001_bind_replaces_the_name_searched_for():
     )
     g = mk_graph(recipe, _XJOB_SPECS)
     assert len(_only("FLOW001", g)) == 1 and len(_only("CONF001", g)) == 1
+
+
+def test_CONF004_sees_a_config_ref_in_continue_on_error():
+    recipe = (
+        "on: push\njobs:\n  j:\n    continue-on-error: ${{ fromJSON(config.lenient) }}\n"
+        "    steps: [{run: a}]\n"
+    )
+    (f,) = _only("CONF004", mk_graph(recipe), {"other": 1})
+    assert "config.lenient" in f.message and f.location == "j"

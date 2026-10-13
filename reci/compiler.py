@@ -183,7 +183,11 @@ def _build_job(
     if job_spec.permissions:
         d["permissions"] = job_spec.permissions
     if job_spec.continue_on_error:
-        d["continue-on-error"] = True
+        # True, or an expression (rewritten for config refs)
+        coe = job_spec.continue_on_error
+        d["continue-on-error"] = (
+            _rewrite_config_refs(coe) if isinstance(coe, str) else True
+        )
     if job_spec.env:
         d["env"] = {k: _rewrite_config_refs(v) for k, v in job_spec.env.items()}
 
