@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any, Iterable
 
 from reci.action_spec import normalize_name, action_local_name
@@ -95,22 +96,46 @@ def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
+_STEP_OUTPUT_REF = re.compile(r"\bsteps\.([\w-]+)\.outputs\.([\w-]+)")
+_NEEDS_OUTPUT_REF = re.compile(r"\bneeds\.[\w-]+\.outputs\.([\w-]+)")
+
+
+def _expression_texts(node) -> Iterable[str]:
+    """Every string of a step in which a ``${{ ... }}`` reference can appear."""
+    yield from (str(v) for v in node.with_.values())
+    yield from (str(v) for v in node.env.values())
+    for text in (node.run, node.if_):
+        if text:
+            yield text
+
+
 @register_rule("FLOW004")
 def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
-    """An output is declared but never consumed downstream."""
-    consumed: set[str] = set()
+    """An output is declared but never consumed downstream.
+
+    Consumed means: matched by an input of a later step (by name, honouring
+    ``bind:``), or referenced explicitly as ``steps.<id>.outputs.<name>`` (same
+    job) or ``needs.<job>.outputs.<name>`` in a step's ``with:``, ``env:``,
+    ``run:`` or ``if:``.
+    """
+    consumed: set[str] = set()  # normalized output names
+    referenced: set[tuple[str, str, str]] = set()  # (job, step id, output name)
     for node in graph.nodes():
         for norm_name in node.input_specs:
-            search = node.bind.get(norm_name, norm_name)
-            consumed.add(search)
-        # Also count explicit with: values that reference steps
-        for v in node.with_.values():
-            if "steps." in str(v) and ".outputs." in str(v):
-                consumed.add(str(v))
+            consumed.add(node.bind.get(norm_name, norm_name))
+        for text in _expression_texts(node):
+            for step_id, name in _STEP_OUTPUT_REF.findall(text):
+                referenced.add((node.job, step_id, normalize_name(name)))
+            consumed.update(
+                normalize_name(name) for name in _NEEDS_OUTPUT_REF.findall(text)
+            )
 
     for node in graph.nodes():
         for name in node.output_names:
-            if name not in consumed:
+            if (
+                name not in consumed
+                and (node.job, node.step_id, name) not in referenced
+            ):
                 yield Finding(
                     rule_id="FLOW004",
                     severity=Severity.INFO,
