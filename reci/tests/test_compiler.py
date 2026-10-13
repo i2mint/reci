@@ -345,6 +345,12 @@ def test_setup_script_roundtrips_awkward_values_verbatim(tmp_path):
 
 
 @needs_posix_bash
+def test_a_sample_of_allowed_characters_survives_yaml_and_the_shell(tmp_path):
+    value = "é日\t😀\u00a0\u2013 ~ ` $ \\ ' \""
+    assert _run_setup_script(tmp_path, {"chars": value}) == {"chars": value}
+
+
+@needs_posix_bash
 def test_setup_script_serializes_json_with_newlines_inside_strings(tmp_path):
     import json
 
@@ -775,3 +781,31 @@ def test_continue_on_error_expression_gets_config_refs_rewritten():
     )
     b = _compile(recipe, {}, config={"lenient": True})["jobs"]["b"]
     assert b["continue-on-error"] == "${{ fromJSON(needs.setup.outputs.lenient) }}"
+
+
+@pytest.mark.parametrize(
+    "config, fragment",
+    [
+        ({"a.b": 1}, "'a.b' is not a valid job-output id"),
+        ({"1st": 1}, "'1st' is not a valid job-output id"),
+        ({"k=v": 1}, "'k=v' is not a valid job-output id"),
+        ({"k<<x": 1}, "not a valid job-output id"),
+        ({"ok": "a\rb"}, "'\\r'"),
+        ({"ok": "a\x00b"}, "'\\x00'"),
+        ({"ok": "a\u2028b"}, "'\\u2028'"),
+        ({"ok": "a\x85b"}, "'\\x85'"),
+        ({"ok": "a\ud800b"}, "'\\ud800'"),
+        ({"Foo": "a", "foo": "b"}, "differ only in case"),
+        ({True: "x"}, "True is not a valid job-output id"),
+        ({None: "x"}, "None is not a valid job-output id"),
+    ],
+)
+def test_config_the_setup_job_cannot_export_is_refused(config, fragment):
+    with pytest.raises(CompilationError) as e:
+        _compile("on: push\njobs:\n  j:\n    steps: [{run: echo}]\n", {}, config=config)
+    assert "[CONF005]" in str(e.value) and fragment in str(e.value)
+
+
+def test_keys_and_values_the_setup_job_can_export_are_accepted():
+    config = {"python-version": "3.12", "_x1": "é日\t😀", "lst": ["a\rb"], "n": 3}
+    _compile("on: push\njobs:\n  j:\n    steps: [{run: echo}]\n", {}, config=config)

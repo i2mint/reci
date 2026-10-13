@@ -79,3 +79,11 @@ def check_undefined_config_references(
     from reci.validation.rules.dag import _recipe_problems
 
     yield from _recipe_problems(graph, config, "CONF004")
+
+
+@register_rule("CONF005")
+def check_exportable_config(graph, config: dict[str, Any]) -> Iterable[Finding]:
+    """Config keys must be valid output ids; values must survive $GITHUB_OUTPUT."""
+    from reci.validation.rules.dag import _recipe_problems
+
+    yield from _recipe_problems(graph, config, "CONF005")
