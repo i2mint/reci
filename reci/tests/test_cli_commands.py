@@ -261,3 +261,47 @@ def test_scaffold_adds_the_config_keys_the_recipe_references(project):
     )
     assert "<REQUIRED: greeting>" in cfg.read_text()
     assert (project / "ci.yml").exists()
+
+
+@pytest.mark.parametrize(
+    "adapter, name", [("pyproject", "pyproject.toml"), ("package-json", "package.json")]
+)
+def test_scaffold_creates_the_config_file_when_there_is_none(project, adapter, name):
+    cfg = project / "fresh" / name
+    cfg.parent.mkdir()
+    cli.scaffold(
+        str(project / "recipe.yml"),
+        config_adapter=adapter,
+        config_path=str(cfg),
+        output=str(project / "ci.yml"),
+    )
+    assert "<REQUIRED: python_version>" in cfg.read_text()
+    assert (project / "ci.yml").exists()
+
+
+def test_scaffold_of_a_refused_recipe_writes_neither_config_nor_workflow(
+    project, capsys
+):
+    (project / "bad.yml").write_text(
+        "on: push\njobs:\n  t:\n    steps:\n"
+        "      - {id: build, uses: x/build@v1, with: {python_version: '${{ config.nope.x }}'}}\n"
+    )
+    cfg = project / "cfg.toml"
+    out = project / "bad-ci.yml"
+    with pytest.raises(SystemExit) as e:
+        cli.scaffold(str(project / "bad.yml"), config_path=str(cfg), output=str(out))
+    assert e.value.code == 1
+    assert not cfg.exists() and not out.exists()
+    assert "CONF004" in capsys.readouterr().err
+
+
+def test_scaffold_accepts_a_config_ref_that_differs_from_a_key_only_in_case(project):
+    (project / "ref.yml").write_text(
+        "on: push\njobs:\n  t:\n    steps: [{run: x, name: '${{ config.OS }}'}]\n"
+    )
+    cfg = project / "pyproject.toml"
+    cfg.write_text('[tool.ci]\nos = "ubuntu-latest"\n')
+    cli.scaffold(
+        str(project / "ref.yml"), config_path=str(cfg), output=str(project / "ci.yml")
+    )
+    assert "<REQUIRED" not in cfg.read_text()

@@ -6,12 +6,17 @@ and the validation rules (which report them), so both always agree.
 
 from __future__ import annotations
 
+import datetime
+import json
 import re
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Any
 
+from ruamel.yaml.comments import TaggedScalar
+
 from reci.recipe import Recipe
+from reci.yaml_gen import scalar_source_text
 
 #: The generated job that exports config values; recipe jobs may not use the id
 #: when config is supplied.
@@ -45,6 +50,52 @@ def _expression_spans(text: str) -> Iterator[tuple[int, int]]:
                 i += 1
         else:
             return  # unterminated: leave the rest alone
+
+
+def _code_pieces(body: str) -> Iterator[tuple[int, str]]:
+    """``(offset, code)`` for each stretch of *body* outside a string literal."""
+    pos = 0
+    for literal in _STRING_LITERAL_RE.finditer(body):
+        yield pos, body[pos : literal.start()]
+        pos = literal.end()
+    yield pos, body[pos:]
+
+
+# The ``config`` context as a whole word (not ``github.event.config`` / ``myconfig``).
+_CONFIG_WORD_RE = re.compile(r"(?<![\w.\-])config(?![\w\-])")
+_CONFIG_USE_RE = re.compile(r"config(?:\.[\w\-*]+|\[)*")
+
+
+def unsupported_config_refs(text: str) -> list[str]:
+    """The uses of the ``config`` context in *text* that reci cannot rewrite.
+
+    Only ``config.<key>`` maps to a setup-job output.  Nested access
+    (``config.x.y``), bracket access (``config['x']``) and the whole context
+    (``toJSON(config)``, ``config.*``) have no counterpart, and would reach
+    GitHub unrewritten, where ``config`` is no context.
+
+    >>> unsupported_config_refs("${{ config.a }} ${{ config.b.c }} ${{ config['d'] }}")
+    ['config.b.c', 'config[']
+    >>> unsupported_config_refs("${{ toJSON(config) }} ${{ 'config' }} ${{ config.a }}")
+    ['config']
+    """
+    found: list[str] = []
+    for body_start, body_end in _expression_spans(text):
+        body = text[body_start:body_end]
+        for offset, code in _code_pieces(body):
+            for word in _CONFIG_WORD_RE.finditer(code):
+                if not _CONFIG_NAME_RE.match(code, word.start()):
+                    found.append(_CONFIG_USE_RE.match(code, word.start()).group())
+    return found
+
+
+def as_expression(text: str) -> str:
+    """An ``if:`` value as a ``${{ }}`` expression: GitHub evaluates it either way.
+
+    >>> as_expression("config.flag"), as_expression("${{ config.flag }}")
+    ('${{ config.flag }}', '${{ config.flag }}')
+    """
+    return text if "${{" in text else "${{ " + text + " }}"
 
 
 def sub_config_refs(text: str, repl: Callable[[re.Match], str]) -> str:
@@ -108,6 +159,67 @@ _UNEXPORTABLE_CHAR_RE = re.compile(
 )
 
 
+#: A decimal number as written, ``3.10`` (GitHub would read the number as 3.1).
+_DECIMAL_SPELLING_RE = re.compile(r"-?\d+\.\d+")
+
+
+def _json_default(value: Any) -> Any:
+    if isinstance(value, (datetime.date, datetime.time)):  # also datetime.datetime
+        return value.isoformat()
+    if isinstance(value, TaggedScalar):  # `!!str 3.10`, or another tag
+        return value.value
+    unwrap = getattr(value, "unwrap", None)  # tomlkit items (Bool...) -> Python
+    if unwrap is not None:
+        return unwrap()
+    raise TypeError(f"{type(value).__name__} has no JSON form")
+
+
+def serialize_config_value(value: Any) -> str:
+    """A config value as the text of a ``$GITHUB_OUTPUT`` entry.
+
+    Lists, mappings and tuples become JSON (dates inside them as ISO text); a
+    boolean ``true`` / ``false``; a number as the author wrote it (a TOML or
+    YAML ``3.10`` stays ``3.10``, not ``3.1``).  ``None``, bytes and other
+    objects have no faithful text and raise :class:`TypeError`.
+
+    >>> serialize_config_value({"d": datetime.date(2024, 1, 2), "t": (1, 2)})
+    '{"d": "2024-01-02", "t": [1, 2]}'
+    >>> serialize_config_value(True), serialize_config_value(7)
+    ('true', '7')
+    >>> serialize_config_value(None)
+    Traceback (most recent call last):
+    ...
+    TypeError: None (null) has no text form; give the key a value or remove it
+    """
+    if isinstance(value, TaggedScalar):
+        value = value.value
+    elif not isinstance(value, (str, int, float, list, dict)) and hasattr(
+        value, "unwrap"
+    ):
+        value = value.unwrap()  # a tomlkit Bool (numbers keep their spelling below)
+    if isinstance(value, (list, dict, tuple)):
+        return json.dumps(value, default=_json_default)
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if value is None:
+        raise TypeError(
+            "None (null) has no text form; give the key a value or remove it"
+        )
+    if isinstance(value, (bytes, bytearray)):
+        raise TypeError("bytes have no text form")
+    if isinstance(value, float):
+        # Keep a decimal spelling (3.10); hex, underscores, exponents, ``.5``,
+        # inf/nan are normalised by str(), as before
+        as_string = getattr(value, "as_string", None)  # tomlkit keeps the spelling
+        text = as_string() if as_string else scalar_source_text(value)
+        return text if _DECIMAL_SPELLING_RE.fullmatch(text) else str(value)
+    if isinstance(value, int):
+        return str(int(value))
+    if isinstance(value, (str, datetime.date, datetime.time)):
+        return str(value)
+    raise TypeError(f"{type(value).__name__} has no text form")
+
+
 @dataclass(frozen=True)
 class RecipeProblem:
     """One problem found by :func:`find_recipe_problems`."""
@@ -126,6 +238,10 @@ def _walk_strings(obj: Any) -> Iterator[str]:
     elif isinstance(obj, list):
         for v in obj:
             yield from _walk_strings(v)
+
+
+def _if_expression(text: str | None) -> str | None:
+    return None if text is None else as_expression(text)
 
 
 def _recipe_strings(recipe: Recipe) -> Iterator[tuple[str, str, bool]]:
@@ -151,7 +267,7 @@ def _recipe_strings(recipe: Recipe) -> Iterator[tuple[str, str, bool]]:
         for text in _walk_strings(job.permissions):
             yield f"{job_id} permissions", text, False
         job_fields = (
-            job.if_,
+            _if_expression(job.if_),
             job.runs_on,
             job.strategy,
             job.env,
@@ -164,7 +280,7 @@ def _recipe_strings(recipe: Recipe) -> Iterator[tuple[str, str, bool]]:
             step_fields = (
                 step.name,
                 step.run,
-                step.if_,
+                _if_expression(step.if_),
                 step.with_,
                 step.env,
                 step.continue_on_error,
@@ -207,13 +323,30 @@ def find_recipe_problems(
     config = config or {}
     problems: list[RecipeProblem] = []
 
+    config_keys = {k.casefold() for k in config if isinstance(k, str)}  # ids: no case
+    unsupported: set[tuple[str, str]] = set()
+    for location, text, _ in _recipe_strings(recipe):
+        for ref in unsupported_config_refs(text):
+            if (location, ref) not in unsupported:
+                unsupported.add((location, ref))
+                problems.append(
+                    RecipeProblem(
+                        "CONF004",
+                        f"'{location}' uses '{ref}', which reci cannot rewrite: "
+                        f"only 'config.<key>' is supported (config values are "
+                        f"strings; parse a structured one with fromJSON in a "
+                        f"step instead).",
+                        location,
+                    )
+                )
+
     for location, name, needs_ok in config_references(recipe):
         if not needs_ok:
             message = (
                 f"'{location}' references config.{name}, but GitHub offers no "
                 f"'needs' context there; use a literal value."
             )
-        elif name not in config:
+        elif name.casefold() not in config_keys:
             message = (
                 f"'{location}' references config.{name}, which is not a config key."
             )
@@ -261,9 +394,21 @@ def find_recipe_problems(
             )
         else:
             seen_keys[key.casefold()] = key
-        if isinstance(value, (dict, list)):
+        try:
+            exported = serialize_config_value(value)
+        except TypeError as e:
+            problems.append(
+                RecipeProblem(
+                    "CONF005",
+                    f"The value of config key '{key}' ({type(value).__name__}) "
+                    f"cannot be exported through $GITHUB_OUTPUT: {e}",
+                    "config",
+                )
+            )
+            continue
+        if isinstance(value, (dict, list, tuple)):
             continue  # exported as JSON, which escapes control characters
-        bad = _UNEXPORTABLE_CHAR_RE.search(str(value))
+        bad = _UNEXPORTABLE_CHAR_RE.search(exported)
         if bad:
             problems.append(
                 RecipeProblem(

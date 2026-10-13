@@ -8,7 +8,6 @@ dependencies.
 
 from __future__ import annotations
 
-import json
 import shlex
 from typing import Any
 
@@ -16,7 +15,12 @@ from ruamel.yaml.scalarbool import ScalarBoolean
 
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
 from reci.recipe import Recipe, StepSpec, JobSpec
-from reci.recipe_checks import find_recipe_problems, sub_config_refs
+from reci.recipe_checks import (
+    as_expression,
+    find_recipe_problems,
+    serialize_config_value,
+    sub_config_refs,
+)
 from reci.graph import RecipeGraph, ActionNode, CrossJobEdge, find_cycle
 
 # ---------------------------------------------------------------------------
@@ -31,6 +35,21 @@ def _rewrite_config_refs(value: str) -> str:
     '${{ needs.setup.outputs.python_versions }}'
     """
     return sub_config_refs(value, lambda m: f"needs.setup.outputs.{m.group(1)}")
+
+
+def _rewrite_if(value: str) -> str:
+    """:func:`_rewrite_config_refs` for an ``if:``, an expression even without ``${{ }}``.
+
+    >>> _rewrite_if("config.flag == 'true'")
+    "needs.setup.outputs.flag == 'true'"
+    >>> _rewrite_if("always()")
+    'always()'
+    """
+    wrapped = as_expression(value)
+    rewritten = _rewrite_config_refs(wrapped)
+    if rewritten == wrapped:
+        return value
+    return rewritten if "${{" in value else rewritten[len("${{ ") : -len(" }}")]
 
 
 def _rewrite_all_config_refs(obj: Any) -> Any:
@@ -57,15 +76,6 @@ def _rewrite_all_config_refs(obj: Any) -> Any:
 # ---------------------------------------------------------------------------
 # Setup job generation
 # ---------------------------------------------------------------------------
-
-
-def _serialize_config_value(value: Any) -> str:
-    """Serialize a config value for GITHUB_OUTPUT."""
-    if isinstance(value, (list, dict)):
-        return json.dumps(value)
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    return str(value)
 
 
 _OUTPUT_DELIMITER = "RECI_EOF"
@@ -96,7 +106,7 @@ def _build_setup_job(config: dict[str, Any]) -> dict:
     outputs: dict[str, str] = {}
 
     for key, value in config.items():
-        lines.append("  " + _output_command(key, _serialize_config_value(value)))
+        lines.append("  " + _output_command(key, serialize_config_value(value)))
         outputs[key] = f"${{{{ steps.config.outputs.{key} }}}}"
 
     # One grouped, quoted redirect: shellcheck-clean (SC2086, SC2129).  Values are
@@ -172,7 +182,7 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
     if step.run:
         d["run"] = _rewrite_config_refs(step.run)
     if step.if_:
-        d["if"] = _rewrite_config_refs(step.if_)
+        d["if"] = _rewrite_if(step.if_)
     if step.with_:
         keys = _declared_with_keys(step, action_spec)
         d["with"] = {keys[k]: _rewrite_config_refs(v) for k, v in step.with_.items()}
@@ -212,7 +222,7 @@ def _build_job(
     d: dict[str, Any] = {}
 
     if job_spec.if_:
-        d["if"] = _rewrite_config_refs(job_spec.if_)
+        d["if"] = _rewrite_if(job_spec.if_)
     d["runs-on"] = _rewrite_all_config_refs(job_spec.runs_on)
 
     # needs: explicit + setup + data-flow driven
