@@ -178,7 +178,7 @@
 </span><span id="line-7"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="line-8">
 </span><span id="line-9"><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
-</span><span id="line-10"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+</span><span id="line-10"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span>
 </span><span id="line-11"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 </span><span id="line-12"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 </span><span id="line-13">
@@ -188,133 +188,214 @@
 </span><span id="line-17"><span class="c1">#: when config is supplied.</span>
 </span><span id="line-18"><span class="n">SETUP_JOB_ID</span> <span class="o">=</span> <span class="s2">"setup"</span>
 </span><span id="line-19">
-</span><span id="line-20"><span class="c1">#: ``${{ config.X }}`` — the one form the compiler rewrites (see reci#19 for refs</span>
-</span><span id="line-21"><span class="c1">#: inside larger expressions).  Plain text such as ``config.json`` does not match.</span>
-</span><span id="line-22"><span class="n">CONFIG_REF_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\$\{\{\s*config\.(\w+)\s*\}\}"</span><span class="p">)</span>
-</span><span id="line-23">
-</span><span id="line-24">
+</span><span id="line-20"><span class="n">_STRING_LITERAL_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"'(?:[^']|'')*'"</span><span class="p">)</span>  <span class="c1"># GitHub strings: '...' with ''</span>
+</span><span id="line-21"><span class="c1"># ``config.key`` as a whole reference: not a suffix of another path</span>
+</span><span id="line-22"><span class="c1"># (``github.event.config.x``) or word (``myconfig.x``), and not a nested access</span>
+</span><span id="line-23"><span class="c1"># (``config.x.y`` / ``config.x[0]``: outputs are strings, left for actionlint);</span>
+</span><span id="line-24"><span class="c1"># keys may contain hyphens.</span>
+</span><span id="line-25"><span class="n">_CONFIG_NAME_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"(?&lt;![\w.\-])config\.([A-Za-z_][\w\-]*)(?![\w\-]*[.\[])"</span><span class="p">)</span>
+</span><span id="line-26">
+</span><span id="line-27">
+</span><span id="line-28"><span class="k">def</span><span class="w"> </span><span class="nf">_expression_spans</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+</span><span id="line-29"><span class="w">    </span><span class="sd">"""``(body_start, body_end)`` of each ``${{ body }}`` in *text*.</span>
+</span><span id="line-30">
+</span><span id="line-31"><span class="sd">    A ``}}`` inside a single-quoted string literal does not end the expression.</span>
+</span><span id="line-32"><span class="sd">    """</span>
+</span><span id="line-33">    <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="line-34">    <span class="k">while</span> <span class="p">(</span><span class="n">start</span> <span class="o">:=</span> <span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"${{"</span><span class="p">,</span> <span class="n">pos</span><span class="p">))</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span id="line-35">        <span class="n">i</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">3</span>
+</span><span id="line-36">        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span id="line-37">            <span class="k">if</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"'"</span><span class="p">:</span>
+</span><span id="line-38">                <span class="n">literal</span> <span class="o">=</span> <span class="n">_STRING_LITERAL_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+</span><span id="line-39">                <span class="n">i</span> <span class="o">=</span> <span class="n">literal</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> <span class="k">if</span> <span class="n">literal</span> <span class="k">else</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span id="line-40">            <span class="k">elif</span> <span class="n">text</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"}}"</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+</span><span id="line-41">                <span class="k">yield</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">3</span><span class="p">,</span> <span class="n">i</span>
+</span><span id="line-42">                <span class="n">pos</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span>
+</span><span id="line-43">                <span class="k">break</span>
+</span><span id="line-44">            <span class="k">else</span><span class="p">:</span>
+</span><span id="line-45">                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-46">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-47">            <span class="k">return</span>  <span class="c1"># unterminated: leave the rest alone</span>
+</span><span id="line-48">
+</span><span id="line-49">
+<div class="viewcode-block" id="sub_config_refs">
+<a class="viewcode-back" href="../../_autosummary/reci.recipe_checks.html#reci.recipe_checks.sub_config_refs">[docs]</a>
+</span><span id="line-50"><span class="k">def</span><span class="w"> </span><span class="nf">sub_config_refs</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">repl</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">re</span><span class="o">.</span><span class="n">Match</span><span class="p">],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-51"><span class="w">    </span><span class="sd">"""Substitute every ``config.&lt;key&gt;`` inside a ``${{ ... }}`` in *text*.</span>
+</span><span id="line-52">
+</span><span id="line-53"><span class="sd">    *repl* receives the match (``group(1)`` is the key).  Only expression code is</span>
+</span><span id="line-54"><span class="sd">    touched, never string literals inside an expression (``'config.json'``) and</span>
+</span><span id="line-55"><span class="sd">    never text outside ``${{ }}`` (``cat config.json``).  An expression that</span>
+</span><span id="line-56"><span class="sd">    changes is re-emitted as ``${{ &lt;code&gt; }}``; the others are left verbatim.</span>
+</span><span id="line-57">
+</span><span id="line-58"><span class="sd">    &gt;&gt;&gt; sub_config_refs("${{ fromJson(config.v) }} cat config.json",</span>
+</span><span id="line-59"><span class="sd">    ...                 lambda m: "NEEDS." + m.group(1))</span>
+</span><span id="line-60"><span class="sd">    '${{ fromJson(NEEDS.v) }} cat config.json'</span>
+</span><span id="line-61"><span class="sd">    """</span>
+</span><span id="line-62">
+</span><span id="line-63">    <span class="k">def</span><span class="w"> </span><span class="nf">rewrite_code</span><span class="p">(</span><span class="n">body</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-64">        <span class="n">pieces</span><span class="p">,</span> <span class="n">pos</span> <span class="o">=</span> <span class="p">[],</span> <span class="mi">0</span>
+</span><span id="line-65">        <span class="k">for</span> <span class="n">literal</span> <span class="ow">in</span> <span class="n">_STRING_LITERAL_RE</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">body</span><span class="p">):</span>
+</span><span id="line-66">            <span class="n">pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_CONFIG_NAME_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">repl</span><span class="p">,</span> <span class="n">body</span><span class="p">[</span><span class="n">pos</span> <span class="p">:</span> <span class="n">literal</span><span class="o">.</span><span class="n">start</span><span class="p">()]))</span>
+</span><span id="line-67">            <span class="n">pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">literal</span><span class="o">.</span><span class="n">group</span><span class="p">())</span>
+</span><span id="line-68">            <span class="n">pos</span> <span class="o">=</span> <span class="n">literal</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+</span><span id="line-69">        <span class="n">pieces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_CONFIG_NAME_RE</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">repl</span><span class="p">,</span> <span class="n">body</span><span class="p">[</span><span class="n">pos</span><span class="p">:]))</span>
+</span><span id="line-70">        <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+</span><span id="line-71">
+</span><span id="line-72">    <span class="n">out</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="p">[],</span> <span class="mi">0</span>
+</span><span id="line-73">    <span class="k">for</span> <span class="n">body_start</span><span class="p">,</span> <span class="n">body_end</span> <span class="ow">in</span> <span class="n">_expression_spans</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span id="line-74">        <span class="n">body</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">body_start</span><span class="p">:</span><span class="n">body_end</span><span class="p">]</span>
+</span><span id="line-75">        <span class="n">new_body</span> <span class="o">=</span> <span class="n">rewrite_code</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+</span><span id="line-76">        <span class="k">if</span> <span class="n">new_body</span> <span class="o">!=</span> <span class="n">body</span><span class="p">:</span>
+</span><span id="line-77">            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">last</span> <span class="p">:</span> <span class="n">body_start</span> <span class="o">-</span> <span class="mi">3</span><span class="p">])</span>
+</span><span id="line-78">            <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"${{ "</span> <span class="o">+</span> <span class="n">new_body</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">" }}"</span><span class="p">)</span>
+</span><span id="line-79">            <span class="n">last</span> <span class="o">=</span> <span class="n">body_end</span> <span class="o">+</span> <span class="mi">2</span>
+</span><span id="line-80">    <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">last</span><span class="p">:])</span>
+</span><span id="line-81">    <span class="k">return</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+</span><span id="line-82">
+</span><span id="line-83">
+<div class="viewcode-block" id="config_names">
+<a class="viewcode-back" href="../../_autosummary/reci.recipe_checks.html#reci.recipe_checks.config_names">[docs]</a>
+</span><span id="line-84"><span class="k">def</span><span class="w"> </span><span class="nf">config_names</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-85"><span class="w">    </span><span class="sd">"""The config keys referenced in *text*'s ``${{ ... }}`` expressions, in order.</span>
+</span><span id="line-86">
+</span><span id="line-87"><span class="sd">    &gt;&gt;&gt; config_names("${{ config.a }} ${{ !config.b &amp;&amp; 'config.c' }} config.d")</span>
+</span><span id="line-88"><span class="sd">    ['a', 'b']</span>
+</span><span id="line-89"><span class="sd">    """</span>
+</span><span id="line-90">    <span class="n">names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-91">
+</span><span id="line-92">    <span class="k">def</span><span class="w"> </span><span class="nf">collect</span><span class="p">(</span><span class="n">match</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">Match</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-93">        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span><span id="line-94">        <span class="k">return</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="line-95">
+</span><span id="line-96">    <span class="n">sub_config_refs</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">collect</span><span class="p">)</span>
+</span><span id="line-97">    <span class="k">return</span> <span class="n">names</span></div>
+
+</span><span id="line-98">
+</span><span id="line-99">
 <div class="viewcode-block" id="RecipeProblem">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe_checks.html#reci.recipe_checks.RecipeProblem">[docs]</a>
-</span><span id="line-25"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-26"><span class="k">class</span><span class="w"> </span><span class="nc">RecipeProblem</span><span class="p">:</span>
-</span><span id="line-27"><span class="w">    </span><span class="sd">"""One problem found by :func:`find_recipe_problems`."""</span>
-</span><span id="line-28">
-</span><span id="line-29">    <span class="n">rule_id</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># the validation rule that reports it</span>
-</span><span id="line-30">    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="line-31">    <span class="n">location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+</span><span id="line-100"><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-101"><span class="k">class</span><span class="w"> </span><span class="nc">RecipeProblem</span><span class="p">:</span>
+</span><span id="line-102"><span class="w">    </span><span class="sd">"""One problem found by :func:`find_recipe_problems`."""</span>
+</span><span id="line-103">
+</span><span id="line-104">    <span class="n">rule_id</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># the validation rule that reports it</span>
+</span><span id="line-105">    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="line-106">    <span class="n">location</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-</span><span id="line-32">
-</span><span id="line-33">
-</span><span id="line-34"><span class="k">def</span><span class="w"> </span><span class="nf">_walk_strings</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-35">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-36">        <span class="k">yield</span> <span class="n">obj</span>
-</span><span id="line-37">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="line-38">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-</span><span id="line-39">            <span class="k">yield from</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="line-40">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-</span><span id="line-41">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
-</span><span id="line-42">            <span class="k">yield from</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="line-43">
-</span><span id="line-44">
-</span><span id="line-45"><span class="k">def</span><span class="w"> </span><span class="nf">_recipe_strings</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
-</span><span id="line-46"><span class="w">    </span><span class="sd">"""``(location, text, needs_context_available)`` for each string that may hold</span>
-</span><span id="line-47"><span class="sd">    a config reference.</span>
-</span><span id="line-48">
-</span><span id="line-49"><span class="sd">    Config values reach a workflow through ``needs.setup.outputs``, and GitHub</span>
-</span><span id="line-50"><span class="sd">    does not offer the ``needs`` context in workflow-level ``env`` or in job</span>
-</span><span id="line-51"><span class="sd">    ``permissions``.</span>
-</span><span id="line-52"><span class="sd">    """</span>
-</span><span id="line-53">    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">env</span><span class="p">):</span>
-</span><span id="line-54">        <span class="k">yield</span> <span class="s2">"workflow env"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">False</span>
-</span><span id="line-55">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-56">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">permissions</span><span class="p">):</span>
-</span><span id="line-57">            <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> permissions"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">False</span>
-</span><span id="line-58">        <span class="n">job_fields</span> <span class="o">=</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">runs_on</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
-</span><span id="line-59">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">job_fields</span><span class="p">)):</span>
-</span><span id="line-60">            <span class="k">yield</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
-</span><span id="line-61">        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
-</span><span id="line-62">            <span class="n">step_fields</span> <span class="o">=</span> <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
-</span><span id="line-63">            <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">step_fields</span><span class="p">)):</span>
-</span><span id="line-64">                <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
-</span><span id="line-65">
-</span><span id="line-66">
+</span><span id="line-107">
+</span><span id="line-108">
+</span><span id="line-109"><span class="k">def</span><span class="w"> </span><span class="nf">_walk_strings</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-110">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-111">        <span class="k">yield</span> <span class="n">obj</span>
+</span><span id="line-112">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="line-113">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="line-114">            <span class="k">yield from</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="line-115">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+</span><span id="line-116">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+</span><span id="line-117">            <span class="k">yield from</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="line-118">
+</span><span id="line-119">
+</span><span id="line-120"><span class="k">def</span><span class="w"> </span><span class="nf">_recipe_strings</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
+</span><span id="line-121"><span class="w">    </span><span class="sd">"""``(location, text, needs_context_available)`` for each string that may hold</span>
+</span><span id="line-122"><span class="sd">    a config reference.</span>
+</span><span id="line-123">
+</span><span id="line-124"><span class="sd">    Config values reach a workflow through ``needs.setup.outputs``, and GitHub</span>
+</span><span id="line-125"><span class="sd">    does not offer the ``needs`` context in workflow-level ``env`` or in job</span>
+</span><span id="line-126"><span class="sd">    ``permissions``.</span>
+</span><span id="line-127"><span class="sd">    """</span>
+</span><span id="line-128">    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">env</span><span class="p">):</span>
+</span><span id="line-129">        <span class="k">yield</span> <span class="s2">"workflow env"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">False</span>
+</span><span id="line-130">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-131">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">permissions</span><span class="p">):</span>
+</span><span id="line-132">            <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> permissions"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">False</span>
+</span><span id="line-133">        <span class="n">job_fields</span> <span class="o">=</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">runs_on</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+</span><span id="line-134">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">job_fields</span><span class="p">)):</span>
+</span><span id="line-135">            <span class="k">yield</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
+</span><span id="line-136">        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+</span><span id="line-137">            <span class="n">step_fields</span> <span class="o">=</span> <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+</span><span id="line-138">            <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">step_fields</span><span class="p">)):</span>
+</span><span id="line-139">                <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
+</span><span id="line-140">
+</span><span id="line-141">
 <div class="viewcode-block" id="config_references">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe_checks.html#reci.recipe_checks.config_references">[docs]</a>
-</span><span id="line-67"><span class="k">def</span><span class="w"> </span><span class="nf">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
-</span><span id="line-68"><span class="w">    </span><span class="sd">"""``(location, key, needs_context_available)`` for each ``${{ config.key }}``.</span>
-</span><span id="line-69">
-</span><span id="line-70"><span class="sd">    Duplicates within one location are reported once.</span>
-</span><span id="line-71"><span class="sd">    """</span>
-</span><span id="line-72">    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="line-73">    <span class="n">refs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-74">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">_recipe_strings</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
-</span><span id="line-75">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">CONFIG_REF_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-</span><span id="line-76">            <span class="k">if</span> <span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-</span><span id="line-77">                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
-</span><span id="line-78">                <span class="n">refs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span><span class="p">))</span>
-</span><span id="line-79">    <span class="k">return</span> <span class="n">refs</span></div>
+</span><span id="line-142"><span class="k">def</span><span class="w"> </span><span class="nf">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
+</span><span id="line-143"><span class="w">    </span><span class="sd">"""``(location, key, needs_context_available)`` for each ``${{ config.key }}``.</span>
+</span><span id="line-144">
+</span><span id="line-145"><span class="sd">    Duplicates within one location are reported once.</span>
+</span><span id="line-146"><span class="sd">    """</span>
+</span><span id="line-147">    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-148">    <span class="n">refs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-149">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">_recipe_strings</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
+</span><span id="line-150">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">config_names</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span id="line-151">            <span class="k">if</span> <span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+</span><span id="line-152">                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+</span><span id="line-153">                <span class="n">refs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span><span class="p">))</span>
+</span><span id="line-154">    <span class="k">return</span> <span class="n">refs</span></div>
 
-</span><span id="line-80">
-</span><span id="line-81">
+</span><span id="line-155">
+</span><span id="line-156">
 <div class="viewcode-block" id="find_recipe_problems">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe_checks.html#reci.recipe_checks.find_recipe_problems">[docs]</a>
-</span><span id="line-82"><span class="k">def</span><span class="w"> </span><span class="nf">find_recipe_problems</span><span class="p">(</span>
-</span><span id="line-83">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-</span><span id="line-84"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]:</span>
-</span><span id="line-85"><span class="w">    </span><span class="sd">"""Problems that would make the compiled workflow invalid.</span>
-</span><span id="line-86">
-</span><span id="line-87"><span class="sd">    * ``CONF004`` — ``${{ config.X }}`` where ``X`` is not a config key (the</span>
-</span><span id="line-88"><span class="sd">      rewritten ``needs.setup.outputs.X`` would be empty or the setup job absent),</span>
-</span><span id="line-89"><span class="sd">      or that sits where the ``needs`` context is unavailable.</span>
-</span><span id="line-90"><span class="sd">    * ``DAG006`` — ``needs:`` naming a job that does not exist (``setup`` exists</span>
-</span><span id="line-91"><span class="sd">      only when config is supplied).</span>
-</span><span id="line-92"><span class="sd">    * ``DAG007`` — a recipe job named ``setup`` while config is supplied: it</span>
-</span><span id="line-93"><span class="sd">      would replace the generated setup job.</span>
-</span><span id="line-94"><span class="sd">    """</span>
-</span><span id="line-95">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span id="line-96">    <span class="n">problems</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-97">
-</span><span id="line-98">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
-</span><span id="line-99">        <span class="k">if</span> <span class="ow">not</span> <span class="n">needs_ok</span><span class="p">:</span>
-</span><span id="line-100">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-101">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, but GitHub offers no "</span>
-</span><span id="line-102">                <span class="sa">f</span><span class="s2">"'needs' context there; use a literal value."</span>
-</span><span id="line-103">            <span class="p">)</span>
-</span><span id="line-104">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-</span><span id="line-105">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-106">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, which is not a config key."</span>
-</span><span id="line-107">            <span class="p">)</span>
-</span><span id="line-108">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-109">            <span class="k">continue</span>
-</span><span id="line-110">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RecipeProblem</span><span class="p">(</span><span class="s2">"CONF004"</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">location</span><span class="p">))</span>
-</span><span id="line-111">
-</span><span id="line-112">    <span class="n">known</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">)</span> <span class="o">|</span> <span class="p">({</span><span class="n">SETUP_JOB_ID</span><span class="p">}</span> <span class="k">if</span> <span class="n">config</span> <span class="k">else</span> <span class="nb">set</span><span class="p">())</span>
-</span><span id="line-113">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-114">        <span class="k">for</span> <span class="n">needed</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
-</span><span id="line-115">            <span class="k">if</span> <span class="n">needed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span><span class="p">:</span>
-</span><span id="line-116">                <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="line-117">                    <span class="n">RecipeProblem</span><span class="p">(</span>
-</span><span id="line-118">                        <span class="s2">"DAG006"</span><span class="p">,</span>
-</span><span id="line-119">                        <span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' needs '</span><span class="si">{</span><span class="n">needed</span><span class="si">}</span><span class="s2">', which is not a job"</span>
-</span><span id="line-120">                        <span class="o">+</span> <span class="p">(</span>
-</span><span id="line-121">                            <span class="s2">" (the setup job exists only when config is supplied)."</span>
-</span><span id="line-122">                            <span class="k">if</span> <span class="n">needed</span> <span class="o">==</span> <span class="n">SETUP_JOB_ID</span>
-</span><span id="line-123">                            <span class="k">else</span> <span class="s2">"."</span>
-</span><span id="line-124">                        <span class="p">),</span>
-</span><span id="line-125">                        <span class="n">job_id</span><span class="p">,</span>
-</span><span id="line-126">                    <span class="p">)</span>
-</span><span id="line-127">                <span class="p">)</span>
-</span><span id="line-128">
-</span><span id="line-129">    <span class="k">if</span> <span class="n">config</span> <span class="ow">and</span> <span class="n">SETUP_JOB_ID</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
-</span><span id="line-130">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="line-131">            <span class="n">RecipeProblem</span><span class="p">(</span>
-</span><span id="line-132">                <span class="s2">"DAG007"</span><span class="p">,</span>
-</span><span id="line-133">                <span class="sa">f</span><span class="s2">"A recipe job named '</span><span class="si">{</span><span class="n">SETUP_JOB_ID</span><span class="si">}</span><span class="s2">' would replace the generated "</span>
-</span><span id="line-134">                <span class="sa">f</span><span class="s2">"setup job that exports the config; rename it."</span><span class="p">,</span>
-</span><span id="line-135">                <span class="n">SETUP_JOB_ID</span><span class="p">,</span>
-</span><span id="line-136">            <span class="p">)</span>
-</span><span id="line-137">        <span class="p">)</span>
-</span><span id="line-138">    <span class="k">return</span> <span class="n">problems</span></div>
+</span><span id="line-157"><span class="k">def</span><span class="w"> </span><span class="nf">find_recipe_problems</span><span class="p">(</span>
+</span><span id="line-158">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="line-159"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]:</span>
+</span><span id="line-160"><span class="w">    </span><span class="sd">"""Problems that would make the compiled workflow invalid.</span>
+</span><span id="line-161">
+</span><span id="line-162"><span class="sd">    * ``CONF004`` — ``${{ config.X }}`` where ``X`` is not a config key (the</span>
+</span><span id="line-163"><span class="sd">      rewritten ``needs.setup.outputs.X`` would be empty or the setup job absent),</span>
+</span><span id="line-164"><span class="sd">      or that sits where the ``needs`` context is unavailable.</span>
+</span><span id="line-165"><span class="sd">    * ``DAG006`` — ``needs:`` naming a job that does not exist (``setup`` exists</span>
+</span><span id="line-166"><span class="sd">      only when config is supplied).</span>
+</span><span id="line-167"><span class="sd">    * ``DAG007`` — a recipe job named ``setup`` while config is supplied: it</span>
+</span><span id="line-168"><span class="sd">      would replace the generated setup job.</span>
+</span><span id="line-169"><span class="sd">    """</span>
+</span><span id="line-170">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span id="line-171">    <span class="n">problems</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-172">
+</span><span id="line-173">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
+</span><span id="line-174">        <span class="k">if</span> <span class="ow">not</span> <span class="n">needs_ok</span><span class="p">:</span>
+</span><span id="line-175">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-176">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, but GitHub offers no "</span>
+</span><span id="line-177">                <span class="sa">f</span><span class="s2">"'needs' context there; use a literal value."</span>
+</span><span id="line-178">            <span class="p">)</span>
+</span><span id="line-179">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+</span><span id="line-180">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-181">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, which is not a config key."</span>
+</span><span id="line-182">            <span class="p">)</span>
+</span><span id="line-183">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-184">            <span class="k">continue</span>
+</span><span id="line-185">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RecipeProblem</span><span class="p">(</span><span class="s2">"CONF004"</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">location</span><span class="p">))</span>
+</span><span id="line-186">
+</span><span id="line-187">    <span class="n">known</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">)</span> <span class="o">|</span> <span class="p">({</span><span class="n">SETUP_JOB_ID</span><span class="p">}</span> <span class="k">if</span> <span class="n">config</span> <span class="k">else</span> <span class="nb">set</span><span class="p">())</span>
+</span><span id="line-188">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-189">        <span class="k">for</span> <span class="n">needed</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
+</span><span id="line-190">            <span class="k">if</span> <span class="n">needed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span><span class="p">:</span>
+</span><span id="line-191">                <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="line-192">                    <span class="n">RecipeProblem</span><span class="p">(</span>
+</span><span id="line-193">                        <span class="s2">"DAG006"</span><span class="p">,</span>
+</span><span id="line-194">                        <span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' needs '</span><span class="si">{</span><span class="n">needed</span><span class="si">}</span><span class="s2">', which is not a job"</span>
+</span><span id="line-195">                        <span class="o">+</span> <span class="p">(</span>
+</span><span id="line-196">                            <span class="s2">" (the setup job exists only when config is supplied)."</span>
+</span><span id="line-197">                            <span class="k">if</span> <span class="n">needed</span> <span class="o">==</span> <span class="n">SETUP_JOB_ID</span>
+</span><span id="line-198">                            <span class="k">else</span> <span class="s2">"."</span>
+</span><span id="line-199">                        <span class="p">),</span>
+</span><span id="line-200">                        <span class="n">job_id</span><span class="p">,</span>
+</span><span id="line-201">                    <span class="p">)</span>
+</span><span id="line-202">                <span class="p">)</span>
+</span><span id="line-203">
+</span><span id="line-204">    <span class="k">if</span> <span class="n">config</span> <span class="ow">and</span> <span class="n">SETUP_JOB_ID</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
+</span><span id="line-205">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="line-206">            <span class="n">RecipeProblem</span><span class="p">(</span>
+</span><span id="line-207">                <span class="s2">"DAG007"</span><span class="p">,</span>
+</span><span id="line-208">                <span class="sa">f</span><span class="s2">"A recipe job named '</span><span class="si">{</span><span class="n">SETUP_JOB_ID</span><span class="si">}</span><span class="s2">' would replace the generated "</span>
+</span><span id="line-209">                <span class="sa">f</span><span class="s2">"setup job that exports the config; rename it."</span><span class="p">,</span>
+</span><span id="line-210">                <span class="n">SETUP_JOB_ID</span><span class="p">,</span>
+</span><span id="line-211">            <span class="p">)</span>
+</span><span id="line-212">        <span class="p">)</span>
+</span><span id="line-213">    <span class="k">return</span> <span class="n">problems</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -329,7 +410,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=2fd7553c"></script>
+    <script src="../../_static/documentation_options.js?v=056c92e6"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

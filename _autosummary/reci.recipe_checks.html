@@ -132,19 +132,22 @@ and the validation rules (which report them), so both always agree.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#reci.recipe_checks.SETUP_JOB_ID" title="reci.recipe_checks.SETUP_JOB_ID"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SETUP_JOB_ID</span></code></a></p></td>
 <td><p>The generated job that exports config values; recipe jobs may not use the id when config is supplied.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#reci.recipe_checks.CONFIG_REF_RE" title="reci.recipe_checks.CONFIG_REF_RE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONFIG_REF_RE</span></code></a></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">config.X</span> <span class="pre">}}</span></code> — the one form the compiler rewrites (see reci#19 for refs inside larger expressions).</p></td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#reci.recipe_checks.config_references" title="reci.recipe_checks.config_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_references</span></code></a>(recipe)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.recipe_checks.config_names" title="reci.recipe_checks.config_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_names</span></code></a>(text)</p></td>
+<td><p>The config keys referenced in <em>text</em>'s <a href="#id1"><span class="problematic" id="id2">``</span></a>${{ .</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.recipe_checks.config_references" title="reci.recipe_checks.config_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_references</span></code></a>(recipe)</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">(location,</span> <span class="pre">key,</span> <span class="pre">needs_context_available)</span></code> for each <code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">config.key</span> <span class="pre">}}</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#reci.recipe_checks.find_recipe_problems" title="reci.recipe_checks.find_recipe_problems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_recipe_problems</span></code></a>(recipe, config)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.recipe_checks.find_recipe_problems" title="reci.recipe_checks.find_recipe_problems"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_recipe_problems</span></code></a>(recipe, config)</p></td>
 <td><p>Problems that would make the compiled workflow invalid.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.recipe_checks.sub_config_refs" title="reci.recipe_checks.sub_config_refs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub_config_refs</span></code></a>(text, repl)</p></td>
+<td><p>Substitute every <code class="docutils literal notranslate"><span class="pre">config.&lt;key&gt;</span></code> inside a <a href="#id3"><span class="problematic" id="id4">``</span></a>${{ .</p></td>
 </tr>
 </tbody>
 </table>
@@ -156,12 +159,6 @@ and the validation rules (which report them), so both always agree.</p>
 </tr>
 </tbody>
 </table>
-<dl class="py data">
-<dt class="sig sig-object py" id="reci.recipe_checks.CONFIG_REF_RE">
-<span class="sig-prename descclassname"><span class="pre">reci.recipe_checks.</span></span><span class="sig-name descname"><span class="pre">CONFIG_REF_RE</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('\\$\\{\\{\\s*config\\.(\\w+)\\s*\\}\\}')</span></span><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.recipe_checks.CONFIG_REF_RE" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.recipe_checks.CONFIG_REF_RE'">¶</a></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">config.X</span> <span class="pre">}}</span></code> — the one form the compiler rewrites (see reci#19 for refs
-inside larger expressions).  Plain text such as <code class="docutils literal notranslate"><span class="pre">config.json</span></code> does not match.</p>
-</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="reci.recipe_checks.RecipeProblem">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">reci.recipe_checks.</span></span><span class="sig-name descname"><span class="pre">RecipeProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rule_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/recipe_checks.html#RecipeProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.recipe_checks.RecipeProblem" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.recipe_checks.RecipeProblem'">¶</a></dt>
@@ -175,6 +172,20 @@ inside larger expressions).  Plain text such as <code class="docutils literal no
 <span class="sig-prename descclassname"><span class="pre">reci.recipe_checks.</span></span><span class="sig-name descname"><span class="pre">SETUP_JOB_ID</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'setup'</span></span><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.recipe_checks.SETUP_JOB_ID" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.recipe_checks.SETUP_JOB_ID'">¶</a></dt>
 <dd><p>The generated job that exports config values; recipe jobs may not use the id
 when config is supplied.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.recipe_checks.config_names">
+<span class="sig-prename descclassname"><span class="pre">reci.recipe_checks.</span></span><span class="sig-name descname"><span class="pre">config_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/recipe_checks.html#config_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.recipe_checks.config_names" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.recipe_checks.config_names'">¶</a></dt>
+<dd><p>The config keys referenced in <em>text</em>’s <code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">...</span> <span class="pre">}}</span></code> expressions, in order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>]</span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">config_names</span><span class="p">(</span><span class="s2">"${{ config.a }} ${{ !config.b &amp;&amp; 'config.c' }} config.d"</span><span class="p">)</span>
+</span><span id="line-2"><span class="go">['a', 'b']</span>
+</span></code></pre></div>
+</div>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="reci.recipe_checks.config_references">
@@ -206,15 +217,35 @@ would replace the generated setup job.</p></li>
 </dd>
 </dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.recipe_checks.sub_config_refs">
+<span class="sig-prename descclassname"><span class="pre">reci.recipe_checks.</span></span><span class="sig-name descname"><span class="pre">sub_config_refs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repl</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/recipe_checks.html#sub_config_refs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.recipe_checks.sub_config_refs" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.recipe_checks.sub_config_refs'">¶</a></dt>
+<dd><p>Substitute every <code class="docutils literal notranslate"><span class="pre">config.&lt;key&gt;</span></code> inside a <code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">...</span> <span class="pre">}}</span></code> in <em>text</em>.</p>
+<p><em>repl</em> receives the match (<code class="docutils literal notranslate"><span class="pre">group(1)</span></code> is the key).  Only expression code is
+touched, never string literals inside an expression (<code class="docutils literal notranslate"><span class="pre">'config.json'</span></code>) and
+never text outside <code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">}}</span></code> (<code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">config.json</span></code>).  An expression that
+changes is re-emitted as <code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">&lt;code&gt;</span> <span class="pre">}}</span></code>; the others are left verbatim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">sub_config_refs</span><span class="p">(</span><span class="s2">"${{ fromJson(config.v) }} cat config.json"</span><span class="p">,</span>
+</span><span id="line-2"><span class="gp">... </span>                <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="s2">"NEEDS."</span> <span class="o">+</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</span><span id="line-3"><span class="go">'${{ fromJson(NEEDS.v) }} cat config.json'</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#reci.recipe_checks.CONFIG_REF_RE'" class="reference internal" href="#reci.recipe_checks.CONFIG_REF_RE"><code class="docutils literal notranslate"><span class="pre">CONFIG_REF_RE</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.recipe_checks.RecipeProblem'" class="reference internal" href="#reci.recipe_checks.RecipeProblem"><code class="docutils literal notranslate"><span class="pre">RecipeProblem</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.recipe_checks.SETUP_JOB_ID'" class="reference internal" href="#reci.recipe_checks.SETUP_JOB_ID"><code class="docutils literal notranslate"><span class="pre">SETUP_JOB_ID</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.recipe_checks.config_names'" class="reference internal" href="#reci.recipe_checks.config_names"><code class="docutils literal notranslate"><span class="pre">config_names()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.recipe_checks.config_references'" class="reference internal" href="#reci.recipe_checks.config_references"><code class="docutils literal notranslate"><span class="pre">config_references()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.recipe_checks.find_recipe_problems'" class="reference internal" href="#reci.recipe_checks.find_recipe_problems"><code class="docutils literal notranslate"><span class="pre">find_recipe_problems()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.recipe_checks.sub_config_refs'" class="reference internal" href="#reci.recipe_checks.sub_config_refs"><code class="docutils literal notranslate"><span class="pre">sub_config_refs()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -228,7 +259,7 @@ would replace the generated setup job.</p></li>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=2fd7553c"></script>
+<script src="../_static/documentation_options.js?v=056c92e6"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

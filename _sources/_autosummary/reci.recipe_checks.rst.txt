@@ -9,14 +9,15 @@ reci.recipe\_checks
    .. autosummary::
    
       SETUP_JOB_ID
-      CONFIG_REF_RE
    
    .. rubric:: Functions
 
    .. autosummary::
    
+      config_names
       config_references
       find_recipe_problems
+      sub_config_refs
    
    .. rubric:: Classes
 

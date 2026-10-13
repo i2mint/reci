@@ -1,4 +1,4 @@
-> built 2026-10-13 18:11 UTC from 27573a9 (main) · reci 0.0.19. Details: build_info.json
+> built 2026-10-13 18:17 UTC from 2ae645c (main) · reci 0.0.20. Details: build_info.json
 
 # index.html.md
 
@@ -832,25 +832,21 @@ and the validation rules (which report them), so both always agree.
 
 ### Module Attributes
 
-| [`SETUP_JOB_ID`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.SETUP_JOB_ID)   | The generated job that exports config values; recipe jobs may not use the id when config is supplied.    |
-|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| [`CONFIG_REF_RE`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.CONFIG_REF_RE)  | `${{ config.X }}` — the one form the compiler rewrites (see reci#19 for refs inside larger expressions). |
+| [`SETUP_JOB_ID`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.SETUP_JOB_ID)   | The generated job that exports config values; recipe jobs may not use the id when config is supplied.   |
+|-----------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
 
 ### Functions
 
-| [`config_references`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.   |
-|---------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
-| [`find_recipe_problems`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                    |
+| [`config_names`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
+|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`config_references`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
+| [`find_recipe_problems`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                              |
+| [`sub_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.sub_config_refs)(text, repl)          | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
 
 ### Classes
 
 | [`RecipeProblem`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.RecipeProblem)(rule_id, message[, location])   | One problem found by [`find_recipe_problems()`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems).   |
 |------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-
-### reci.recipe_checks.CONFIG_REF_RE *= re.compile('\\\\$\\\\{\\\\{\\\\s\*config\\\\.(\\\\w+)\\\\s\*\\\\}\\\\}')*
-
-`${{ config.X }}` — the one form the compiler rewrites (see reci#19 for refs
-inside larger expressions).  Plain text such as `config.json` does not match.
 
 ### *class* reci.recipe_checks.RecipeProblem(rule_id, message, location=None)
 
@@ -862,6 +858,18 @@ One problem found by [`find_recipe_problems()`](_autosummary/reci.recipe_checks.
 
 The generated job that exports config values; recipe jobs may not use the id
 when config is supplied.
+
+### reci.recipe_checks.config_names(text)
+
+The config keys referenced in *text*’s `${{ ... }}` expressions, in order.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+```pycon
+>>> config_names("${{ config.a }} ${{ !config.b && 'config.c' }} config.d")
+['a', 'b']
+```
 
 ### reci.recipe_checks.config_references(recipe)
 
@@ -886,6 +894,24 @@ Problems that would make the compiled workflow invalid.
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`RecipeProblem`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.RecipeProblem)]
+
+### reci.recipe_checks.sub_config_refs(text, repl)
+
+Substitute every `config.<key>` inside a `${{ ... }}` in *text*.
+
+*repl* receives the match (`group(1)` is the key).  Only expression code is
+touched, never string literals inside an expression (`'config.json'`) and
+never text outside `${{ }}` (`cat config.json`).  An expression that
+changes is re-emitted as `${{ <code> }}`; the others are left verbatim.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> sub_config_refs("${{ fromJson(config.v) }} cat config.json",
+...                 lambda m: "NEEDS." + m.group(1))
+'${{ fromJson(NEEDS.v) }} cat config.json'
+```
 
 
 # _autosummary/reci.validation.formatters.html.md
@@ -1252,7 +1278,7 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 18:11 UTC** from commit <a href="https://github.com/i2mint/reci/commit/27573a9112e248b6fff57fdb01ee20b66ff5dfd2"><code>27573a9</code></a> on branch <code>main</code>, for **reci 0.0.19** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 18:17 UTC** from commit <a href="https://github.com/i2mint/reci/commit/2ae645cab7e38ca7ad9840275f43b32c6147ce3d"><code>2ae645c</code></a> on branch <code>main</code>, for **reci 0.0.20** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1261,9 +1287,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/27573a9112e248b6fff57fdb01ee20b66ff5dfd2"><code>27573a9112e248b6fff57fdb01ee20b66ff5dfd2</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/2ae645cab7e38ca7ad9840275f43b32c6147ce3d"><code>2ae645cab7e38ca7ad9840275f43b32c6147ce3d</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.19</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.20</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1272,9 +1298,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38444435426">38444435426</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38445220256">38445220256</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>58dd73ef0de6dd4b3c89592b108c9c9337828724</code> (in the history of the built commit) |
+| Event commit | <code>5718d4c9e3ad0c24deb867f2df9f00d63b09abeb</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1299,13 +1325,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.19/">0.0.19</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.20/">0.0.20</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 27573a9112e248b6fff57fdb01ee20b66ff5dfd2
+git checkout 2ae645cab7e38ca7ad9840275f43b32c6147ce3d
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
