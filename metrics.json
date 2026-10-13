@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.8144452571868896,
-  "commit_message": "fix: FLOW001/CONF001 count outputs of steps in other jobs as sources (#21)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "ee658fdeec5f7e4344ac34dd241313db54530005",
+  "collection_duration_seconds": 4.005030155181885,
+  "commit_message": "Merge ee658fdeec5f7e4344ac34dd241313db54530005 into 5718d4c9e3ad0c24deb867f2df9f00d63b09abeb",
+  "commit_sha": "d15c9b81b70fa9271ee6dc4d023a70c5af95d021",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T18:16:50.686061Z",
+  "timestamp": "2026-10-13T18:16:55.099621Z",
   "workflow_status": {}
 }
