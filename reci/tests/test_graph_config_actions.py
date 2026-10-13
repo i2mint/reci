@@ -18,6 +18,7 @@ from reci.config import (
     flatten_config,
     resolve_config_for_input,
 )
+from reci.graph import RecipeGraph
 from reci.recipe import parse_recipe_string
 from reci.tests._helpers import mk_graph, mk_spec
 
@@ -156,6 +157,36 @@ def test_collect_required_config_keys_skips_upstream_fed_inputs():
         "other": True,
         "later": True,
     }
+
+
+def test_collect_required_config_keys_cross_job_consumer_follows_written_key():
+    # Another step needs `wheel` from config, so scaffold writes the key and the
+    # compiler (config beats another job's output) feeds the cross-job consumer
+    # from it too: the key must stay required, not become an empty optional.
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", inputs={"wheel": {}}, outputs=["wheel"]),
+        "x/c@v1": mk_spec("x/c@v1", inputs={"wheel": {"required": True}}),
+    }
+    recipe = parse_recipe_string(
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  test:\n    steps: [{id: c, uses: x/c@v1}]\n"
+    )
+    assert collect_required_config_keys(recipe, specs) == {"wheel": True}
+
+
+def test_upstream_output_names_is_scoped_by_job_even_for_equal_step_ids():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/c@v1": mk_spec("x/c@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = parse_recipe_string(
+        "on: push\njobs:\n  a:\n    steps: [{id: s, uses: x/c@v1}]\n"
+        "  b:\n    steps: [{id: s, uses: x/p@v1}]\n"
+    )
+    graph = RecipeGraph.from_recipe(recipe, specs)
+    node = graph["a.s"]
+    assert graph.upstream_output_names(node, other_jobs=False) == set()
+    assert graph.upstream_output_names(node) == {"v"}  # b.s is another job
 
 
 # -- action specs -------------------------------------------------------------

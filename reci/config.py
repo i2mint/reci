@@ -65,20 +65,31 @@ def collect_required_config_keys(
     """
     graph = RecipeGraph.from_recipe(recipe, action_specs)
     keys: dict[str, bool] = {}
+
+    def record(name: str, is_required: bool) -> None:
+        keys[name] = keys.get(name, False) or is_required
+
+    cross_job_fed: list[tuple[str, bool]] = []
     for node in graph.nodes():
-        if not node.action_spec:
-            continue
         provided = {normalize_name(k) for k in node.with_}
-        upstream = graph.upstream_output_names(node)
+        same_job = graph.upstream_output_names(node, other_jobs=False)
+        everywhere = graph.upstream_output_names(node)
         for norm_name, inp in node.input_specs.items():
             if norm_name in provided:
                 continue
-            if node.bind.get(norm_name, norm_name) in upstream:
-                continue
+            search = node.bind.get(norm_name, norm_name)
             is_required = inp.required and inp.default is None
-            # Record the shared key name
-            if norm_name not in keys:
-                keys[norm_name] = is_required
-            elif is_required:
-                keys[norm_name] = True
+            if search in same_job:
+                continue
+            if search in everywhere:
+                cross_job_fed.append((norm_name, is_required))
+            else:
+                record(norm_name, is_required)
+
+    # The compiler lets a config value beat another job's output: if the key is
+    # written anyway (another step needs it), a cross-job consumer reads it too,
+    # so its requiredness must count.
+    for norm_name, is_required in cross_job_fed:
+        if norm_name in keys:
+            record(norm_name, is_required)
     return keys
