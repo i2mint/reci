@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 2.586332321166992,
+  "collection_duration_seconds": 4.11377739906311,
   "commit_message": "fix: no dangling needs:[setup] without config; cross-job wiring without config (#8, #17) (#20)\n\n* fix: no dangling needs:[setup] without config; cross-job wiring independent of config (#8, #17)\n\nLint every compiled workflow in the compiler tests with actionlint.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* test: actionlint helper fails on any non-zero exit\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: shellcheck-clean setup script (quoted, grouped GITHUB_OUTPUT redirect); lint helper finds shellcheck\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "06731d08030a2dd98b107afbefc0a6e3cf64fa49",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14873,
-      "comment_lines_ratio": 0.05146224325970215,
-      "docs_lines": 21225,
-      "empty_lines": 34053,
-      "empty_lines_ratio": 0.1178271881747218,
-      "files_analyzed": 725,
-      "function_lines": 112766,
-      "function_lines_ratio": 0.39018297071361346,
-      "mean_lines_per_function": 14.569250645994831,
-      "num_classes": 1970,
-      "num_functions": 7740,
+      "comment_lines": 15019,
+      "comment_lines_ratio": 0.05158208176063908,
+      "docs_lines": 21258,
+      "empty_lines": 34386,
+      "empty_lines_ratio": 0.11809717447375562,
+      "files_analyzed": 735,
+      "function_lines": 114325,
+      "function_lines_ratio": 0.3926440839792971,
+      "mean_lines_per_function": 14.58971413986728,
+      "num_classes": 1981,
+      "num_functions": 7836,
       "pypi_version": "0.0.9",
-      "total_lines": 289008
+      "total_lines": 291167
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:14:06.451538Z",
+  "timestamp": "2026-10-13T17:14:14.570238Z",
   "workflow_status": {}
 }
