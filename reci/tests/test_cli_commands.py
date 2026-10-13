@@ -139,11 +139,6 @@ def test_inspect_prints_the_contract(capsys):
     assert "Outputs: none" in capsys.readouterr().out
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#15: upstream outputs ignored",
-)
 def test_scaffold_does_not_ask_for_inputs_an_upstream_step_supplies(project):
     cfg = project / "pyproject.toml"
     cli.scaffold(

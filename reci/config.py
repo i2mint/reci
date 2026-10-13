@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import Any
 
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
+from reci.graph import RecipeGraph
 from reci.recipe import Recipe
 
 
@@ -58,22 +59,37 @@ def collect_required_config_keys(
     """Scan a recipe and return config keys needed by its actions.
 
     Returns ``{key: required}`` where *required* is True when the input
-    has ``required=True`` and no default.
+    has ``required=True`` and no default.  Inputs given by an explicit
+    ``with:`` or fed by an upstream step output (``bind:`` honoured) need no
+    config key.
     """
+    graph = RecipeGraph.from_recipe(recipe, action_specs)
     keys: dict[str, bool] = {}
-    for job in recipe.jobs.values():
-        for step in job.steps:
-            spec = action_specs.get(step.uses) if step.uses else None
-            if not spec:
+
+    def record(name: str, is_required: bool) -> None:
+        keys[name] = keys.get(name, False) or is_required
+
+    cross_job_fed: list[tuple[str, bool]] = []
+    for node in graph.nodes():
+        provided = {normalize_name(k) for k in node.with_}
+        same_job = graph.upstream_output_names(node, other_jobs=False)
+        everywhere = graph.upstream_output_names(node)
+        for norm_name, inp in node.input_specs.items():
+            if norm_name in provided:
                 continue
-            for norm_name, inp in spec.inputs.items():
-                # Skip inputs that are explicitly provided
-                if norm_name in {normalize_name(k) for k in step.with_}:
-                    continue
-                is_required = inp.required and inp.default is None
-                # Record the shared key name
-                if norm_name not in keys:
-                    keys[norm_name] = is_required
-                elif is_required:
-                    keys[norm_name] = True
+            search = node.bind.get(norm_name, norm_name)
+            is_required = inp.required and inp.default is None
+            if search in same_job:
+                continue
+            if search in everywhere:
+                cross_job_fed.append((norm_name, is_required))
+            else:
+                record(norm_name, is_required)
+
+    # The compiler lets a config value beat another job's output: if the key is
+    # written anyway (another step needs it), a cross-job consumer reads it too,
+    # so its requiredness must count.
+    for norm_name, is_required in cross_job_fed:
+        if norm_name in keys:
+            record(norm_name, is_required)
     return keys
