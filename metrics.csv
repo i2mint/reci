@@ -1,28 +1,26 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T18:03:00.194844Z
-commit_sha,66b5096024f045eea67f24a7ea2bfc75ad51626c
-commit_message,"fix: refuse recipes that compile to an invalid workflow: undefined config refs, needs on missing jobs, job named setup (#22)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-13T18:05:22.357411Z
+commit_sha,892b2f0b675914e3776a302914c9e87b4a72e361
+commit_message,Merge 30c05cd19255665335086ef8decf8d0b8f95bd75 into 131e5a0bbf0136ed1a198c3897b92492864b816e
 python_version,3.10
-metrics.umpyre_stats.num_functions,7861
-metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,291705
-metrics.umpyre_stats.empty_lines,34483
-metrics.umpyre_stats.comment_lines,15028
-metrics.umpyre_stats.docs_lines,21385
-metrics.umpyre_stats.function_lines,114739
-metrics.umpyre_stats.empty_lines_ratio,0.11821189215131725
-metrics.umpyre_stats.comment_lines_ratio,0.051517800517646255
-metrics.umpyre_stats.function_lines_ratio,0.3933391611388218
-metrics.umpyre_stats.mean_lines_per_function,14.59598015519654
-metrics.umpyre_stats.files_analyzed,737
-metrics.umpyre_stats.pypi_version,0.0.17
+metrics.umpyre_stats.num_functions,7766
+metrics.umpyre_stats.num_classes,1971
+metrics.umpyre_stats.total_lines,289563
+metrics.umpyre_stats.empty_lines,34154
+metrics.umpyre_stats.comment_lines,14885
+metrics.umpyre_stats.docs_lines,21355
+metrics.umpyre_stats.function_lines,113193
+metrics.umpyre_stats.empty_lines_ratio,0.11795015247113755
+metrics.umpyre_stats.comment_lines_ratio,0.05140504829691639
+metrics.umpyre_stats.function_lines_ratio,0.3909097502097989
+metrics.umpyre_stats.mean_lines_per_function,14.5754571207829
+metrics.umpyre_stats.files_analyzed,727
+metrics.umpyre_stats.pypi_version,0.0.18
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T18:02:26Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T18:03:28Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38443216969
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38443517754
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.340153932571411
+collection_duration_seconds,3.056715488433838
