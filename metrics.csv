@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T16:18:57.359943Z
+timestamp,2026-10-13T16:19:02.606568Z
 commit_sha,1a5eed516cbc4d31c3bc30ad4263514fe781de4c
 commit_message,"test_skills: skip the bridge test on checkouts without symlinks
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7710
-metrics.umpyre_stats.num_classes,1964
-metrics.umpyre_stats.total_lines,288532
-metrics.umpyre_stats.empty_lines,33943
-metrics.umpyre_stats.comment_lines,14859
-metrics.umpyre_stats.docs_lines,21210
-metrics.umpyre_stats.function_lines,112488
-metrics.umpyre_stats.empty_lines_ratio,0.11764033105513426
-metrics.umpyre_stats.comment_lines_ratio,0.05149862060360723
-metrics.umpyre_stats.function_lines_ratio,0.3898631694231489
-metrics.umpyre_stats.mean_lines_per_function,14.58988326848249
-metrics.umpyre_stats.files_analyzed,714
+metrics.umpyre_stats.num_functions,7806
+metrics.umpyre_stats.num_classes,1975
+metrics.umpyre_stats.total_lines,290691
+metrics.umpyre_stats.empty_lines,34276
+metrics.umpyre_stats.comment_lines,15005
+metrics.umpyre_stats.docs_lines,21243
+metrics.umpyre_stats.function_lines,114047
+metrics.umpyre_stats.empty_lines_ratio,0.11791214726290115
+metrics.umpyre_stats.comment_lines_ratio,0.05161838515812323
+metrics.umpyre_stats.function_lines_ratio,0.39233068791259446
+metrics.umpyre_stats.mean_lines_per_function,14.610171662823468
+metrics.umpyre_stats.files_analyzed,724
 metrics.umpyre_stats.pypi_version,0.0.7
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T16:17:41Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.1463265419006348
+collection_duration_seconds,4.070679664611816
