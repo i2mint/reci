@@ -1,26 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:56:51.499542Z
-commit_sha,215993aa3be21fc438455bc21df2366074cf0c73
-commit_message,Merge e520d3d2a709c4612367a97089131f2dd3df6ad4 into 098050d19575feb18e507065db3f3c15a6886042
+timestamp,2026-10-13T17:59:34.188598Z
+commit_sha,c8e9ced6cb1bfea99e5758db2bb2a2f3d227d098
+commit_message,"fix: validate before compiling in the CLI; clean exit on CompilationError; cycle message names the reads
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7756
-metrics.umpyre_stats.num_classes,1970
-metrics.umpyre_stats.total_lines,289357
-metrics.umpyre_stats.empty_lines,34116
-metrics.umpyre_stats.comment_lines,14879
-metrics.umpyre_stats.docs_lines,21330
-metrics.umpyre_stats.function_lines,113044
-metrics.umpyre_stats.empty_lines_ratio,0.11790279827341311
-metrics.umpyre_stats.comment_lines_ratio,0.051420909119184954
-metrics.umpyre_stats.function_lines_ratio,0.39067311314397096
-metrics.umpyre_stats.mean_lines_per_function,14.57503867973182
-metrics.umpyre_stats.files_analyzed,726
-metrics.umpyre_stats.pypi_version,0.0.17
+metrics.umpyre_stats.num_functions,7854
+metrics.umpyre_stats.num_classes,1981
+metrics.umpyre_stats.total_lines,291532
+metrics.umpyre_stats.empty_lines,34453
+metrics.umpyre_stats.comment_lines,15026
+metrics.umpyre_stats.docs_lines,21365
+metrics.umpyre_stats.function_lines,114615
+metrics.umpyre_stats.empty_lines_ratio,0.11817913642413183
+metrics.umpyre_stats.comment_lines_ratio,0.05154151173799103
+metrics.umpyre_stats.function_lines_ratio,0.3931472359809558
+metrics.umpyre_stats.mean_lines_per_function,14.593200916730328
+metrics.umpyre_stats.files_analyzed,736
+metrics.umpyre_stats.pypi_version,0.0.16
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T17:56:35Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T17:56:56Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38442625927
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38442625389
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.337874889373779
+collection_duration_seconds,2.852121114730835
