@@ -97,7 +97,6 @@ def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
 
 
 _STEP_OUTPUT_REF = re.compile(r"\bsteps\.([\w-]+)\.outputs\.([\w-]+)")
-_NEEDS_OUTPUT_REF = re.compile(r"\bneeds\.[\w-]+\.outputs\.([\w-]+)")
 
 
 def _expression_texts(node) -> Iterable[str]:
@@ -115,8 +114,9 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
 
     Consumed means: matched by an input of a later step (by name, honouring
     ``bind:``), or referenced explicitly as ``steps.<id>.outputs.<name>`` (same
-    job) or ``needs.<job>.outputs.<name>`` in a step's ``with:``, ``env:``,
-    ``run:`` or ``if:``.
+    job) in a step's ``with:``, ``env:``, ``run:`` or ``if:``.  ``needs.`` references
+    are not counted: a recipe cannot declare job outputs, so only the compiler's
+    own forwarding makes them resolve.
     """
     consumed: set[str] = set()  # normalized output names
     referenced: set[tuple[str, str, str]] = set()  # (job, step id, output name)
@@ -126,9 +126,6 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
         for text in _expression_texts(node):
             for step_id, name in _STEP_OUTPUT_REF.findall(text):
                 referenced.add((node.job, step_id, normalize_name(name)))
-            consumed.update(
-                normalize_name(name) for name in _NEEDS_OUTPUT_REF.findall(text)
-            )
 
     for node in graph.nodes():
         for name in node.output_names:

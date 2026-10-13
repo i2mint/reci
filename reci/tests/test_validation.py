@@ -360,13 +360,33 @@ def test_FLOW004_counts_references_in_with_env_and_if(where):
     assert _only("FLOW004", mk_graph(recipe, specs)) == []
 
 
-def test_FLOW004_counts_run_and_needs_references_and_normalizes_names():
-    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path", "other"])}
+def test_FLOW004_counts_run_references_and_normalizes_names():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"])}
     recipe = _steps(
         "{id: p, uses: x/p@v1}",
-        "{id: r, run: 'echo ${{ steps.p.outputs.wheel-path }} ${{ needs.build.outputs.other }}'}",
+        "{id: r, run: 'echo ${{ steps.p.outputs.wheel-path }}'}",
     )
     assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+def test_FLOW004_needs_references_do_not_count_as_consumption():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = (
+        "on: push\njobs:\n  a:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  b:\n    needs: a\n"
+        "    steps: [{id: r, run: 'echo ${{ needs.a.outputs.v }}'}]\n"
+    )
+    assert [f.location for f in _only("FLOW004", mk_graph(recipe, specs))] == ["a.p"]
+
+
+def test_FLOW004_steps_reference_is_scoped_to_its_own_job():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = (
+        "on: push\njobs:\n  a:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  b:\n    steps:\n      - {id: p, uses: x/p@v1}\n"
+        "      - {id: r, run: 'echo ${{ steps.p.outputs.v }}'}\n"
+    )
+    assert [f.location for f in _only("FLOW004", mk_graph(recipe, specs))] == ["a.p"]
 
 
 def test_FLOW004_explicit_reference_only_consumes_the_step_it_names():
