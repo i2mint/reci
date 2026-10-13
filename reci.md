@@ -1,4 +1,4 @@
-> built 2026-10-13 22:13 UTC from 8511e9c (main) · reci 0.0.23. Details: build_info.json
+> built 2026-10-13 22:18 UTC from 235ee06 (main) · reci 0.0.24. Details: build_info.json
 
 # index.html.md
 
@@ -1289,20 +1289,18 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 22:13 UTC** from commit <a href="https://github.com/i2mint/reci/commit/8511e9c594f73087f79b09a2f2ed5b261c5bf148"><code>8511e9c</code></a> on branch <code>main</code>, for **reci 0.0.23** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 22:18 UTC** from commit <a href="https://github.com/i2mint/reci/commit/235ee06993c222650ddf6ea96890df24a6b955ec"><code>235ee06</code></a> on branch <code>main</code>, for **reci 0.0.24** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.23) is ahead of the latest release on PyPI (0.0.22): these docs describe unreleased code.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/8511e9c594f73087f79b09a2f2ed5b261c5bf148"><code>8511e9c594f73087f79b09a2f2ed5b261c5bf148</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/235ee06993c222650ddf6ea96890df24a6b955ec"><code>235ee06993c222650ddf6ea96890df24a6b955ec</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.23</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.24</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1311,9 +1309,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38476113924">38476113924</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38476613207">38476613207</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>eb2362bec39165944aabec67f3f9d4d6a3833622</code> (in the history of the built commit) |
+| Event commit | <code>89854112f544a5b7901d9fa033eacd358ed7987e</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1338,13 +1336,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.22/">0.0.22</a>, older than the documented version (0.0.23).
+Latest release: <a href="https://pypi.org/project/reci/0.0.24/">0.0.24</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 8511e9c594f73087f79b09a2f2ed5b261c5bf148
+git checkout 235ee06993c222650ddf6ea96890df24a6b955ec
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
