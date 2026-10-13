@@ -249,35 +249,25 @@
 </span><span id="line-70">    <span class="k">def</span><span class="w"> </span><span class="nf">record</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_required</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="line-71">        <span class="n">keys</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">keys</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_required</span>
 </span><span id="line-72">
-</span><span id="line-73">    <span class="n">cross_job_fed</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-74">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
-</span><span id="line-75">        <span class="n">provided</span> <span class="o">=</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}</span>
-</span><span id="line-76">        <span class="n">same_job</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">upstream_output_names</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">other_jobs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</span><span id="line-77">        <span class="n">everywhere</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">upstream_output_names</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-</span><span id="line-78">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-79">            <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="n">provided</span><span class="p">:</span>
-</span><span id="line-80">                <span class="k">continue</span>
-</span><span id="line-81">            <span class="n">search</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
-</span><span id="line-82">            <span class="n">is_required</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">required</span> <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="line-83">            <span class="k">if</span> <span class="n">search</span> <span class="ow">in</span> <span class="n">same_job</span><span class="p">:</span>
-</span><span id="line-84">                <span class="k">continue</span>
-</span><span id="line-85">            <span class="k">if</span> <span class="n">search</span> <span class="ow">in</span> <span class="n">everywhere</span><span class="p">:</span>
-</span><span id="line-86">                <span class="n">cross_job_fed</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span><span class="p">))</span>
-</span><span id="line-87">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-88">                <span class="n">record</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span><span class="p">)</span>
-</span><span id="line-89">
-</span><span id="line-90">    <span class="c1"># The compiler lets a config value beat another job's output: if the key is</span>
-</span><span id="line-91">    <span class="c1"># written anyway (another step needs it), a cross-job consumer reads it too,</span>
-</span><span id="line-92">    <span class="c1"># so its requiredness must count.</span>
-</span><span id="line-93">    <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span> <span class="ow">in</span> <span class="n">cross_job_fed</span><span class="p">:</span>
-</span><span id="line-94">        <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-</span><span id="line-95">            <span class="n">record</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span><span class="p">)</span>
-</span><span id="line-96">
-</span><span id="line-97">    <span class="c1"># Keys the recipe itself references as ${{ config.X }} must exist too.</span>
-</span><span id="line-98">    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
-</span><span id="line-99">        <span class="k">if</span> <span class="n">needs_ok</span><span class="p">:</span>
-</span><span id="line-100">            <span class="n">record</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-</span><span id="line-101">    <span class="k">return</span> <span class="n">keys</span></div>
+</span><span id="line-73">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+</span><span id="line-74">        <span class="n">provided</span> <span class="o">=</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}</span>
+</span><span id="line-75">        <span class="n">same_job</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">upstream_output_names</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">other_jobs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span><span id="line-76">        <span class="n">everywhere</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">upstream_output_names</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+</span><span id="line-77">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-78">            <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="n">provided</span><span class="p">:</span>
+</span><span id="line-79">                <span class="k">continue</span>
+</span><span id="line-80">            <span class="n">search</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
+</span><span id="line-81">            <span class="n">is_required</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">required</span> <span class="ow">and</span> <span class="n">inp</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span id="line-82">            <span class="k">if</span> <span class="n">search</span> <span class="ow">in</span> <span class="n">same_job</span><span class="p">:</span>
+</span><span id="line-83">                <span class="k">continue</span>
+</span><span id="line-84">            <span class="k">if</span> <span class="n">search</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">everywhere</span><span class="p">:</span>  <span class="c1"># fed from another job: needs no key</span>
+</span><span id="line-85">                <span class="n">record</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">is_required</span><span class="p">)</span>
+</span><span id="line-86">
+</span><span id="line-87">    <span class="c1"># Keys the recipe itself references as ${{ config.X }} must exist too.</span>
+</span><span id="line-88">    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
+</span><span id="line-89">        <span class="k">if</span> <span class="n">needs_ok</span><span class="p">:</span>
+</span><span id="line-90">            <span class="n">record</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</span><span id="line-91">    <span class="k">return</span> <span class="n">keys</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -292,7 +282,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=6a9d8632"></script>
+    <script src="../../_static/documentation_options.js?v=cee5022b"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
