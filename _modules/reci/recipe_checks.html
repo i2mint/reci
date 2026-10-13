@@ -310,92 +310,98 @@
 </span><span id="line-130">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 </span><span id="line-131">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">permissions</span><span class="p">):</span>
 </span><span id="line-132">            <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2"> permissions"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">False</span>
-</span><span id="line-133">        <span class="n">job_fields</span> <span class="o">=</span> <span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">runs_on</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
-</span><span id="line-134">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">job_fields</span><span class="p">)):</span>
-</span><span id="line-135">            <span class="k">yield</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
-</span><span id="line-136">        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
-</span><span id="line-137">            <span class="n">step_fields</span> <span class="o">=</span> <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
-</span><span id="line-138">            <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">step_fields</span><span class="p">)):</span>
-</span><span id="line-139">                <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
-</span><span id="line-140">
-</span><span id="line-141">
+</span><span id="line-133">        <span class="n">job_fields</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-134">            <span class="n">job</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span>
+</span><span id="line-135">            <span class="n">job</span><span class="o">.</span><span class="n">runs_on</span><span class="p">,</span>
+</span><span id="line-136">            <span class="n">job</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span>
+</span><span id="line-137">            <span class="n">job</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+</span><span id="line-138">            <span class="n">job</span><span class="o">.</span><span class="n">continue_on_error</span><span class="p">,</span>  <span class="c1"># a bool contributes no strings</span>
+</span><span id="line-139">        <span class="p">)</span>
+</span><span id="line-140">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">job_fields</span><span class="p">)):</span>
+</span><span id="line-141">            <span class="k">yield</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
+</span><span id="line-142">        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+</span><span id="line-143">            <span class="n">step_fields</span> <span class="o">=</span> <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+</span><span id="line-144">            <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_walk_strings</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">step_fields</span><span class="p">)):</span>
+</span><span id="line-145">                <span class="k">yield</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">True</span>
+</span><span id="line-146">
+</span><span id="line-147">
 <div class="viewcode-block" id="config_references">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe_checks.html#reci.recipe_checks.config_references">[docs]</a>
-</span><span id="line-142"><span class="k">def</span><span class="w"> </span><span class="nf">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
-</span><span id="line-143"><span class="w">    </span><span class="sd">"""``(location, key, needs_context_available)`` for each ``${{ config.key }}``.</span>
-</span><span id="line-144">
-</span><span id="line-145"><span class="sd">    Duplicates within one location are reported once.</span>
-</span><span id="line-146"><span class="sd">    """</span>
-</span><span id="line-147">    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="line-148">    <span class="n">refs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-149">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">_recipe_strings</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
-</span><span id="line-150">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">config_names</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-</span><span id="line-151">            <span class="k">if</span> <span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-</span><span id="line-152">                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
-</span><span id="line-153">                <span class="n">refs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span><span class="p">))</span>
-</span><span id="line-154">    <span class="k">return</span> <span class="n">refs</span></div>
+</span><span id="line-148"><span class="k">def</span><span class="w"> </span><span class="nf">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
+</span><span id="line-149"><span class="w">    </span><span class="sd">"""``(location, key, needs_context_available)`` for each ``${{ config.key }}``.</span>
+</span><span id="line-150">
+</span><span id="line-151"><span class="sd">    Duplicates within one location are reported once.</span>
+</span><span id="line-152"><span class="sd">    """</span>
+</span><span id="line-153">    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-154">    <span class="n">refs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-155">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">_recipe_strings</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
+</span><span id="line-156">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">config_names</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span id="line-157">            <span class="k">if</span> <span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+</span><span id="line-158">                <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+</span><span id="line-159">                <span class="n">refs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span><span class="p">))</span>
+</span><span id="line-160">    <span class="k">return</span> <span class="n">refs</span></div>
 
-</span><span id="line-155">
-</span><span id="line-156">
+</span><span id="line-161">
+</span><span id="line-162">
 <div class="viewcode-block" id="find_recipe_problems">
 <a class="viewcode-back" href="../../_autosummary/reci.recipe_checks.html#reci.recipe_checks.find_recipe_problems">[docs]</a>
-</span><span id="line-157"><span class="k">def</span><span class="w"> </span><span class="nf">find_recipe_problems</span><span class="p">(</span>
-</span><span id="line-158">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
-</span><span id="line-159"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]:</span>
-</span><span id="line-160"><span class="w">    </span><span class="sd">"""Problems that would make the compiled workflow invalid.</span>
-</span><span id="line-161">
-</span><span id="line-162"><span class="sd">    * ``CONF004`` — ``${{ config.X }}`` where ``X`` is not a config key (the</span>
-</span><span id="line-163"><span class="sd">      rewritten ``needs.setup.outputs.X`` would be empty or the setup job absent),</span>
-</span><span id="line-164"><span class="sd">      or that sits where the ``needs`` context is unavailable.</span>
-</span><span id="line-165"><span class="sd">    * ``DAG006`` — ``needs:`` naming a job that does not exist (``setup`` exists</span>
-</span><span id="line-166"><span class="sd">      only when config is supplied).</span>
-</span><span id="line-167"><span class="sd">    * ``DAG007`` — a recipe job named ``setup`` while config is supplied: it</span>
-</span><span id="line-168"><span class="sd">      would replace the generated setup job.</span>
-</span><span id="line-169"><span class="sd">    """</span>
-</span><span id="line-170">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
-</span><span id="line-171">    <span class="n">problems</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-172">
-</span><span id="line-173">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
-</span><span id="line-174">        <span class="k">if</span> <span class="ow">not</span> <span class="n">needs_ok</span><span class="p">:</span>
-</span><span id="line-175">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-176">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, but GitHub offers no "</span>
-</span><span id="line-177">                <span class="sa">f</span><span class="s2">"'needs' context there; use a literal value."</span>
-</span><span id="line-178">            <span class="p">)</span>
-</span><span id="line-179">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
-</span><span id="line-180">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="line-181">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, which is not a config key."</span>
-</span><span id="line-182">            <span class="p">)</span>
-</span><span id="line-183">        <span class="k">else</span><span class="p">:</span>
-</span><span id="line-184">            <span class="k">continue</span>
-</span><span id="line-185">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RecipeProblem</span><span class="p">(</span><span class="s2">"CONF004"</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">location</span><span class="p">))</span>
-</span><span id="line-186">
-</span><span id="line-187">    <span class="n">known</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">)</span> <span class="o">|</span> <span class="p">({</span><span class="n">SETUP_JOB_ID</span><span class="p">}</span> <span class="k">if</span> <span class="n">config</span> <span class="k">else</span> <span class="nb">set</span><span class="p">())</span>
-</span><span id="line-188">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-189">        <span class="k">for</span> <span class="n">needed</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
-</span><span id="line-190">            <span class="k">if</span> <span class="n">needed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span><span class="p">:</span>
-</span><span id="line-191">                <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="line-192">                    <span class="n">RecipeProblem</span><span class="p">(</span>
-</span><span id="line-193">                        <span class="s2">"DAG006"</span><span class="p">,</span>
-</span><span id="line-194">                        <span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' needs '</span><span class="si">{</span><span class="n">needed</span><span class="si">}</span><span class="s2">', which is not a job"</span>
-</span><span id="line-195">                        <span class="o">+</span> <span class="p">(</span>
-</span><span id="line-196">                            <span class="s2">" (the setup job exists only when config is supplied)."</span>
-</span><span id="line-197">                            <span class="k">if</span> <span class="n">needed</span> <span class="o">==</span> <span class="n">SETUP_JOB_ID</span>
-</span><span id="line-198">                            <span class="k">else</span> <span class="s2">"."</span>
-</span><span id="line-199">                        <span class="p">),</span>
-</span><span id="line-200">                        <span class="n">job_id</span><span class="p">,</span>
-</span><span id="line-201">                    <span class="p">)</span>
-</span><span id="line-202">                <span class="p">)</span>
-</span><span id="line-203">
-</span><span id="line-204">    <span class="k">if</span> <span class="n">config</span> <span class="ow">and</span> <span class="n">SETUP_JOB_ID</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
-</span><span id="line-205">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="line-206">            <span class="n">RecipeProblem</span><span class="p">(</span>
-</span><span id="line-207">                <span class="s2">"DAG007"</span><span class="p">,</span>
-</span><span id="line-208">                <span class="sa">f</span><span class="s2">"A recipe job named '</span><span class="si">{</span><span class="n">SETUP_JOB_ID</span><span class="si">}</span><span class="s2">' would replace the generated "</span>
-</span><span id="line-209">                <span class="sa">f</span><span class="s2">"setup job that exports the config; rename it."</span><span class="p">,</span>
-</span><span id="line-210">                <span class="n">SETUP_JOB_ID</span><span class="p">,</span>
-</span><span id="line-211">            <span class="p">)</span>
-</span><span id="line-212">        <span class="p">)</span>
-</span><span id="line-213">    <span class="k">return</span> <span class="n">problems</span></div>
+</span><span id="line-163"><span class="k">def</span><span class="w"> </span><span class="nf">find_recipe_problems</span><span class="p">(</span>
+</span><span id="line-164">    <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+</span><span id="line-165"><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]:</span>
+</span><span id="line-166"><span class="w">    </span><span class="sd">"""Problems that would make the compiled workflow invalid.</span>
+</span><span id="line-167">
+</span><span id="line-168"><span class="sd">    * ``CONF004`` — ``${{ config.X }}`` where ``X`` is not a config key (the</span>
+</span><span id="line-169"><span class="sd">      rewritten ``needs.setup.outputs.X`` would be empty or the setup job absent),</span>
+</span><span id="line-170"><span class="sd">      or that sits where the ``needs`` context is unavailable.</span>
+</span><span id="line-171"><span class="sd">    * ``DAG006`` — ``needs:`` naming a job that does not exist (``setup`` exists</span>
+</span><span id="line-172"><span class="sd">      only when config is supplied).</span>
+</span><span id="line-173"><span class="sd">    * ``DAG007`` — a recipe job named ``setup`` while config is supplied: it</span>
+</span><span id="line-174"><span class="sd">      would replace the generated setup job.</span>
+</span><span id="line-175"><span class="sd">    """</span>
+</span><span id="line-176">    <span class="n">config</span> <span class="o">=</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{}</span>
+</span><span id="line-177">    <span class="n">problems</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RecipeProblem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-178">
+</span><span id="line-179">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">needs_ok</span> <span class="ow">in</span> <span class="n">config_references</span><span class="p">(</span><span class="n">recipe</span><span class="p">):</span>
+</span><span id="line-180">        <span class="k">if</span> <span class="ow">not</span> <span class="n">needs_ok</span><span class="p">:</span>
+</span><span id="line-181">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-182">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, but GitHub offers no "</span>
+</span><span id="line-183">                <span class="sa">f</span><span class="s2">"'needs' context there; use a literal value."</span>
+</span><span id="line-184">            <span class="p">)</span>
+</span><span id="line-185">        <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+</span><span id="line-186">            <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-187">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' references config.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, which is not a config key."</span>
+</span><span id="line-188">            <span class="p">)</span>
+</span><span id="line-189">        <span class="k">else</span><span class="p">:</span>
+</span><span id="line-190">            <span class="k">continue</span>
+</span><span id="line-191">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">RecipeProblem</span><span class="p">(</span><span class="s2">"CONF004"</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">location</span><span class="p">))</span>
+</span><span id="line-192">
+</span><span id="line-193">    <span class="n">known</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">)</span> <span class="o">|</span> <span class="p">({</span><span class="n">SETUP_JOB_ID</span><span class="p">}</span> <span class="k">if</span> <span class="n">config</span> <span class="k">else</span> <span class="nb">set</span><span class="p">())</span>
+</span><span id="line-194">    <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-195">        <span class="k">for</span> <span class="n">needed</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
+</span><span id="line-196">            <span class="k">if</span> <span class="n">needed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known</span><span class="p">:</span>
+</span><span id="line-197">                <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="line-198">                    <span class="n">RecipeProblem</span><span class="p">(</span>
+</span><span id="line-199">                        <span class="s2">"DAG006"</span><span class="p">,</span>
+</span><span id="line-200">                        <span class="sa">f</span><span class="s2">"Job '</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">' needs '</span><span class="si">{</span><span class="n">needed</span><span class="si">}</span><span class="s2">', which is not a job"</span>
+</span><span id="line-201">                        <span class="o">+</span> <span class="p">(</span>
+</span><span id="line-202">                            <span class="s2">" (the setup job exists only when config is supplied)."</span>
+</span><span id="line-203">                            <span class="k">if</span> <span class="n">needed</span> <span class="o">==</span> <span class="n">SETUP_JOB_ID</span>
+</span><span id="line-204">                            <span class="k">else</span> <span class="s2">"."</span>
+</span><span id="line-205">                        <span class="p">),</span>
+</span><span id="line-206">                        <span class="n">job_id</span><span class="p">,</span>
+</span><span id="line-207">                    <span class="p">)</span>
+</span><span id="line-208">                <span class="p">)</span>
+</span><span id="line-209">
+</span><span id="line-210">    <span class="k">if</span> <span class="n">config</span> <span class="ow">and</span> <span class="n">SETUP_JOB_ID</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
+</span><span id="line-211">        <span class="n">problems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="line-212">            <span class="n">RecipeProblem</span><span class="p">(</span>
+</span><span id="line-213">                <span class="s2">"DAG007"</span><span class="p">,</span>
+</span><span id="line-214">                <span class="sa">f</span><span class="s2">"A recipe job named '</span><span class="si">{</span><span class="n">SETUP_JOB_ID</span><span class="si">}</span><span class="s2">' would replace the generated "</span>
+</span><span id="line-215">                <span class="sa">f</span><span class="s2">"setup job that exports the config; rename it."</span><span class="p">,</span>
+</span><span id="line-216">                <span class="n">SETUP_JOB_ID</span><span class="p">,</span>
+</span><span id="line-217">            <span class="p">)</span>
+</span><span id="line-218">        <span class="p">)</span>
+</span><span id="line-219">    <span class="k">return</span> <span class="n">problems</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -410,7 +416,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=a11416ff"></script>
+    <script src="../../_static/documentation_options.js?v=96ec9c95"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
