@@ -1,4 +1,4 @@
-> built 2026-10-13 22:23 UTC from c3d0def (main) · reci 0.0.25. Details: build_info.json
+> built 2026-10-13 22:30 UTC from 89fb9cd (main) · reci 0.0.26. Details: build_info.json
 
 # index.html.md
 
@@ -1253,10 +1253,11 @@ LiteralScalarString for multiline `run:` blocks.
 
 ### Functions
 
-| [`dump_workflow`](_autosummary/reci.yaml_gen.html.md#reci.yaml_gen.dump_workflow)(workflow, \*[, stream])   | Serialize a workflow dict to GitHub Actions YAML.   |
-|------------------------------------------------------------------------------------------|-----------------------------------------------------|
-| [`load_yaml`](_autosummary/reci.yaml_gen.html.md#reci.yaml_gen.load_yaml)(path)                         | Load a YAML file and return a plain dict.           |
-| [`load_yaml_string`](_autosummary/reci.yaml_gen.html.md#reci.yaml_gen.load_yaml_string)(text)                  | Load YAML from a string and return a plain dict.    |
+| [`dump_workflow`](_autosummary/reci.yaml_gen.html.md#reci.yaml_gen.dump_workflow)(workflow, \*[, stream])   | Serialize a workflow dict to GitHub Actions YAML.                 |
+|------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+| [`load_yaml`](_autosummary/reci.yaml_gen.html.md#reci.yaml_gen.load_yaml)(path)                         | Load a YAML file and return a plain dict.                         |
+| [`load_yaml_string`](_autosummary/reci.yaml_gen.html.md#reci.yaml_gen.load_yaml_string)(text)                  | Load YAML from a string and return a plain dict.                  |
+| [`scalar_source_text`](_autosummary/reci.yaml_gen.html.md#reci.yaml_gen.scalar_source_text)(value)               | A YAML number as written in the source, not as Python renders it. |
 
 ### reci.yaml_gen.dump_workflow(workflow, , stream=None)
 
@@ -1282,6 +1283,27 @@ Load YAML from a string and return a plain dict.
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)
 
+### reci.yaml_gen.scalar_source_text(value)
+
+A YAML number as written in the source, not as Python renders it.
+
+ruamel keeps the spelling of what it loads, so `3.10` stays `3.10`
+(`str()` gives `3.1`), `0x1F` stays `0x1F` and `1e3` stays `1e3`.
+Anchors and tags are not part of the spelling.  When ruamel’s text would be
+a different number (negative hex, underscored floats), `str()` is used.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> scalar_source_text(load_yaml_string("v: 3.10")["v"])
+'3.10'
+>>> scalar_source_text(load_yaml_string("v: &a 0x1F")["v"])
+'0x1F'
+>>> scalar_source_text(7)
+'7'
+```
+
 
 # about-this-build.html.md
 
@@ -1289,7 +1311,7 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 22:23 UTC** from commit <a href="https://github.com/i2mint/reci/commit/c3d0def83662ae300952b919db02ebf92428a73f"><code>c3d0def</code></a> on branch <code>main</code>, for **reci 0.0.25** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 22:30 UTC** from commit <a href="https://github.com/i2mint/reci/commit/89fb9cded57023d37b4b03595c03e355495d31ea"><code>89fb9cd</code></a> on branch <code>main</code>, for **reci 0.0.26** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1298,9 +1320,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/c3d0def83662ae300952b919db02ebf92428a73f"><code>c3d0def83662ae300952b919db02ebf92428a73f</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/89fb9cded57023d37b4b03595c03e355495d31ea"><code>89fb9cded57023d37b4b03595c03e355495d31ea</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.25</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.26</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1309,9 +1331,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38477183325">38477183325</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38478040299">38478040299</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>db11c523f4c2b55c6c0514b9caf77c83312b9d15</code> (in the history of the built commit) |
+| Event commit | <code>b3fdec081eafe33837437a25f630c25cd18fa840</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1336,13 +1358,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.25/">0.0.25</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.26/">0.0.26</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout c3d0def83662ae300952b919db02ebf92428a73f
+git checkout 89fb9cded57023d37b4b03595c03e355495d31ea
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

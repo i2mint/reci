@@ -255,6 +255,45 @@
 </span><span id="line-75">        <span class="k">if</span> <span class="n">_EXPRESSION_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
 </span><span id="line-76">            <span class="k">return</span> <span class="n">SingleQuotedScalarString</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 </span><span id="line-77">    <span class="k">return</span> <span class="n">d</span>
+</span><span id="line-78">
+</span><span id="line-79">
+</span><span id="line-80"><span class="k">def</span><span class="w"> </span><span class="nf">_reads_back_as</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="line-81"><span class="w">    </span><span class="sd">"""Whether YAML reads *text* back as the number *value*."""</span>
+</span><span id="line-82">    <span class="n">back</span> <span class="o">=</span> <span class="n">load_yaml_string</span><span class="p">(</span><span class="sa">f</span><span class="s2">"v: </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)[</span><span class="s2">"v"</span><span class="p">]</span>
+</span><span id="line-83">    <span class="n">both_nan</span> <span class="o">=</span> <span class="n">back</span> <span class="o">!=</span> <span class="n">back</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">value</span>
+</span><span id="line-84">    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">back</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">back</span> <span class="o">==</span> <span class="n">value</span> <span class="ow">or</span> <span class="n">both_nan</span><span class="p">)</span>
+</span><span id="line-85">
+</span><span id="line-86">
+</span><span id="line-87"><span class="n">_PADDED_FLOAT_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[+-]?0\d"</span><span class="p">)</span>
+</span><span id="line-88">
+</span><span id="line-89">
+<div class="viewcode-block" id="scalar_source_text">
+<a class="viewcode-back" href="../../_autosummary/reci.yaml_gen.html#reci.yaml_gen.scalar_source_text">[docs]</a>
+</span><span id="line-90"><span class="k">def</span><span class="w"> </span><span class="nf">scalar_source_text</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="line-91"><span class="w">    </span><span class="sd">"""A YAML number as written in the source, not as Python renders it.</span>
+</span><span id="line-92">
+</span><span id="line-93"><span class="sd">    ruamel keeps the spelling of what it loads, so ``3.10`` stays ``3.10``</span>
+</span><span id="line-94"><span class="sd">    (``str()`` gives ``3.1``), ``0x1F`` stays ``0x1F`` and ``1e3`` stays ``1e3``.</span>
+</span><span id="line-95"><span class="sd">    Anchors and tags are not part of the spelling.  When ruamel's text would be</span>
+</span><span id="line-96"><span class="sd">    a different number (negative hex, underscored floats), ``str()`` is used.</span>
+</span><span id="line-97">
+</span><span id="line-98"><span class="sd">    &gt;&gt;&gt; scalar_source_text(load_yaml_string("v: 3.10")["v"])</span>
+</span><span id="line-99"><span class="sd">    '3.10'</span>
+</span><span id="line-100"><span class="sd">    &gt;&gt;&gt; scalar_source_text(load_yaml_string("v: &amp;a 0x1F")["v"])</span>
+</span><span id="line-101"><span class="sd">    '0x1F'</span>
+</span><span id="line-102"><span class="sd">    &gt;&gt;&gt; scalar_source_text(7)</span>
+</span><span id="line-103"><span class="sd">    '7'</span>
+</span><span id="line-104"><span class="sd">    """</span>
+</span><span id="line-105">    <span class="k">try</span><span class="p">:</span>
+</span><span id="line-106">        <span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">_make_yaml</span><span class="p">()</span><span class="o">.</span><span class="n">representer</span><span class="o">.</span><span class="n">represent_data</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-107">    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>  <span class="c1"># ruamel cannot spell e.g. signed-zero 0e3</span>
+</span><span id="line-108">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="line-109">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_PADDED_FLOAT_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span id="line-110">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># ruamel pads underscored floats: 1_000.5 -&gt; 01000.5</span>
+</span><span id="line-111">    <span class="k">if</span> <span class="ow">not</span> <span class="n">_reads_back_as</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span id="line-112">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># e.g. ruamel spells -0x1F as 0x-1F</span>
+</span><span id="line-113">    <span class="k">return</span> <span class="n">text</span></div>
+
 </span></code></pre></div>
     </div></div>
           </main>
@@ -268,7 +307,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=5d650c58"></script>
+    <script src="../../_static/documentation_options.js?v=6a9d8632"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

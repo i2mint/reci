@@ -139,6 +139,9 @@ LiteralScalarString for multiline <code class="docutils literal notranslate"><sp
 <tr class="row-odd"><td><p><a class="reference internal" href="#reci.yaml_gen.load_yaml_string" title="reci.yaml_gen.load_yaml_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_yaml_string</span></code></a>(text)</p></td>
 <td><p>Load YAML from a string and return a plain dict.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.yaml_gen.scalar_source_text" title="reci.yaml_gen.scalar_source_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scalar_source_text</span></code></a>(value)</p></td>
+<td><p>A YAML number as written in the source, not as Python renders it.</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py function">
@@ -173,6 +176,28 @@ LiteralScalarString for multiline <code class="docutils literal notranslate"><sp
 </dd>
 </dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.yaml_gen.scalar_source_text">
+<span class="sig-prename descclassname"><span class="pre">reci.yaml_gen.</span></span><span class="sig-name descname"><span class="pre">scalar_source_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/yaml_gen.html#scalar_source_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.yaml_gen.scalar_source_text" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.yaml_gen.scalar_source_text'">¶</a></dt>
+<dd><p>A YAML number as written in the source, not as Python renders it.</p>
+<p>ruamel keeps the spelling of what it loads, so <code class="docutils literal notranslate"><span class="pre">3.10</span></code> stays <code class="docutils literal notranslate"><span class="pre">3.10</span></code>
+(<code class="docutils literal notranslate"><span class="pre">str()</span></code> gives <code class="docutils literal notranslate"><span class="pre">3.1</span></code>), <code class="docutils literal notranslate"><span class="pre">0x1F</span></code> stays <code class="docutils literal notranslate"><span class="pre">0x1F</span></code> and <code class="docutils literal notranslate"><span class="pre">1e3</span></code> stays <code class="docutils literal notranslate"><span class="pre">1e3</span></code>.
+Anchors and tags are not part of the spelling.  When ruamel’s text would be
+a different number (negative hex, underscored floats), <code class="docutils literal notranslate"><span class="pre">str()</span></code> is used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="gp">&gt;&gt;&gt; </span><span class="n">scalar_source_text</span><span class="p">(</span><span class="n">load_yaml_string</span><span class="p">(</span><span class="s2">"v: 3.10"</span><span class="p">)[</span><span class="s2">"v"</span><span class="p">])</span>
+</span><span id="line-2"><span class="go">'3.10'</span>
+</span><span id="line-3"><span class="gp">&gt;&gt;&gt; </span><span class="n">scalar_source_text</span><span class="p">(</span><span class="n">load_yaml_string</span><span class="p">(</span><span class="s2">"v: &amp;a 0x1F"</span><span class="p">)[</span><span class="s2">"v"</span><span class="p">])</span>
+</span><span id="line-4"><span class="go">'0x1F'</span>
+</span><span id="line-5"><span class="gp">&gt;&gt;&gt; </span><span class="n">scalar_source_text</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+</span><span id="line-6"><span class="go">'7'</span>
+</span></code></pre></div>
+</div>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
@@ -180,6 +205,7 @@ LiteralScalarString for multiline <code class="docutils literal notranslate"><sp
 <li><a :data-current="activeSection === '#reci.yaml_gen.dump_workflow'" class="reference internal" href="#reci.yaml_gen.dump_workflow"><code class="docutils literal notranslate"><span class="pre">dump_workflow()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.yaml_gen.load_yaml'" class="reference internal" href="#reci.yaml_gen.load_yaml"><code class="docutils literal notranslate"><span class="pre">load_yaml()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.yaml_gen.load_yaml_string'" class="reference internal" href="#reci.yaml_gen.load_yaml_string"><code class="docutils literal notranslate"><span class="pre">load_yaml_string()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.yaml_gen.scalar_source_text'" class="reference internal" href="#reci.yaml_gen.scalar_source_text"><code class="docutils literal notranslate"><span class="pre">scalar_source_text()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -193,7 +219,7 @@ LiteralScalarString for multiline <code class="docutils literal notranslate"><sp
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=5d650c58"></script>
+<script src="../_static/documentation_options.js?v=6a9d8632"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

@@ -11,4 +11,5 @@ reci.yaml\_gen
       dump_workflow
       load_yaml
       load_yaml_string
+      scalar_source_text
    
