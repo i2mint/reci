@@ -855,3 +855,18 @@ def test_config_the_setup_job_cannot_export_is_refused(config, fragment):
 def test_keys_and_values_the_setup_job_can_export_are_accepted():
     config = {"python-version": "3.12", "_x1": "é日\t😀", "lst": ["a\rb"], "n": 3}
     _compile("on: push\njobs:\n  j:\n    steps: [{run: echo}]\n", {}, config=config)
+
+
+def test_numeric_scalars_keep_the_spelling_the_author_wrote():
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n"
+        "      - {id: s, uses: x/s@v1, with: {a: 3.10, b: 1e3, c: 0x1F, d: 7}, "
+        "env: {E: 3.10}}\n"
+    )
+    specs = {"x/s@v1": mk_spec("x/s@v1", inputs={k: {} for k in "abcd"})}
+    step = _compile(recipe, specs)["jobs"]["j"]["steps"][0]
+    assert step["with"] == {"a": "3.10", "b": "1e3", "c": "0x1F", "d": "7"}
+    assert step["env"] == {"E": "3.10"}
+    # and the dumped YAML hands the action those strings, not numbers
+    again = load_yaml_string(dump_workflow({"jobs": {"j": {"steps": [step]}}}))
+    assert again["jobs"]["j"]["steps"][0]["with"]["a"] == "3.10"

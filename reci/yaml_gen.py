@@ -75,3 +75,19 @@ def _prepare_workflow_dict(d: Any) -> Any:
         if _EXPRESSION_RE.search(d):
             return SingleQuotedScalarString(d)
     return d
+
+
+def scalar_source_text(value: int | float) -> str:
+    """A YAML number as written in the source, not as Python renders it.
+
+    ruamel keeps the spelling of what it loads, so ``3.10`` stays ``3.10``
+    (``str()`` gives ``3.1``), ``0x1F`` stays ``0x1F`` and ``1e3`` stays ``1e3``.
+
+    >>> scalar_source_text(load_yaml_string("v: 3.10")["v"])
+    '3.10'
+    >>> scalar_source_text(7)
+    '7'
+    """
+    buf = io.StringIO()
+    _make_yaml().dump({"v": value}, buf)
+    return buf.getvalue().split(":", 1)[1].strip()
