@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.1107795238494873,
-  "commit_message": "test: CLI command bodies end to end (compile, validate, scaffold, inspect)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "21508f1cc95dddb3053c49f49c2bd8c681b1c77d",
+  "collection_duration_seconds": 2.6055688858032227,
+  "commit_message": "Merge 21508f1cc95dddb3053c49f49c2bd8c681b1c77d into e1aca33d1b574beb4024fa17bf5bde96909c69b4",
+  "commit_sha": "ecae3f0f97faf496e7b95ba6cfa66b710b97d455",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15005,
-      "comment_lines_ratio": 0.05161838515812323,
-      "docs_lines": 21243,
-      "empty_lines": 34276,
-      "empty_lines_ratio": 0.11791214726290115,
-      "files_analyzed": 724,
-      "function_lines": 114047,
-      "function_lines_ratio": 0.39233068791259446,
-      "mean_lines_per_function": 14.610171662823468,
-      "num_classes": 1975,
-      "num_functions": 7806,
+      "comment_lines": 14859,
+      "comment_lines_ratio": 0.05149862060360723,
+      "docs_lines": 21210,
+      "empty_lines": 33943,
+      "empty_lines_ratio": 0.11764033105513426,
+      "files_analyzed": 714,
+      "function_lines": 112488,
+      "function_lines_ratio": 0.3898631694231489,
+      "mean_lines_per_function": 14.58988326848249,
+      "num_classes": 1964,
+      "num_functions": 7710,
       "pypi_version": "0.0.8",
-      "total_lines": 290691
+      "total_lines": 288532
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T16:41:52.565220Z",
+  "timestamp": "2026-10-13T16:41:59.177889Z",
   "workflow_status": {}
 }
