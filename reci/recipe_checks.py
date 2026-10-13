@@ -130,7 +130,13 @@ def _recipe_strings(recipe: Recipe) -> Iterator[tuple[str, str, bool]]:
     for job_id, job in recipe.jobs.items():
         for text in _walk_strings(job.permissions):
             yield f"{job_id} permissions", text, False
-        job_fields = (job.if_, job.runs_on, job.strategy, job.env)
+        job_fields = (
+            job.if_,
+            job.runs_on,
+            job.strategy,
+            job.env,
+            job.continue_on_error,  # a bool contributes no strings
+        )
         for text in _walk_strings(list(job_fields)):
             yield job_id, text, True
         for step in job.steps:

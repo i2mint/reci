@@ -48,7 +48,7 @@ class JobSpec:
     runs_on: str = "ubuntu-latest"
     strategy: dict | None = None
     permissions: dict | None = None
-    continue_on_error: bool = False
+    continue_on_error: bool | str = False  # a bool, or an expression string
     env: dict[str, str] = field(default_factory=dict)
 
 
@@ -101,6 +101,31 @@ def _scalar_to_str(value: Any) -> str:
     return str(value)
 
 
+def _if_condition(value: Any) -> str | None:
+    """An ``if:`` value as expression text (``if: false`` is the expression ``false``).
+
+    >>> _if_condition(False), _if_condition(None), _if_condition("always()")
+    ('false', None, 'always()')
+    """
+    return None if value is None else _scalar_to_str(value)
+
+
+def _continue_on_error(value: Any) -> bool | str:
+    """``continue-on-error``: a boolean, or an expression kept as text.
+
+    >>> _continue_on_error(True), _continue_on_error("${{ matrix.exp }}")
+    (True, '${{ matrix.exp }}')
+    >>> _continue_on_error("false"), _continue_on_error(None)
+    (False, False)
+    """
+    if value is None:
+        return False
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        return {"true": True, "false": False}.get(lowered, value)
+    return bool(value)
+
+
 def _str_map(mapping: dict | None, *, where: str) -> dict[str, str]:
     """A ``with:`` / ``env:`` mapping with every key and value a string.
 
@@ -149,7 +174,7 @@ def _parse_step(step_data: dict, *, index: int, job_id: str) -> StepSpec:
         uses=uses,
         run=run,
         with_=with_,
-        if_=step_data.get("if"),
+        if_=_if_condition(step_data.get("if")),
         name=step_data.get("name"),
         outputs=outputs,
         bind=bind,
@@ -198,11 +223,11 @@ def _parse_job(job_id: str, job_data: dict) -> JobSpec:
         id=job_id,
         steps=steps,
         needs=needs,
-        if_=job_data.get("if"),
+        if_=_if_condition(job_data.get("if")),
         runs_on=job_data.get("runs-on", "ubuntu-latest"),
         strategy=job_data.get("strategy"),
         permissions=job_data.get("permissions"),
-        continue_on_error=bool(job_data.get("continue-on-error", False)),
+        continue_on_error=_continue_on_error(job_data.get("continue-on-error")),
         env=_str_map(job_data.get("env"), where=f"Job '{job_id}' env:"),
     )
 

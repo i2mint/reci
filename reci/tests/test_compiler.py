@@ -754,3 +754,24 @@ def test_config_refs_where_github_has_no_needs_context_are_refused():
     ):
         with pytest.raises(CompilationError, match="no 'needs' context"):
             _compile(recipe, {}, config={"w": "read"})
+
+
+def test_boolean_if_compiles_to_expression_text():
+    recipe = (
+        "on: push\njobs:\n  a:\n    if: false\n    continue-on-error: true\n"
+        "    steps: [{run: x, if: true}, {run: y, if: false}]\n"
+    )
+    # lint=False: actionlint flags constant conditions as style, GitHub accepts them
+    a = _compile(recipe, {}, lint=False)["jobs"]["a"]
+    assert a["if"] == "false" and a["continue-on-error"] is True
+    assert [s["if"] for s in a["steps"]] == ["true", "false"]
+
+
+def test_continue_on_error_expression_gets_config_refs_rewritten():
+    recipe = (
+        "on: push\njobs:\n  b:\n"
+        "    continue-on-error: ${{ fromJSON(config.lenient) }}\n"
+        "    steps: [{run: x}]\n"
+    )
+    b = _compile(recipe, {}, config={"lenient": True})["jobs"]["b"]
+    assert b["continue-on-error"] == "${{ fromJSON(needs.setup.outputs.lenient) }}"

@@ -203,3 +203,22 @@ def test_strings_pass_through_unchanged_and_non_scalars_are_rejected():
                 "on: push\njobs:\n  j:\n    steps:\n      - uses: a/b@v1\n"
                 f"        {field}: {{x: {value}}}\n"
             )
+
+
+def test_boolean_if_is_expression_text_not_dropped_or_crashing():
+    r = parse_recipe_string(
+        "on: push\njobs:\n  j:\n    if: false\n    steps:\n"
+        "      - {run: a, if: false}\n      - {run: b, if: true}\n"
+        "      - {run: c, if: always()}\n      - {run: d}\n"
+    )
+    assert r.jobs["j"].if_ == "false"
+    assert [st.if_ for st in r.jobs["j"].steps] == ["false", "true", "always()", None]
+
+
+def test_continue_on_error_keeps_booleans_and_expressions():
+    def coe(value):
+        text = f"on: push\njobs:\n  j:\n    continue-on-error: {value}\n    steps: [{{run: a}}]\n"
+        return parse_recipe_string(text).jobs["j"].continue_on_error
+
+    assert coe("true") is True and coe("false") is False and coe("'true'") is True
+    assert coe("'${{ matrix.exp }}'") == "${{ matrix.exp }}"
