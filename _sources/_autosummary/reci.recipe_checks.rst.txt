@@ -14,10 +14,13 @@ reci.recipe\_checks
 
    .. autosummary::
    
+      as_expression
       config_names
       config_references
       find_recipe_problems
+      serialize_config_value
       sub_config_refs
+      unsupported_config_refs
    
    .. rubric:: Classes
 

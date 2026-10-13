@@ -12,11 +12,14 @@ and the validation rules (which report them), so both always agree.
 
 ### Functions
 
-| [`config_names`](#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
+| [`as_expression`](#reci.recipe_checks.as_expression)(text)                  | An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.             |
 |---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`config_names`](#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
 | [`config_references`](#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
 | [`find_recipe_problems`](#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                              |
+| [`serialize_config_value`](#reci.recipe_checks.serialize_config_value)(value)        | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
 | [`sub_config_refs`](#reci.recipe_checks.sub_config_refs)(text, repl)          | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
+| [`unsupported_config_refs`](#reci.recipe_checks.unsupported_config_refs)(text)        | The uses of the `config` context in *text* that reci cannot rewrite.                 |
 
 ### Classes
 
@@ -33,6 +36,18 @@ One problem found by [`find_recipe_problems()`](#reci.recipe_checks.find_recipe_
 
 The generated job that exports config values; recipe jobs may not use the id
 when config is supplied.
+
+### reci.recipe_checks.as_expression(text)
+
+An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> as_expression("config.flag"), as_expression("${{ config.flag }}")
+('${{ config.flag }}', '${{ config.flag }}')
+```
 
 ### reci.recipe_checks.config_names(text)
 
@@ -72,6 +87,29 @@ Problems that would make the compiled workflow invalid.
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`RecipeProblem`](#reci.recipe_checks.RecipeProblem)]
 
+### reci.recipe_checks.serialize_config_value(value)
+
+A config value as the text of a `$GITHUB_OUTPUT` entry.
+
+Lists, mappings and tuples become JSON (dates inside them as ISO text); a
+boolean `true` / `false`; a number as the author wrote it (a TOML or
+YAML `3.10` stays `3.10`, not `3.1`).  `None`, bytes and other
+objects have no faithful text and raise [`TypeError`](https://docs.python.org/3/builtins/exceptions.html#TypeError).
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> serialize_config_value({"d": datetime.date(2024, 1, 2), "t": (1, 2)})
+'{"d": "2024-01-02", "t": [1, 2]}'
+>>> serialize_config_value(True), serialize_config_value(7)
+('true', '7')
+>>> serialize_config_value(None)
+Traceback (most recent call last):
+...
+TypeError: None (null) has no text form; give the key a value or remove it
+```
+
 ### reci.recipe_checks.sub_config_refs(text, repl)
 
 Substitute every `config.<key>` inside a `${{ ... }}` in *text*.
@@ -88,4 +126,23 @@ changes is re-emitted as `${{ <code> }}`; the others are left verbatim.
 >>> sub_config_refs("${{ fromJson(config.v) }} cat config.json",
 ...                 lambda m: "NEEDS." + m.group(1))
 '${{ fromJson(NEEDS.v) }} cat config.json'
+```
+
+### reci.recipe_checks.unsupported_config_refs(text)
+
+The uses of the `config` context in *text* that reci cannot rewrite.
+
+Only `config.<key>` maps to a setup-job output.  Nested access
+(`config.x.y`), bracket access (`config['x']`) and the whole context
+(`toJSON(config)`, `config.*`) have no counterpart, and would reach
+GitHub unrewritten, where `config` is no context.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+```pycon
+>>> unsupported_config_refs("${{ config.a }} ${{ config.b.c }} ${{ config['d'] }}")
+['config.b.c', 'config[']
+>>> unsupported_config_refs("${{ toJSON(config) }} ${{ 'config' }} ${{ config.a }}")
+['config']
 ```

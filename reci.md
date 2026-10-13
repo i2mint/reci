@@ -1,4 +1,4 @@
-> built 2026-10-13 23:00 UTC from af8cf6e (main) · reci 0.0.30. Details: build_info.json
+> built 2026-10-13 23:09 UTC from 55f7055 (main) · reci 0.0.31. Details: build_info.json
 
 # index.html.md
 
@@ -838,11 +838,14 @@ and the validation rules (which report them), so both always agree.
 
 ### Functions
 
-| [`config_names`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
+| [`as_expression`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.as_expression)(text)                  | An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.             |
 |---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`config_names`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
 | [`config_references`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
 | [`find_recipe_problems`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                              |
+| [`serialize_config_value`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.serialize_config_value)(value)        | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
 | [`sub_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.sub_config_refs)(text, repl)          | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
+| [`unsupported_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.unsupported_config_refs)(text)        | The uses of the `config` context in *text* that reci cannot rewrite.                 |
 
 ### Classes
 
@@ -859,6 +862,18 @@ One problem found by [`find_recipe_problems()`](_autosummary/reci.recipe_checks.
 
 The generated job that exports config values; recipe jobs may not use the id
 when config is supplied.
+
+### reci.recipe_checks.as_expression(text)
+
+An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> as_expression("config.flag"), as_expression("${{ config.flag }}")
+('${{ config.flag }}', '${{ config.flag }}')
+```
 
 ### reci.recipe_checks.config_names(text)
 
@@ -898,6 +913,29 @@ Problems that would make the compiled workflow invalid.
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`RecipeProblem`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.RecipeProblem)]
 
+### reci.recipe_checks.serialize_config_value(value)
+
+A config value as the text of a `$GITHUB_OUTPUT` entry.
+
+Lists, mappings and tuples become JSON (dates inside them as ISO text); a
+boolean `true` / `false`; a number as the author wrote it (a TOML or
+YAML `3.10` stays `3.10`, not `3.1`).  `None`, bytes and other
+objects have no faithful text and raise [`TypeError`](https://docs.python.org/3/builtins/exceptions.html#TypeError).
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
+```pycon
+>>> serialize_config_value({"d": datetime.date(2024, 1, 2), "t": (1, 2)})
+'{"d": "2024-01-02", "t": [1, 2]}'
+>>> serialize_config_value(True), serialize_config_value(7)
+('true', '7')
+>>> serialize_config_value(None)
+Traceback (most recent call last):
+...
+TypeError: None (null) has no text form; give the key a value or remove it
+```
+
 ### reci.recipe_checks.sub_config_refs(text, repl)
 
 Substitute every `config.<key>` inside a `${{ ... }}` in *text*.
@@ -914,6 +952,25 @@ changes is re-emitted as `${{ <code> }}`; the others are left verbatim.
 >>> sub_config_refs("${{ fromJson(config.v) }} cat config.json",
 ...                 lambda m: "NEEDS." + m.group(1))
 '${{ fromJson(NEEDS.v) }} cat config.json'
+```
+
+### reci.recipe_checks.unsupported_config_refs(text)
+
+The uses of the `config` context in *text* that reci cannot rewrite.
+
+Only `config.<key>` maps to a setup-job output.  Nested access
+(`config.x.y`), bracket access (`config['x']`) and the whole context
+(`toJSON(config)`, `config.*`) have no counterpart, and would reach
+GitHub unrewritten, where `config` is no context.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
+
+```pycon
+>>> unsupported_config_refs("${{ config.a }} ${{ config.b.c }} ${{ config['d'] }}")
+['config.b.c', 'config[']
+>>> unsupported_config_refs("${{ toJSON(config) }} ${{ 'config' }} ${{ config.a }}")
+['config']
 ```
 
 
@@ -1313,20 +1370,18 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-13 23:00 UTC** from commit <a href="https://github.com/i2mint/reci/commit/af8cf6ec44cb36a46314752e4e85c1b892192d20"><code>af8cf6e</code></a> on branch <code>main</code>, for **reci 0.0.30** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 23:09 UTC** from commit <a href="https://github.com/i2mint/reci/commit/55f705536b4d7d94361a593d1fdec11f01605f90"><code>55f7055</code></a> on branch <code>main</code>, for **reci 0.0.31** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.30) is ahead of the latest release on PyPI (0.0.29): these docs describe unreleased code.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/af8cf6ec44cb36a46314752e4e85c1b892192d20"><code>af8cf6ec44cb36a46314752e4e85c1b892192d20</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/55f705536b4d7d94361a593d1fdec11f01605f90"><code>55f705536b4d7d94361a593d1fdec11f01605f90</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.30</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.31</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1335,9 +1390,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38481316592">38481316592</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38482315850">38482315850</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>5a94dca768d388e9be220a88224ee20c4e286c1e</code> (in the history of the built commit) |
+| Event commit | <code>ea22e404ae6774625e3e786342c8fd50cfaeeb97</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1362,13 +1417,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.29/">0.0.29</a>, older than the documented version (0.0.30).
+Latest release: <a href="https://pypi.org/project/reci/0.0.31/">0.0.31</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout af8cf6ec44cb36a46314752e4e85c1b892192d20
+git checkout 55f705536b4d7d94361a593d1fdec11f01605f90
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
