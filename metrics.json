@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 4.284035921096802,
+  "collection_duration_seconds": 3.6239612102508545,
   "commit_message": "fix: anchored booleans (ScalarBoolean) render lowercase; non-scalar with:/env: values are a parse error\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "4ddd3db682ae51af1484f7e56c58d435adb6eee2",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14875,
-      "comment_lines_ratio": 0.05144353142983621,
-      "docs_lines": 21280,
-      "empty_lines": 34080,
-      "empty_lines_ratio": 0.11786188579017265,
-      "files_analyzed": 725,
-      "function_lines": 112879,
-      "function_lines_ratio": 0.3903794544046038,
-      "mean_lines_per_function": 14.570672518394217,
-      "num_classes": 1970,
-      "num_functions": 7747,
+      "comment_lines": 15021,
+      "comment_lines_ratio": 0.05156344937197703,
+      "docs_lines": 21313,
+      "empty_lines": 34413,
+      "empty_lines_ratio": 0.11813148147512452,
+      "files_analyzed": 735,
+      "function_lines": 114438,
+      "function_lines_ratio": 0.392837894895833,
+      "mean_lines_per_function": 14.591100344256024,
+      "num_classes": 1981,
+      "num_functions": 7843,
       "pypi_version": "0.0.12",
-      "total_lines": 289152
+      "total_lines": 291311
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:36:20.232824Z",
+  "timestamp": "2026-10-13T17:36:23.548745Z",
   "workflow_status": {}
 }
