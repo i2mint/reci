@@ -11,6 +11,8 @@ import itertools
 from dataclasses import dataclass, field
 from typing import Any
 
+from ruamel.yaml.scalarbool import ScalarBoolean
+
 from reci.action_spec import normalize_name
 from reci.yaml_gen import load_yaml
 
@@ -81,6 +83,44 @@ def _auto_step_id(step_data: dict, *, index: int, job_id: str) -> str:
     return f"step_{index}"
 
 
+def _scalar_to_str(value: Any) -> str:
+    """Render a YAML scalar the way GitHub Actions passes it on.
+
+    GitHub sees ``true`` / ``false`` / empty, not Python's ``True`` / ``None``.
+
+    >>> _scalar_to_str(True), _scalar_to_str(False), _scalar_to_str(None)
+    ('true', 'false', '')
+    >>> _scalar_to_str(3), _scalar_to_str("x")
+    ('3', 'x')
+    """
+    # ruamel returns an anchored/aliased boolean as ScalarBoolean (an int subclass)
+    if isinstance(value, (bool, ScalarBoolean)):
+        return "true" if value else "false"
+    if value is None:
+        return ""
+    return str(value)
+
+
+def _str_map(mapping: dict | None, *, where: str) -> dict[str, str]:
+    """A ``with:`` / ``env:`` mapping with every key and value a string.
+
+    *where* names the mapping in the error for a non-scalar value (GitHub
+    accepts only scalars there).
+
+    >>> _str_map({"a": True, "b": 2}, where="x")
+    {'a': 'true', 'b': '2'}
+    """
+    result: dict[str, str] = {}
+    for key, value in (mapping or {}).items():
+        if isinstance(value, (dict, list)):
+            raise RecipeParseError(
+                f"{where}: '{key}' must be a scalar, got a "
+                f"{'mapping' if isinstance(value, dict) else 'list'}."
+            )
+        result[_scalar_to_str(key)] = _scalar_to_str(value)
+    return result
+
+
 def _parse_step(step_data: dict, *, index: int, job_id: str) -> StepSpec:
     uses = step_data.get("uses")
     run = step_data.get("run")
@@ -102,9 +142,7 @@ def _parse_step(step_data: dict, *, index: int, job_id: str) -> StepSpec:
         outputs = [outputs]
 
     bind = step_data.get("bind", {})
-    with_ = step_data.get("with", {})
-    # Ensure string values in with_
-    with_ = {str(k): str(v) for k, v in with_.items()}
+    with_ = _str_map(step_data.get("with"), where=f"Job '{job_id}' step {index} with:")
 
     return StepSpec(
         id=step_id,
@@ -115,7 +153,7 @@ def _parse_step(step_data: dict, *, index: int, job_id: str) -> StepSpec:
         name=step_data.get("name"),
         outputs=outputs,
         bind=bind,
-        env=step_data.get("env", {}),
+        env=_str_map(step_data.get("env"), where=f"Job '{job_id}' step {index} env:"),
     )
 
 
@@ -165,7 +203,7 @@ def _parse_job(job_id: str, job_data: dict) -> JobSpec:
         strategy=job_data.get("strategy"),
         permissions=job_data.get("permissions"),
         continue_on_error=bool(job_data.get("continue-on-error", False)),
-        env=job_data.get("env", {}),
+        env=_str_map(job_data.get("env"), where=f"Job '{job_id}' env:"),
     )
 
 
@@ -187,7 +225,7 @@ def parse_recipe(path: str) -> Recipe:
         name=name,
         on=on,
         jobs=jobs,
-        env=data.get("env", {}),
+        env=_str_map(data.get("env"), where="Workflow env:"),
         defaults=data.get("defaults"),
     )
 
@@ -212,6 +250,6 @@ def parse_recipe_string(text: str) -> Recipe:
         name=name,
         on=on,
         jobs=jobs,
-        env=data.get("env", {}),
+        env=_str_map(data.get("env"), where="Workflow env:"),
         defaults=data.get("defaults"),
     )
