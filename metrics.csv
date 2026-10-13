@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:23:11.237890Z
+timestamp,2026-10-13T17:23:18.610971Z
 commit_sha,f8b6af7c2416cf6ca4baf9ccf5bd2fe3cab2de12
 commit_message,"fix: normalize bind: names; inspect and validation messages show the declared spelling
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7839
-metrics.umpyre_stats.num_classes,1981
-metrics.umpyre_stats.total_lines,291208
-metrics.umpyre_stats.empty_lines,34391
-metrics.umpyre_stats.comment_lines,15019
-metrics.umpyre_stats.docs_lines,21272
-metrics.umpyre_stats.function_lines,114351
-metrics.umpyre_stats.empty_lines_ratio,0.11809771709568419
-metrics.umpyre_stats.comment_lines_ratio,0.05157481937309415
-metrics.umpyre_stats.function_lines_ratio,0.3926780857668745
-metrics.umpyre_stats.mean_lines_per_function,14.587447378492154
-metrics.umpyre_stats.files_analyzed,735
+metrics.umpyre_stats.num_functions,7743
+metrics.umpyre_stats.num_classes,1970
+metrics.umpyre_stats.total_lines,289049
+metrics.umpyre_stats.empty_lines,34058
+metrics.umpyre_stats.comment_lines,14873
+metrics.umpyre_stats.docs_lines,21239
+metrics.umpyre_stats.function_lines,112792
+metrics.umpyre_stats.empty_lines_ratio,0.11782777314572962
+metrics.umpyre_stats.comment_lines_ratio,0.051454943625475265
+metrics.umpyre_stats.function_lines_ratio,0.3902175755667724
+metrics.umpyre_stats.mean_lines_per_function,14.566963709156658
+metrics.umpyre_stats.files_analyzed,725
 metrics.umpyre_stats.pypi_version,0.0.10
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T17:20:46Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.09781289100647
+collection_duration_seconds,4.805203676223755
