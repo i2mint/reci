@@ -882,3 +882,17 @@ def test_numeric_scalar_spelling_ignores_anchors_and_tags():
     step = _compile(recipe, specs)["jobs"]["j"]["steps"][0]
     assert step["with"] == {"a": "3.10", "b": "3.10", "c": "3", "d": "1000.5"}
     assert step["env"] == {"E": "3.10"}
+
+
+@pytest.mark.parametrize(
+    "written, expected",
+    [("-0e3", "-0.0"), ("+0.e3", "0.0"), ("-0x1F", "-31"), ("-0o17", "-15"), ("-0b101", "-5")],
+)
+def test_numbers_ruamel_cannot_respell_fall_back_to_the_value(written, expected):
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n"
+        f"      - {{id: s, uses: x/s@v1, with: {{a: {written}}}}}\n"
+    )
+    specs = {"x/s@v1": mk_spec("x/s@v1", inputs={"a": {}})}
+    step = _compile(recipe, specs)["jobs"]["j"]["steps"][0]
+    assert step["with"] == {"a": expected}
