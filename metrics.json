@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.451158761978149,
-  "commit_message": "docs: say why cross-job sources precede config in wiring\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "033135ffb29f6a5b7ea5c6c0b4443e1dbaeb8cc1",
+  "collection_duration_seconds": 4.360035419464111,
+  "commit_message": "fix: cross-job sources keyed by target input (#25) (#53)\n\n* fix: key cross-job sources by target input so a sibling bind cannot override config (#25)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* docs: say why cross-job sources precede config in wiring\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "db11c523f4c2b55c6c0514b9caf77c83312b9d15",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.603150406504065,
       "num_classes": 1982,
       "num_functions": 7872,
-      "pypi_version": "0.0.23",
+      "pypi_version": "0.0.24",
       "total_lines": 291944
     },
     "wily": {
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T22:18:49Z",
+      "last_success_timestamp": "2026-10-13T22:20:43Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38476875020",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38477010093",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:20:41.283664Z",
+  "timestamp": "2026-10-13T22:22:03.626541Z",
   "workflow_status": {}
 }
