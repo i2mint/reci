@@ -222,3 +222,20 @@ def test_continue_on_error_keeps_booleans_and_expressions():
 
     assert coe("true") is True and coe("false") is False and coe("'true'") is True
     assert coe("'${{ matrix.exp }}'") == "${{ matrix.exp }}"
+
+
+def test_continue_on_error_string_forms_are_case_and_space_insensitive():
+    def coe(value):
+        text = f"on: push\njobs:\n  j:\n    continue-on-error: {value}\n    steps: [{{run: a}}]\n"
+        return parse_recipe_string(text).jobs["j"].continue_on_error
+
+    assert coe("'False'") is False and coe("' TRUE '") is True
+
+
+@pytest.mark.parametrize("where", ["if: [a, b]", "if: {a: b}", "continue-on-error: [x]"])
+def test_non_scalar_if_and_continue_on_error_are_rejected(where):
+    job = f"on: push\njobs:\n  j:\n    {where}\n    steps: [{{run: a}}]\n"
+    step = f"on: push\njobs:\n  j:\n    steps: [{{run: a, {where}}}]\n"
+    for text in (job, step) if where.startswith("if") else (job,):
+        with pytest.raises(RecipeParseError, match="must be a scalar"):
+            parse_recipe_string(text)

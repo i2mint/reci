@@ -101,23 +101,35 @@ def _scalar_to_str(value: Any) -> str:
     return str(value)
 
 
-def _if_condition(value: Any) -> str | None:
+def _require_scalar(value: Any, *, where: str) -> None:
+    if isinstance(value, (dict, list)):
+        kind = "mapping" if isinstance(value, dict) else "list"
+        raise RecipeParseError(f"{where} must be a scalar, got a {kind}.")
+
+
+def _if_condition(value: Any, *, where: str) -> str | None:
     """An ``if:`` value as expression text (``if: false`` is the expression ``false``).
 
-    >>> _if_condition(False), _if_condition(None), _if_condition("always()")
-    ('false', None, 'always()')
+    >>> _if_condition(False, where="x"), _if_condition(None, where="x")
+    ('false', None)
+    >>> _if_condition("always()", where="x")
+    'always()'
     """
+    _require_scalar(value, where=where)
     return None if value is None else _scalar_to_str(value)
 
 
-def _continue_on_error(value: Any) -> bool | str:
+def _continue_on_error(value: Any, *, where: str) -> bool | str:
     """``continue-on-error``: a boolean, or an expression kept as text.
 
-    >>> _continue_on_error(True), _continue_on_error("${{ matrix.exp }}")
-    (True, '${{ matrix.exp }}')
-    >>> _continue_on_error("false"), _continue_on_error(None)
+    >>> _continue_on_error(True, where="x")
+    True
+    >>> _continue_on_error("${{ matrix.exp }}", where="x")
+    '${{ matrix.exp }}'
+    >>> _continue_on_error("false", where="x"), _continue_on_error(None, where="x")
     (False, False)
     """
+    _require_scalar(value, where=where)
     if value is None:
         return False
     if isinstance(value, str):
@@ -174,7 +186,9 @@ def _parse_step(step_data: dict, *, index: int, job_id: str) -> StepSpec:
         uses=uses,
         run=run,
         with_=with_,
-        if_=_if_condition(step_data.get("if")),
+        if_=_if_condition(
+            step_data.get("if"), where=f"Job '{job_id}' step {index} if:"
+        ),
         name=step_data.get("name"),
         outputs=outputs,
         bind=bind,
@@ -223,11 +237,14 @@ def _parse_job(job_id: str, job_data: dict) -> JobSpec:
         id=job_id,
         steps=steps,
         needs=needs,
-        if_=_if_condition(job_data.get("if")),
+        if_=_if_condition(job_data.get("if"), where=f"Job '{job_id}' if:"),
         runs_on=job_data.get("runs-on", "ubuntu-latest"),
         strategy=job_data.get("strategy"),
         permissions=job_data.get("permissions"),
-        continue_on_error=_continue_on_error(job_data.get("continue-on-error")),
+        continue_on_error=_continue_on_error(
+            job_data.get("continue-on-error"),
+            where=f"Job '{job_id}' continue-on-error:",
+        ),
         env=_str_map(job_data.get("env"), where=f"Job '{job_id}' env:"),
     )
 
