@@ -17,6 +17,32 @@ from reci.recipe import Recipe, StepSpec, JobSpec
 
 
 # ---------------------------------------------------------------------------
+# Cycle detection
+# ---------------------------------------------------------------------------
+
+
+def find_cycle(deps: dict[str, Iterable[str]]) -> list[str] | None:
+    """A dependency cycle in ``{node: nodes it depends on}``, or ``None``.
+
+    The cycle is returned as a closed path following the dependency direction:
+    each node depends on the next, and the first node is repeated at the end.
+
+    >>> find_cycle({'a': ['b'], 'b': ['a']})
+    ['a', 'b', 'a']
+    >>> find_cycle({'a': ['b'], 'b': ['c'], 'c': ['a']})
+    ['a', 'b', 'c', 'a']
+    >>> find_cycle({'a': ['b'], 'b': []}) is None
+    True
+    """
+    try:
+        TopologicalSorter({k: set(v) for k, v in deps.items()}).prepare()
+    except CycleError as e:
+        # graphlib lists predecessors first; flip to follow "depends on"
+        return list(reversed(e.args[1]))
+    return None
+
+
+# ---------------------------------------------------------------------------
 # Node representation
 # ---------------------------------------------------------------------------
 
@@ -108,6 +134,7 @@ class RecipeGraph:
         self._nodes: dict[str, ActionNode] = {}
         self._deps: dict[str, set[str]] = {}  # key -> set of predecessor keys
         self._jobs: dict[str, list[str]] = {}  # job_id -> ordered node keys
+        self._job_needs: dict[str, list[str]] = {}  # job_id -> explicit needs:
 
     # -- construction -------------------------------------------------------
 
@@ -128,6 +155,9 @@ class RecipeGraph:
         *action_specs* is keyed by action ref (e.g. ``"actions/checkout@v4"``).
         """
         graph = cls()
+        graph._job_needs = {
+            job_id: list(job.needs) for job_id, job in recipe.jobs.items()
+        }
 
         for job_id, job in recipe.jobs.items():
             prev_key: str | None = None
@@ -186,6 +216,10 @@ class RecipeGraph:
 
     def job_ids(self) -> list[str]:
         return list(self._jobs.keys())
+
+    def job_needs(self, job_id: str) -> list[str]:
+        """The job ids *job_id* lists in its explicit ``needs:``."""
+        return list(self._job_needs.get(job_id, []))
 
     def job_nodes(self, job_id: str) -> list[ActionNode]:
         return [self._nodes[k] for k in self._jobs.get(job_id, [])]

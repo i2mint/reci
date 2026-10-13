@@ -15,7 +15,7 @@ from typing import Any
 
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
 from reci.recipe import Recipe, StepSpec, JobSpec
-from reci.graph import RecipeGraph, ActionNode, CrossJobEdge
+from reci.graph import RecipeGraph, ActionNode, CrossJobEdge, find_cycle
 
 # ---------------------------------------------------------------------------
 # Config reference rewriting
@@ -340,11 +340,14 @@ def _build_upstream_outputs(
 # ---------------------------------------------------------------------------
 
 
-def _detect_cross_job_edges(
+def detect_cross_job_edges(
     graph: RecipeGraph,
     config: dict[str, Any],
 ) -> list[CrossJobEdge]:
-    """Find data-flow edges between steps in different jobs."""
+    """Find data-flow edges between steps in different jobs.
+
+    Public: the validation rules use the same detection as the compiler.
+    """
     edges: list[CrossJobEdge] = []
 
     # Build a map of all outputs per job
@@ -403,6 +406,28 @@ class CompilationError(Exception):
     """Raised when compilation fails."""
 
 
+def describe_cycle_edges(cycle: list[str], edges: list[CrossJobEdge]) -> list[str]:
+    """The data-flow reads that justify each ``consumer -> producer`` hop of *cycle*."""
+    hops = set(zip(cycle, cycle[1:]))
+    return [
+        f"'{e.target_job}.{e.target_step_id}' reads '{e.source_output}' "
+        f"from '{e.source_job}.{e.source_step_id}'"
+        for e in edges
+        if (e.target_job, e.source_job) in hops
+    ]
+
+
+def _raise_on_needs_cycle(jobs: dict[str, dict], edges: list[CrossJobEdge]) -> None:
+    """GitHub rejects a workflow whose jobs ``needs:`` each other in a loop."""
+    cycle = find_cycle({job_id: job.get("needs", []) for job_id, job in jobs.items()})
+    if cycle:
+        reasons = describe_cycle_edges(cycle, edges)
+        raise CompilationError(
+            f"The jobs' needs form a cycle: {' -> '.join(cycle)}"
+            + (f" (data flow: {'; '.join(reasons)})" if reasons else "")
+        )
+
+
 def compile_recipe(
     recipe: Recipe,
     action_specs: dict[str, ActionSpec],
@@ -427,7 +452,7 @@ def compile_recipe(
 
     # Detect cross-job edges (independent of config: data flow between jobs
     # exists whether or not any config was supplied)
-    cross_job_edges = _detect_cross_job_edges(graph, config)
+    cross_job_edges = detect_cross_job_edges(graph, config)
 
     # Compute wired inputs for all nodes
     all_wired: dict[str, dict[str, str]] = {}
@@ -477,5 +502,6 @@ def compile_recipe(
             has_setup=bool(config),
         )
 
+    _raise_on_needs_cycle(jobs, cross_job_edges)
     workflow["jobs"] = jobs
     return workflow
