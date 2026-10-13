@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 4.011689901351929,
+  "collection_duration_seconds": 4.21291184425354,
   "commit_message": "test: behavioural suite for compiler, validation, graph, config, adapters; add CHANGELOG (#4)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "11921e8541e29a8f2b92d50dc354fdec1ceef890",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14859,
-      "comment_lines_ratio": 0.05149862060360723,
-      "docs_lines": 21210,
-      "empty_lines": 33943,
-      "empty_lines_ratio": 0.11764033105513426,
-      "files_analyzed": 714,
-      "function_lines": 112488,
-      "function_lines_ratio": 0.3898631694231489,
-      "mean_lines_per_function": 14.58988326848249,
-      "num_classes": 1964,
-      "num_functions": 7710,
+      "comment_lines": 15005,
+      "comment_lines_ratio": 0.05161838515812323,
+      "docs_lines": 21243,
+      "empty_lines": 34276,
+      "empty_lines_ratio": 0.11791214726290115,
+      "files_analyzed": 724,
+      "function_lines": 114047,
+      "function_lines_ratio": 0.39233068791259446,
+      "mean_lines_per_function": 14.610171662823468,
+      "num_classes": 1975,
+      "num_functions": 7806,
       "pypi_version": "0.0.8",
-      "total_lines": 288532
+      "total_lines": 290691
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T16:41:27.065835Z",
+  "timestamp": "2026-10-13T16:41:32.182567Z",
   "workflow_status": {}
 }
