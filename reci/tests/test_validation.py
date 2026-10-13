@@ -704,3 +704,128 @@ def test_FLOW004_counts_a_declared_job_output_and_step_extra_keys_as_consumption
         "      - {run: x, working-directory: '${{ steps.p.outputs.w }}'}\n"
     )
     assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+_LOOP_RECIPE = (
+    "on: push\njobs:\n  a:\n    steps: [{id: s, uses: x/a@v1}]\n"
+    "  b:\n    steps: [{id: t, uses: x/b@v1}]\n"
+)
+
+
+def test_DAG005_config_supplying_an_input_breaks_the_cycle_in_validation_too():
+    g = mk_graph(_LOOP_RECIPE, _LOOP_SPECS)
+    assert len(_only("DAG005", g)) == 1
+    assert _only("DAG005", g, {"w": "from-config"}) == []
+
+
+def test_DAG005_reports_a_data_flow_cycle_beside_an_explicit_needs_cycle():
+    recipe = (
+        "on: push\njobs:\n  e1:\n    needs: e2\n    steps: [{run: x}]\n"
+        "  e2:\n    needs: e1\n    steps: [{run: x}]\n"
+        "  a:\n    steps: [{id: s, uses: x/a@v1}]\n"
+        "  b:\n    steps: [{id: t, uses: x/b@v1}]\n"
+    )
+    g = mk_graph(recipe, _LOOP_SPECS)
+    assert len(_only("DAG001", g)) == 1
+    (f,) = _only("DAG005", g)
+    assert "e1" not in f.message and "'b.t' reads 'v' from 'a.s'" in f.message
+
+
+def test_DAG005_names_only_the_other_producers_that_avoid_the_cycle():
+    specs = {
+        **_LOOP_SPECS,
+        "x/c@v1": mk_spec("x/c@v1", outputs=["v"]),
+    }
+    recipe = _LOOP_RECIPE + "  c:\n    steps: [{id: u, uses: x/c@v1}]\n"
+    (f,) = _only("DAG005", mk_graph(recipe, specs))
+    assert "also produced by job 'c'" in f.suggestion and "bind:" in f.suggestion
+
+
+# -- cross-job producer choice: FLOW002, FLOW006 --------------------------------
+
+_PRODUCERS = {
+    "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+    "x/c@v1": mk_spec("x/c@v1", inputs={"v": {"required": True}}),
+}
+
+
+def _two_producers(extra_first_job=""):
+    return (
+        f"on: push\njobs:\n  p1:\n{extra_first_job}    steps: [{{id: a, uses: x/p@v1}}]\n"
+        "  p2:\n    steps: [{id: b, uses: x/p@v1}]\n"
+        "  c:\n    steps: [{id: z, uses: x/c@v1}]\n"
+    )
+
+
+def test_FLOW002_warns_when_several_jobs_produce_what_a_job_consumes():
+    (f,) = _only("FLOW002", mk_graph(_two_producers(), _PRODUCERS))
+    assert f.severity is Severity.WARNING and f.location == "c.z"
+    assert "p1, p2" in f.message and "Using the first, 'p1'" in f.message
+    assert "bind:" in f.suggestion
+    one = _two_producers().replace("  p2:\n    steps: [{id: b, uses: x/p@v1}]\n", "")
+    assert _only("FLOW002", mk_graph(one, _PRODUCERS)) == []
+
+
+def test_FLOW002_stays_quiet_when_the_input_is_given_explicitly():
+    recipe = _two_producers().replace(
+        "{id: z, uses: x/c@v1}", "{id: z, uses: x/c@v1, with: {v: 1}}"
+    )
+    assert _only("FLOW002", mk_graph(recipe, _PRODUCERS)) == []
+
+
+def test_FLOW006_warns_about_a_matrix_producer():
+    recipe = _two_producers().replace(
+        "  p2:\n    steps: [{id: b, uses: x/p@v1}]\n", ""
+    ).replace(
+        "  p1:\n", "  p1:\n    strategy: {matrix: {os: [a, b]}}\n"
+    )
+    (f,) = _only("FLOW006", mk_graph(recipe, _PRODUCERS))
+    assert f.severity is Severity.WARNING and "whichever leg finishes last" in f.message
+    assert f.location == "p1.a" and f.suggestion
+
+
+def test_FLOW006_warns_about_a_conditional_producer_and_not_about_a_plain_one():
+    plain = _two_producers().replace("  p2:\n    steps: [{id: b, uses: x/p@v1}]\n", "")
+    assert _only("FLOW006", mk_graph(plain, _PRODUCERS)) == []
+    conditional = plain.replace("  p1:\n", "  p1:\n    if: github.ref == 'refs/heads/main'\n")
+    (f,) = _only("FLOW006", mk_graph(conditional, _PRODUCERS))
+    assert "has an if:" in f.message and "skipped" in f.message
+
+
+def test_FLOW006_ignores_a_matrix_job_nobody_reads_from():
+    recipe = (
+        "on: push\njobs:\n  p1:\n    strategy: {matrix: {os: [a, b]}}\n"
+        "    steps: [{id: a, uses: x/p@v1}]\n"
+    )
+    assert _only("FLOW006", mk_graph(recipe, _PRODUCERS)) == []
+
+
+def test_DAG005_does_not_suggest_a_producer_that_depends_on_the_consumer():
+    specs = {**_LOOP_SPECS, "x/c@v1": mk_spec("x/c@v1", outputs=["v"])}
+    recipe = _LOOP_RECIPE + (
+        "  c:\n    needs: b\n    steps: [{id: u, uses: x/c@v1}]\n"
+    )  # c also produces v, but needs b, the consumer of v
+    (f,) = _only("DAG005", mk_graph(recipe, specs))
+    assert "also produced" not in f.suggestion
+
+
+def test_DAG005_leaves_an_explicit_needs_cycle_to_DAG001():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/c@v1": mk_spec("x/c@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  a:\n    needs: b\n    steps: [{id: s, uses: x/p@v1}]\n"
+        "  b:\n    needs: a\n    steps: [{id: t, uses: x/c@v1}]\n"
+    )
+    g = mk_graph(recipe, specs)
+    assert len(_only("DAG001", g)) == 1 and _only("DAG005", g) == []
+
+
+def test_FLOW006_stays_quiet_when_the_skip_cannot_reach_the_consumer():
+    plain = _two_producers().replace("  p2:\n    steps: [{id: b, uses: x/p@v1}]\n", "")
+    guarded = plain.replace("  p1:\n", "  p1:\n    if: github.ref == 'x'\n")
+    resilient = guarded.replace("  c:\n", "  c:\n    if: ${{ always() }}\n")
+    assert _only("FLOW006", mk_graph(resilient, _PRODUCERS)) == []
+    never_skipped = plain.replace("  p1:\n", "  p1:\n    if: always()\n")
+    assert _only("FLOW006", mk_graph(never_skipped, _PRODUCERS)) == []

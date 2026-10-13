@@ -71,7 +71,31 @@ def check_unsourced_required_inputs(graph, config: dict[str, Any]) -> Iterable[F
 
 @register_rule("FLOW002")
 def check_ambiguous_wiring(graph, config: dict[str, Any]) -> Iterable[Finding]:
-    """An input name matches multiple upstream outputs."""
+    """An input name matches multiple upstream outputs, in a job or across jobs.
+
+    Within a job the nearest preceding step wins.  Across jobs there is no
+    nearer: the first producing job in recipe order is used.
+    """
+    from reci.compiler import detect_cross_job_edges
+
+    for edge in detect_cross_job_edges(graph, config):
+        if edge.alternatives:
+            yield Finding(
+                rule_id="FLOW002",
+                severity=Severity.WARNING,
+                message=(
+                    f"Input '{edge.target_input}' of "
+                    f"'{edge.target_job}.{edge.target_step_id}' matches outputs "
+                    f"from several jobs: {edge.source_job}, "
+                    f"{', '.join(edge.alternatives)}. Using the first, "
+                    f"'{edge.source_job}'."
+                ),
+                location=f"{edge.target_job}.{edge.target_step_id}",
+                suggestion=(
+                    "Name the outputs differently and pick one with bind:, or "
+                    "give the input an explicit with:."
+                ),
+            )
     for node in graph.nodes():
         for norm_name, input_spec in node.input_specs.items():
             if norm_name in {normalize_name(k) for k in node.with_}:
@@ -205,12 +229,77 @@ def check_boolean_coercion(graph, config: dict[str, Any]) -> Iterable[Finding]:
                 )
 
 
+#: A status function in an ``if:`` lets a job run although a job it needs was skipped.
+_STATUS_FUNCTION_RE = re.compile(r"\b(always|cancelled|failure)\s*\(")
+
+
+def _always_true(condition: str) -> bool:
+    """An ``if:`` that never skips a job.
+
+    >>> _always_true("always()"), _always_true("${{ true }}"), _always_true("x == 1")
+    (True, True, False)
+    """
+    body = condition.strip()
+    if body.startswith("${{") and body.endswith("}}"):
+        body = body[3:-2].strip()
+    return body in ("true", "always()")
+
+
 @register_rule("FLOW006")
 def check_matrix_output(graph, config: dict[str, Any]) -> Iterable[Finding]:
-    """Matrix job outputs consumed by downstream are non-deterministic."""
-    # This requires knowing which jobs have matrix strategies.
-    # We check via the graph's recipe reference (stored on JobSpec).
-    # For now, check if any job node has strategy info in the graph metadata.
-    # Since we don't store strategy on ActionNode, this is checked at
-    # compile time via the recipe. Stub for now — will be enhanced.
-    return []
+    """A job output consumed by another job comes from a matrix or conditional job.
+
+    A matrix job has one output value for all its legs: whichever leg finishes
+    last wins.  A job with an ``if:`` that is false is skipped, and so is every
+    job that ``needs`` it (unless it uses ``always()`` or similar).
+    """
+    from reci.compiler import detect_cross_job_edges
+
+    if graph.recipe is None:
+        return
+    reported: set[tuple[str, str, str]] = set()
+    for edge in detect_cross_job_edges(graph, config):
+        job = graph.recipe.jobs[edge.source_job]
+        where = f"'{edge.source_job}.{edge.source_step_id}'"
+        reads = (
+            f"'{edge.target_job}.{edge.target_step_id}' reads "
+            f"'{edge.source_output}' from {where}"
+        )
+        if isinstance(job.strategy, dict) and "matrix" in job.strategy:
+            if (edge.source_job, edge.source_output, "matrix") not in reported:
+                reported.add((edge.source_job, edge.source_output, "matrix"))
+                yield Finding(
+                    rule_id="FLOW006",
+                    severity=Severity.WARNING,
+                    message=(
+                        f"{reads}, but job '{edge.source_job}' is a matrix: its "
+                        f"output is the value of whichever leg finishes last."
+                    ),
+                    location=where.strip("'"),
+                    suggestion=(
+                        "Produce the value in a job without a matrix, or "
+                        "aggregate the legs yourself."
+                    ),
+                )
+        consumer = graph.recipe.jobs[edge.target_job]
+        if (
+            job.if_
+            and not _always_true(job.if_)
+            and not (consumer.if_ and _STATUS_FUNCTION_RE.search(consumer.if_))
+            and (edge.source_job, edge.source_output, "if") not in reported
+        ):
+            reported.add((edge.source_job, edge.source_output, "if"))
+            yield Finding(
+                rule_id="FLOW006",
+                severity=Severity.WARNING,
+                message=(
+                    f"{reads}, but job '{edge.source_job}' has an if: "
+                    f"({job.if_}); when it is skipped, so is '{edge.target_job}' "
+                    f"(and the output is empty)."
+                ),
+                location=where.strip("'"),
+                suggestion=(
+                    "Give the consumer job an if: such as always() && ..., or "
+                    "move the condition to the step."
+                ),
+            )

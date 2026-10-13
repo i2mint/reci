@@ -463,23 +463,25 @@ def detect_cross_job_edges(
                 if _resolve_config_key(norm_name, node.ref, config) is not None:
                     continue
 
-                # Search other jobs
-                for other_job_id, other_outs in job_outputs.items():
-                    if other_job_id == job_id:
-                        continue
-                    if search_name in other_outs:
-                        src_step_id, src_output = other_outs[search_name]
-                        edges.append(
-                            CrossJobEdge(
-                                source_job=other_job_id,
-                                source_step_id=src_step_id,
-                                source_output=src_output,
-                                target_job=job_id,
-                                target_step_id=node.step_id,
-                                target_input=norm_name,
-                            )
+                # Search other jobs: the first producer in recipe order wins
+                producers = [
+                    other_job_id
+                    for other_job_id, other_outs in job_outputs.items()
+                    if other_job_id != job_id and search_name in other_outs
+                ]
+                if producers:
+                    src_step_id, src_output = job_outputs[producers[0]][search_name]
+                    edges.append(
+                        CrossJobEdge(
+                            source_job=producers[0],
+                            source_step_id=src_step_id,
+                            source_output=src_output,
+                            target_job=job_id,
+                            target_step_id=node.step_id,
+                            target_input=norm_name,
+                            alternatives=tuple(producers[1:]),
                         )
-                        break  # first match wins
+                    )
 
     return edges
 

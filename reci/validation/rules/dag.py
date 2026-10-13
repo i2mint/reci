@@ -38,30 +38,84 @@ def check_data_flow_needs_cycles(graph, config: dict[str, Any]) -> Iterable[Find
     """
     from reci.compiler import describe_cycle_edges, detect_cross_job_edges
 
-    explicit = {job_id: list(graph.job_needs(job_id)) for job_id in graph.job_ids()}
-    if find_cycle(explicit):
-        return
     edges = detect_cross_job_edges(graph, config)
-    combined = {job_id: set(needs) for job_id, needs in explicit.items()}
+    depends_on = {job_id: set(graph.job_needs(job_id)) for job_id in graph.job_ids()}
     for edge in edges:
-        combined[edge.target_job].add(edge.source_job)
-    cycle = find_cycle(combined)
-    if not cycle:
-        return
-    reasons = describe_cycle_edges(cycle, edges)
-    yield Finding(
-        rule_id="DAG005",
-        severity=Severity.ERROR,
-        message=(
-            f"Job dependencies form a cycle: {' -> '.join(cycle)} "
-            f"(inferred from data flow: {'; '.join(reasons) or 'n/a'})."
-        ),
-        location=cycle[0],
-        suggestion=(
-            "Break the loop: pass the value through config or an explicit "
-            "with:, or move a step into the other job."
-        ),
-    )
+        depends_on[edge.target_job].add(edge.source_job)
+
+    # Every data-flow edge closes a loop if its producer already depends, through
+    # needs: or other data flow, on its consumer.  Looking edge by edge also finds
+    # a loop beside an explicit-needs loop (DAG001's).
+    explicit = {
+        (job_id, needed)
+        for job_id in graph.job_ids()
+        for needed in graph.job_needs(job_id)
+    }
+    reported: set[frozenset[str]] = set()
+    for edge in edges:
+        path = _dependency_path(depends_on, edge.source_job, edge.target_job)
+        if path is None:
+            continue
+        cycle = [edge.target_job, *path]
+        if frozenset(cycle) in reported or set(zip(cycle, cycle[1:])) <= explicit:
+            continue  # seen, or made of explicit needs: alone (DAG001's)
+        reported.add(frozenset(cycle))
+        reasons = describe_cycle_edges(cycle, edges)
+        hops = set(zip(cycle, cycle[1:]))
+        alternatives = [
+            f"'{e.source_output}' is also produced by job "
+            f"{', '.join(repr(j) for j in avoiding)}"
+            for e in edges
+            if (e.target_job, e.source_job) in hops
+            # only a producer that does not itself depend on the consumer helps
+            if (
+                avoiding := [
+                    j
+                    for j in e.alternatives
+                    if _dependency_path(depends_on, j, e.target_job) is None
+                ]
+            )
+        ]
+        yield Finding(
+            rule_id="DAG005",
+            severity=Severity.ERROR,
+            message=(
+                f"Job dependencies form a cycle: {' -> '.join(cycle)} "
+                f"(inferred from data flow: {'; '.join(reasons) or 'n/a'})."
+            ),
+            location=cycle[0],
+            suggestion=(
+                "Break the loop: pass the value through config or an explicit "
+                "with:, or move a step into the other job."
+                + (
+                    f" The first producer in recipe order is used ("
+                    f"{'; '.join(alternatives)}): give the outputs different "
+                    f"names and pick one with bind: to use the other job."
+                    if alternatives
+                    else ""
+                )
+            ),
+        )
+
+
+def _dependency_path(
+    depends_on: dict[str, set[str]], start: str, goal: str
+) -> list[str] | None:
+    """A path ``start -> ... -> goal`` following "depends on", or ``None``."""
+    parents: dict[str, str | None] = {start: None}
+    queue = [start]
+    for node in queue:
+        if node == goal:
+            path = []
+            while node is not None:
+                path.append(node)
+                node = parents[node]
+            return path[::-1]
+        for nxt in sorted(depends_on.get(node, ())):
+            if nxt not in parents:
+                parents[nxt] = node
+                queue.append(nxt)
+    return None
 
 
 @register_rule("DAG002")
