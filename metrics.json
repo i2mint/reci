@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.229694366455078,
+  "collection_duration_seconds": 4.309823513031006,
   "commit_message": "fix: FLOW004 recognises explicit output references (#18) (#37)\n\n* fix: FLOW004 counts explicit steps./needs. output references in with, env, run and if (#18)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: FLOW004 no longer counts needs. references; test job-scoped step ids\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "9413584e24094bd4fe1429bd5b9a0dfbd53e8f4f",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15021,
-      "comment_lines_ratio": 0.051543455583617,
-      "docs_lines": 21342,
-      "empty_lines": 34435,
-      "empty_lines_ratio": 0.11816116723399583,
-      "files_analyzed": 736,
-      "function_lines": 114525,
-      "function_lines_ratio": 0.39298410563302955,
-      "mean_lines_per_function": 14.59288990825688,
-      "num_classes": 1981,
-      "num_functions": 7848,
+      "comment_lines": 14875,
+      "comment_lines_ratio": 0.05142343525832714,
+      "docs_lines": 21309,
+      "empty_lines": 34102,
+      "empty_lines_ratio": 0.11789189843223342,
+      "files_analyzed": 726,
+      "function_lines": 112966,
+      "function_lines_ratio": 0.3905277167994745,
+      "mean_lines_per_function": 14.572497420020639,
+      "num_classes": 1970,
+      "num_functions": 7752,
       "pypi_version": "0.0.16",
-      "total_lines": 291424
+      "total_lines": 289265
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:54:49.484246Z",
+  "timestamp": "2026-10-13T17:54:53.860619Z",
   "workflow_status": {}
 }
