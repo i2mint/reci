@@ -294,181 +294,184 @@
 </span><span id="line-115">    <span class="n">source_output</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="line-116">    <span class="n">target_job</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="line-117">    <span class="n">target_step_id</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="line-118">    <span class="n">target_input</span><span class="p">:</span> <span class="nb">str</span></div>
+</span><span id="line-118">    <span class="n">target_input</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="line-119">    <span class="c1">#: other jobs that also produce the output; the first producer in recipe</span>
+</span><span id="line-120">    <span class="c1">#: order (``source_job``) is the one used</span>
+</span><span id="line-121">    <span class="n">alternatives</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span></div>
 
-</span><span id="line-119">
-</span><span id="line-120">
-</span><span id="line-121"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-122"><span class="c1"># The graph</span>
-</span><span id="line-123"><span class="c1"># ---------------------------------------------------------------------------</span>
-</span><span id="line-124">
-</span><span id="line-125">
+</span><span id="line-122">
+</span><span id="line-123">
+</span><span id="line-124"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-125"><span class="c1"># The graph</span>
+</span><span id="line-126"><span class="c1"># ---------------------------------------------------------------------------</span>
+</span><span id="line-127">
+</span><span id="line-128">
 <div class="viewcode-block" id="RecipeGraph">
 <a class="viewcode-back" href="../../_autosummary/reci.graph.html#reci.graph.RecipeGraph">[docs]</a>
-</span><span id="line-126"><span class="k">class</span><span class="w"> </span><span class="nc">RecipeGraph</span><span class="p">:</span>
-</span><span id="line-127"><span class="w">    </span><span class="sd">"""The computational DAG of a recipe.</span>
-</span><span id="line-128">
-</span><span id="line-129"><span class="sd">    Nodes are identified by ``"{job}.{step_id}"`` strings.  The actual</span>
-</span><span id="line-130"><span class="sd">    :class:`ActionNode` objects are stored in :attr:`_nodes`.</span>
-</span><span id="line-131"><span class="sd">    """</span>
-</span><span id="line-132">
-</span><span id="line-133">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-134">        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionNode</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="line-135">        <span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># key -&gt; set of predecessor keys</span>
-</span><span id="line-136">        <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># job_id -&gt; ordered node keys</span>
-</span><span id="line-137">        <span class="bp">self</span><span class="o">.</span><span class="n">_job_needs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># job_id -&gt; explicit needs:</span>
-</span><span id="line-138">        <span class="bp">self</span><span class="o">.</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># set by from_recipe</span>
-</span><span id="line-139">
-</span><span id="line-140">    <span class="c1"># -- construction -------------------------------------------------------</span>
-</span><span id="line-141">
-</span><span id="line-142">    <span class="k">def</span><span class="w"> </span><span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ActionNode</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">depends_on</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-143">        <span class="n">key</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span>
-</span><span id="line-144">        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
-</span><span id="line-145">        <span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">depends_on</span><span class="p">)</span>
-</span><span id="line-146">        <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-</span><span id="line-147">
+</span><span id="line-129"><span class="k">class</span><span class="w"> </span><span class="nc">RecipeGraph</span><span class="p">:</span>
+</span><span id="line-130"><span class="w">    </span><span class="sd">"""The computational DAG of a recipe.</span>
+</span><span id="line-131">
+</span><span id="line-132"><span class="sd">    Nodes are identified by ``"{job}.{step_id}"`` strings.  The actual</span>
+</span><span id="line-133"><span class="sd">    :class:`ActionNode` objects are stored in :attr:`_nodes`.</span>
+</span><span id="line-134"><span class="sd">    """</span>
+</span><span id="line-135">
+</span><span id="line-136">    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-137">        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionNode</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="line-138">        <span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># key -&gt; set of predecessor keys</span>
+</span><span id="line-139">        <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># job_id -&gt; ordered node keys</span>
+</span><span id="line-140">        <span class="bp">self</span><span class="o">.</span><span class="n">_job_needs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># job_id -&gt; explicit needs:</span>
+</span><span id="line-141">        <span class="bp">self</span><span class="o">.</span><span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># set by from_recipe</span>
+</span><span id="line-142">
+</span><span id="line-143">    <span class="c1"># -- construction -------------------------------------------------------</span>
+</span><span id="line-144">
+</span><span id="line-145">    <span class="k">def</span><span class="w"> </span><span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ActionNode</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">depends_on</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-146">        <span class="n">key</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span>
+</span><span id="line-147">        <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+</span><span id="line-148">        <span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">depends_on</span><span class="p">)</span>
+</span><span id="line-149">        <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+</span><span id="line-150">
 <div class="viewcode-block" id="RecipeGraph.from_recipe">
 <a class="viewcode-back" href="../../_autosummary/reci.graph.html#reci.graph.RecipeGraph.from_recipe">[docs]</a>
-</span><span id="line-148">    <span class="nd">@classmethod</span>
-</span><span id="line-149">    <span class="k">def</span><span class="w"> </span><span class="nf">from_recipe</span><span class="p">(</span>
-</span><span id="line-150">        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="line-151">        <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span>
-</span><span id="line-152">        <span class="n">action_specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">],</span>
-</span><span id="line-153">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecipeGraph</span><span class="p">:</span>
-</span><span id="line-154"><span class="w">        </span><span class="sd">"""Build a graph from a parsed recipe and fetched action specs.</span>
-</span><span id="line-155">
-</span><span id="line-156"><span class="sd">        *action_specs* is keyed by action ref (e.g. ``"actions/checkout@v4"``).</span>
-</span><span id="line-157"><span class="sd">        """</span>
-</span><span id="line-158">        <span class="n">graph</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-</span><span id="line-159">        <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span> <span class="o">=</span> <span class="n">recipe</span>
-</span><span id="line-160">        <span class="n">graph</span><span class="o">.</span><span class="n">_job_needs</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-161">            <span class="n">job_id</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">)</span> <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="line-162">        <span class="p">}</span>
-</span><span id="line-163">
-</span><span id="line-164">        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-165">            <span class="n">prev_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-166">            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
-</span><span id="line-167">                <span class="n">spec</span> <span class="o">=</span> <span class="n">action_specs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">)</span> <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="line-168">                <span class="n">node</span> <span class="o">=</span> <span class="n">ActionNode</span><span class="p">(</span>
-</span><span id="line-169">                    <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-</span><span id="line-170">                    <span class="n">job</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
-</span><span id="line-171">                    <span class="n">ref</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">,</span>
-</span><span id="line-172">                    <span class="n">action_spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span>
-</span><span id="line-173">                    <span class="n">with_</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">),</span>
-</span><span id="line-174">                    <span class="n">bind</span><span class="o">=</span><span class="p">{</span>
-</span><span id="line-175">                        <span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="line-176">                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-</span><span id="line-177">                    <span class="p">},</span>
-</span><span id="line-178">                    <span class="n">if_</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span>
-</span><span id="line-179">                    <span class="n">declared_outputs</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">outputs</span><span class="p">),</span>
-</span><span id="line-180">                    <span class="n">run</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
-</span><span id="line-181">                    <span class="n">name</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-</span><span id="line-182">                    <span class="n">env</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">),</span>
-</span><span id="line-183">                <span class="p">)</span>
-</span><span id="line-184">                <span class="c1"># Within a job, steps are sequential</span>
-</span><span id="line-185">                <span class="n">deps</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="line-186">                <span class="k">if</span> <span class="n">prev_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-187">                    <span class="n">deps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">prev_key</span><span class="p">)</span>
-</span><span id="line-188">                <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="n">deps</span><span class="p">)</span>
-</span><span id="line-189">                <span class="n">prev_key</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span>
-</span><span id="line-190">
-</span><span id="line-191">        <span class="c1"># Inter-job edges from explicit needs:</span>
-</span><span id="line-192">        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-193">            <span class="k">if</span> <span class="ow">not</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
-</span><span id="line-194">                <span class="k">continue</span>
-</span><span id="line-195">            <span class="n">first_key</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="line-196">            <span class="k">if</span> <span class="n">first_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-151">    <span class="nd">@classmethod</span>
+</span><span id="line-152">    <span class="k">def</span><span class="w"> </span><span class="nf">from_recipe</span><span class="p">(</span>
+</span><span id="line-153">        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="line-154">        <span class="n">recipe</span><span class="p">:</span> <span class="n">Recipe</span><span class="p">,</span>
+</span><span id="line-155">        <span class="n">action_specs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActionSpec</span><span class="p">],</span>
+</span><span id="line-156">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecipeGraph</span><span class="p">:</span>
+</span><span id="line-157"><span class="w">        </span><span class="sd">"""Build a graph from a parsed recipe and fetched action specs.</span>
+</span><span id="line-158">
+</span><span id="line-159"><span class="sd">        *action_specs* is keyed by action ref (e.g. ``"actions/checkout@v4"``).</span>
+</span><span id="line-160"><span class="sd">        """</span>
+</span><span id="line-161">        <span class="n">graph</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+</span><span id="line-162">        <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span> <span class="o">=</span> <span class="n">recipe</span>
+</span><span id="line-163">        <span class="n">graph</span><span class="o">.</span><span class="n">_job_needs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="line-164">            <span class="n">job_id</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">)</span> <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="line-165">        <span class="p">}</span>
+</span><span id="line-166">
+</span><span id="line-167">        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-168">            <span class="n">prev_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-169">            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+</span><span id="line-170">                <span class="n">spec</span> <span class="o">=</span> <span class="n">action_specs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">)</span> <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">uses</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="line-171">                <span class="n">node</span> <span class="o">=</span> <span class="n">ActionNode</span><span class="p">(</span>
+</span><span id="line-172">                    <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span id="line-173">                    <span class="n">job</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+</span><span id="line-174">                    <span class="n">ref</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">uses</span><span class="p">,</span>
+</span><span id="line-175">                    <span class="n">action_spec</span><span class="o">=</span><span class="n">spec</span><span class="p">,</span>
+</span><span id="line-176">                    <span class="n">with_</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">),</span>
+</span><span id="line-177">                    <span class="n">bind</span><span class="o">=</span><span class="p">{</span>
+</span><span id="line-178">                        <span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="line-179">                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="line-180">                    <span class="p">},</span>
+</span><span id="line-181">                    <span class="n">if_</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span>
+</span><span id="line-182">                    <span class="n">declared_outputs</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">outputs</span><span class="p">),</span>
+</span><span id="line-183">                    <span class="n">run</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+</span><span id="line-184">                    <span class="n">name</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="line-185">                    <span class="n">env</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">),</span>
+</span><span id="line-186">                <span class="p">)</span>
+</span><span id="line-187">                <span class="c1"># Within a job, steps are sequential</span>
+</span><span id="line-188">                <span class="n">deps</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-189">                <span class="k">if</span> <span class="n">prev_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-190">                    <span class="n">deps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">prev_key</span><span class="p">)</span>
+</span><span id="line-191">                <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="n">deps</span><span class="p">)</span>
+</span><span id="line-192">                <span class="n">prev_key</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span>
+</span><span id="line-193">
+</span><span id="line-194">        <span class="c1"># Inter-job edges from explicit needs:</span>
+</span><span id="line-195">        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-196">            <span class="k">if</span> <span class="ow">not</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
 </span><span id="line-197">                <span class="k">continue</span>
-</span><span id="line-198">            <span class="k">for</span> <span class="n">needed_job</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
-</span><span id="line-199">                <span class="n">last_keys</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">needed_job</span><span class="p">,</span> <span class="p">[])</span>
-</span><span id="line-200">                <span class="k">if</span> <span class="n">last_keys</span><span class="p">:</span>
-</span><span id="line-201">                    <span class="n">graph</span><span class="o">.</span><span class="n">_deps</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">first_key</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">last_keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-</span><span id="line-202">
-</span><span id="line-203">        <span class="k">return</span> <span class="n">graph</span></div>
+</span><span id="line-198">            <span class="n">first_key</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="line-199">            <span class="k">if</span> <span class="n">first_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-200">                <span class="k">continue</span>
+</span><span id="line-201">            <span class="k">for</span> <span class="n">needed_job</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">needs</span><span class="p">:</span>
+</span><span id="line-202">                <span class="n">last_keys</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">needed_job</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="line-203">                <span class="k">if</span> <span class="n">last_keys</span><span class="p">:</span>
+</span><span id="line-204">                    <span class="n">graph</span><span class="o">.</span><span class="n">_deps</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">first_key</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">last_keys</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</span><span id="line-205">
+</span><span id="line-206">        <span class="k">return</span> <span class="n">graph</span></div>
 
-</span><span id="line-204">
-</span><span id="line-205">    <span class="c1"># -- queries ------------------------------------------------------------</span>
-</span><span id="line-206">
-</span><span id="line-207">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionNode</span><span class="p">:</span>
-</span><span id="line-208">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span id="line-207">
+</span><span id="line-208">    <span class="c1"># -- queries ------------------------------------------------------------</span>
 </span><span id="line-209">
-</span><span id="line-210">    <span class="k">def</span><span class="w"> </span><span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ActionNode</span><span class="p">]:</span>
-</span><span id="line-211">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+</span><span id="line-210">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActionNode</span><span class="p">:</span>
+</span><span id="line-211">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 </span><span id="line-212">
-</span><span id="line-213">    <span class="k">def</span><span class="w"> </span><span class="nf">node_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-214">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</span><span id="line-213">    <span class="k">def</span><span class="w"> </span><span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ActionNode</span><span class="p">]:</span>
+</span><span id="line-214">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 </span><span id="line-215">
-</span><span id="line-216">    <span class="k">def</span><span class="w"> </span><span class="nf">jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">ActionNode</span><span class="p">]]:</span>
-</span><span id="line-217">        <span class="k">return</span> <span class="p">{</span><span class="n">jid</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span> <span class="k">for</span> <span class="n">jid</span><span class="p">,</span> <span class="n">keys</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+</span><span id="line-216">    <span class="k">def</span><span class="w"> </span><span class="nf">node_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-217">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 </span><span id="line-218">
-</span><span id="line-219">    <span class="k">def</span><span class="w"> </span><span class="nf">job_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-220">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="line-219">    <span class="k">def</span><span class="w"> </span><span class="nf">jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">ActionNode</span><span class="p">]]:</span>
+</span><span id="line-220">        <span class="k">return</span> <span class="p">{</span><span class="n">jid</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span> <span class="k">for</span> <span class="n">jid</span><span class="p">,</span> <span class="n">keys</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 </span><span id="line-221">
+</span><span id="line-222">    <span class="k">def</span><span class="w"> </span><span class="nf">job_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-223">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</span><span id="line-224">
 <div class="viewcode-block" id="RecipeGraph.job_needs">
 <a class="viewcode-back" href="../../_autosummary/reci.graph.html#reci.graph.RecipeGraph.job_needs">[docs]</a>
-</span><span id="line-222">    <span class="k">def</span><span class="w"> </span><span class="nf">job_needs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-223"><span class="w">        </span><span class="sd">"""The job ids *job_id* lists in its explicit ``needs:``."""</span>
-</span><span id="line-224">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_needs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="p">[]))</span></div>
+</span><span id="line-225">    <span class="k">def</span><span class="w"> </span><span class="nf">job_needs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-226"><span class="w">        </span><span class="sd">"""The job ids *job_id* lists in its explicit ``needs:``."""</span>
+</span><span id="line-227">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_needs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="p">[]))</span></div>
 
-</span><span id="line-225">
-</span><span id="line-226">    <span class="k">def</span><span class="w"> </span><span class="nf">job_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ActionNode</span><span class="p">]:</span>
-</span><span id="line-227">        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="p">[])]</span>
 </span><span id="line-228">
+</span><span id="line-229">    <span class="k">def</span><span class="w"> </span><span class="nf">job_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ActionNode</span><span class="p">]:</span>
+</span><span id="line-230">        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_nodes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="p">[])]</span>
+</span><span id="line-231">
 <div class="viewcode-block" id="RecipeGraph.upstream_output_names">
 <a class="viewcode-back" href="../../_autosummary/reci.graph.html#reci.graph.RecipeGraph.upstream_output_names">[docs]</a>
-</span><span id="line-229">    <span class="k">def</span><span class="w"> </span><span class="nf">upstream_output_names</span><span class="p">(</span>
-</span><span id="line-230">        <span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ActionNode</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">other_jobs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="line-231">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-232"><span class="w">        </span><span class="sd">"""Normalized output names *node* can be fed from.</span>
-</span><span id="line-233">
-</span><span id="line-234"><span class="sd">        Outputs of earlier steps in its own job, plus (unless *other_jobs* is</span>
-</span><span id="line-235"><span class="sd">        false) outputs of any step in another job, which the compiler forwards</span>
-</span><span id="line-236"><span class="sd">        through ``needs``.</span>
-</span><span id="line-237"><span class="sd">        """</span>
-</span><span id="line-238">        <span class="n">names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-</span><span id="line-239">        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-240">            <span class="k">if</span> <span class="n">job_id</span> <span class="o">!=</span> <span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">:</span>
-</span><span id="line-241">                <span class="k">if</span> <span class="n">other_jobs</span><span class="p">:</span>
-</span><span id="line-242">                    <span class="n">names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span>
-</span><span id="line-243">                <span class="k">continue</span>
-</span><span id="line-244">            <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
-</span><span id="line-245">                <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
-</span><span id="line-246">                    <span class="k">break</span>  <span class="c1"># same job: only steps before this one</span>
-</span><span id="line-247">                <span class="n">names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span>
-</span><span id="line-248">        <span class="k">return</span> <span class="n">names</span></div>
+</span><span id="line-232">    <span class="k">def</span><span class="w"> </span><span class="nf">upstream_output_names</span><span class="p">(</span>
+</span><span id="line-233">        <span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">ActionNode</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">other_jobs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="line-234">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-235"><span class="w">        </span><span class="sd">"""Normalized output names *node* can be fed from.</span>
+</span><span id="line-236">
+</span><span id="line-237"><span class="sd">        Outputs of earlier steps in its own job, plus (unless *other_jobs* is</span>
+</span><span id="line-238"><span class="sd">        false) outputs of any step in another job, which the compiler forwards</span>
+</span><span id="line-239"><span class="sd">        through ``needs``.</span>
+</span><span id="line-240"><span class="sd">        """</span>
+</span><span id="line-241">        <span class="n">names</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-242">        <span class="k">for</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-243">            <span class="k">if</span> <span class="n">job_id</span> <span class="o">!=</span> <span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">:</span>
+</span><span id="line-244">                <span class="k">if</span> <span class="n">other_jobs</span><span class="p">:</span>
+</span><span id="line-245">                    <span class="n">names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">n</span> <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span>
+</span><span id="line-246">                <span class="k">continue</span>
+</span><span id="line-247">            <span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+</span><span id="line-248">                <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
+</span><span id="line-249">                    <span class="k">break</span>  <span class="c1"># same job: only steps before this one</span>
+</span><span id="line-250">                <span class="n">names</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span>
+</span><span id="line-251">        <span class="k">return</span> <span class="n">names</span></div>
 
-</span><span id="line-249">
-</span><span id="line-250">    <span class="k">def</span><span class="w"> </span><span class="nf">predecessors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-251">        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">()))</span>
 </span><span id="line-252">
+</span><span id="line-253">    <span class="k">def</span><span class="w"> </span><span class="nf">predecessors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-254">        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">()))</span>
+</span><span id="line-255">
 <div class="viewcode-block" id="RecipeGraph.execution_waves">
 <a class="viewcode-back" href="../../_autosummary/reci.graph.html#reci.graph.RecipeGraph.execution_waves">[docs]</a>
-</span><span id="line-253">    <span class="k">def</span><span class="w"> </span><span class="nf">execution_waves</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
-</span><span id="line-254"><span class="w">        </span><span class="sd">"""Return parallel execution waves (topological generations).</span>
-</span><span id="line-255">
-</span><span id="line-256"><span class="sd">        Each wave is a tuple of node keys that can execute concurrently.</span>
-</span><span id="line-257"><span class="sd">        Raises :class:`CycleError` if the graph has cycles.</span>
-</span><span id="line-258"><span class="sd">        """</span>
-</span><span id="line-259">        <span class="n">ts</span> <span class="o">=</span> <span class="n">TopologicalSorter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="p">)</span>
-</span><span id="line-260">        <span class="n">ts</span><span class="o">.</span><span class="n">prepare</span><span class="p">()</span>
-</span><span id="line-261">        <span class="n">waves</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-262">        <span class="k">while</span> <span class="n">ts</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
-</span><span id="line-263">            <span class="n">wave</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_ready</span><span class="p">()</span>
-</span><span id="line-264">            <span class="n">waves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
-</span><span id="line-265">            <span class="n">ts</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="o">*</span><span class="n">wave</span><span class="p">)</span>
-</span><span id="line-266">        <span class="k">return</span> <span class="n">waves</span></div>
+</span><span id="line-256">    <span class="k">def</span><span class="w"> </span><span class="nf">execution_waves</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]:</span>
+</span><span id="line-257"><span class="w">        </span><span class="sd">"""Return parallel execution waves (topological generations).</span>
+</span><span id="line-258">
+</span><span id="line-259"><span class="sd">        Each wave is a tuple of node keys that can execute concurrently.</span>
+</span><span id="line-260"><span class="sd">        Raises :class:`CycleError` if the graph has cycles.</span>
+</span><span id="line-261"><span class="sd">        """</span>
+</span><span id="line-262">        <span class="n">ts</span> <span class="o">=</span> <span class="n">TopologicalSorter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_deps</span><span class="p">)</span>
+</span><span id="line-263">        <span class="n">ts</span><span class="o">.</span><span class="n">prepare</span><span class="p">()</span>
+</span><span id="line-264">        <span class="n">waves</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-265">        <span class="k">while</span> <span class="n">ts</span><span class="o">.</span><span class="n">is_active</span><span class="p">():</span>
+</span><span id="line-266">            <span class="n">wave</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">get_ready</span><span class="p">()</span>
+</span><span id="line-267">            <span class="n">waves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
+</span><span id="line-268">            <span class="n">ts</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="o">*</span><span class="n">wave</span><span class="p">)</span>
+</span><span id="line-269">        <span class="k">return</span> <span class="n">waves</span></div>
 
-</span><span id="line-267">
+</span><span id="line-270">
 <div class="viewcode-block" id="RecipeGraph.validate">
 <a class="viewcode-back" href="../../_autosummary/reci.graph.html#reci.graph.RecipeGraph.validate">[docs]</a>
-</span><span id="line-268">    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-</span><span id="line-269"><span class="w">        </span><span class="sd">"""Run all validation rules and return a ValidationReport.</span>
-</span><span id="line-270">
-</span><span id="line-271"><span class="sd">        Imported lazily to avoid circular imports (validation depends on graph).</span>
-</span><span id="line-272"><span class="sd">        """</span>
-</span><span id="line-273">        <span class="kn">from</span><span class="w"> </span><span class="nn">reci.validation.rules</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_all_rules</span>
-</span><span id="line-274">
-</span><span id="line-275">        <span class="k">return</span> <span class="n">run_all_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{})</span></div>
+</span><span id="line-271">    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+</span><span id="line-272"><span class="w">        </span><span class="sd">"""Run all validation rules and return a ValidationReport.</span>
+</span><span id="line-273">
+</span><span id="line-274"><span class="sd">        Imported lazily to avoid circular imports (validation depends on graph).</span>
+</span><span id="line-275"><span class="sd">        """</span>
+</span><span id="line-276">        <span class="kn">from</span><span class="w"> </span><span class="nn">reci.validation.rules</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_all_rules</span>
+</span><span id="line-277">
+</span><span id="line-278">        <span class="k">return</span> <span class="n">run_all_rules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span> <span class="ow">or</span> <span class="p">{})</span></div>
 </div>
 
 </span></code></pre></div>
@@ -484,7 +487,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=c5dbc6bb"></script>
+    <script src="../../_static/documentation_options.js?v=f2234cd1"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

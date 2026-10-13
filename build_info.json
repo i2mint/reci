@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T23:09:53Z",
+  "built_at": "2026-10-13T23:18:12Z",
   "package": {
     "name": "reci",
-    "version": "0.0.31",
+    "version": "0.0.32",
     "display_name": "reci",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "55f705536b4d7d94361a593d1fdec11f01605f90",
-    "short_commit": "55f7055",
+    "commit": "ffc29cddc172159dd79ed5477985852246f0e808",
+    "short_commit": "ffc29cd",
     "branch": "main",
     "tags": [
-      "0.0.31"
+      "0.0.32"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/reci",
-    "commit_url": "https://github.com/i2mint/reci/commit/55f705536b4d7d94361a593d1fdec11f01605f90",
+    "commit_url": "https://github.com/i2mint/reci/commit/ffc29cddc172159dd79ed5477985852246f0e808",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/reci",
-    "sha": "ea22e404ae6774625e3e786342c8fd50cfaeeb97",
+    "sha": "44015e3949e91b28f61e035cc334a2641d2e97c8",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "38482315850",
-    "run_url": "https://github.com/i2mint/reci/actions/runs/38482315850",
+    "run_id": "38483195202",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/38483195202",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -58,15 +58,15 @@
   },
   "site": {
     "modules_documented": 23,
-    "objects_documented": 86
+    "objects_documented": 87
   },
   "pypi": {
     "checked": true,
-    "latest": "0.0.31",
+    "latest": "0.0.32",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 55f705536b4d7d94361a593d1fdec11f01605f90\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout ffc29cddc172159dd79ed5477985852246f0e808\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

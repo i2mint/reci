@@ -1,4 +1,4 @@
-> built 2026-10-13 23:09 UTC from 55f7055 (main) · reci 0.0.31. Details: build_info.json
+> built 2026-10-13 23:18 UTC from ffc29cd (main) · reci 0.0.32. Details: build_info.json
 
 # index.html.md
 
@@ -159,8 +159,8 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 | DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                   |
 | DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                       |
 | FLOW001 | Data flow  | Required input has no source                                                                                                                 |
-| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)                                                                                                 |
-| FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic)                                                                                    |
+| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches, in a job or across jobs)                                                                        |
+| FLOW006 | Data flow  | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer)                            |
 | CONF001 | Config     | Required config key missing                                                                                                                  |
 | CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)     |
 | CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |
@@ -657,11 +657,16 @@ All normalized output names this node produces.
 Declared (recipe) outputs come first; the action’s own `action.yml`
 spelling wins when both name the same output.
 
-### *class* reci.graph.CrossJobEdge(source_job, source_step_id, source_output, target_job, target_step_id, target_input)
+### *class* reci.graph.CrossJobEdge(source_job, source_step_id, source_output, target_job, target_step_id, target_input, alternatives=())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 Data-flow edge between steps in different jobs.
+
+#### alternatives *: [tuple](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), ...]* *= ()*
+
+other jobs that also produce the output; the first producer in recipe
+order (`source_job`) is the one used
 
 ### *class* reci.graph.RecipeGraph
 
@@ -1189,16 +1194,19 @@ Data-flow validation rules (FLOW001–FLOW006).
 
 ### Functions
 
-| [`check_ambiguous_wiring`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_ambiguous_wiring)(graph, config)          | An input name matches multiple upstream outputs.                 |
-|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------|
-| [`check_boolean_coercion`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_boolean_coercion)(graph, config)          | A string output is wired to a likely-boolean input.              |
-| [`check_matrix_output`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_matrix_output)(graph, config)             | Matrix job outputs consumed by downstream are non-deterministic. |
-| [`check_unsourced_required_inputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unsourced_required_inputs)(graph, config) | Required input has no source at any level.                       |
-| [`check_unused_outputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unused_outputs)(graph, config)            | An output is declared but never consumed downstream.             |
+| [`check_ambiguous_wiring`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_ambiguous_wiring)(graph, config)          | An input name matches multiple upstream outputs, in a job or across jobs.    |
+|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| [`check_boolean_coercion`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_boolean_coercion)(graph, config)          | A string output is wired to a likely-boolean input.                          |
+| [`check_matrix_output`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_matrix_output)(graph, config)             | A job output consumed by another job comes from a matrix or conditional job. |
+| [`check_unsourced_required_inputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unsourced_required_inputs)(graph, config) | Required input has no source at any level.                                   |
+| [`check_unused_outputs`](_autosummary/reci.validation.rules.flow.html.md#reci.validation.rules.flow.check_unused_outputs)(graph, config)            | An output is declared but never consumed downstream.                         |
 
 ### reci.validation.rules.flow.check_ambiguous_wiring(graph, config)
 
-An input name matches multiple upstream outputs.
+An input name matches multiple upstream outputs, in a job or across jobs.
+
+Within a job the nearest preceding step wins.  Across jobs there is no
+nearer: the first producing job in recipe order is used.
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
@@ -1212,7 +1220,11 @@ A string output is wired to a likely-boolean input.
 
 ### reci.validation.rules.flow.check_matrix_output(graph, config)
 
-Matrix job outputs consumed by downstream are non-deterministic.
+A job output consumed by another job comes from a matrix or conditional job.
+
+A matrix job has one output value for all its legs: whichever leg finishes
+last wins.  A job with an `if:` that is false is skipped, and so is every
+job that `needs` it (unless it uses `always()` or similar).
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
@@ -1370,7 +1382,7 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-13 23:09 UTC** from commit <a href="https://github.com/i2mint/reci/commit/55f705536b4d7d94361a593d1fdec11f01605f90"><code>55f7055</code></a> on branch <code>main</code>, for **reci 0.0.31** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 23:18 UTC** from commit <a href="https://github.com/i2mint/reci/commit/ffc29cddc172159dd79ed5477985852246f0e808"><code>ffc29cd</code></a> on branch <code>main</code>, for **reci 0.0.32** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1379,9 +1391,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/55f705536b4d7d94361a593d1fdec11f01605f90"><code>55f705536b4d7d94361a593d1fdec11f01605f90</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/ffc29cddc172159dd79ed5477985852246f0e808"><code>ffc29cddc172159dd79ed5477985852246f0e808</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.31</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.32</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1390,9 +1402,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38482315850">38482315850</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38483195202">38483195202</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>ea22e404ae6774625e3e786342c8fd50cfaeeb97</code> (in the history of the built commit) |
+| Event commit | <code>44015e3949e91b28f61e035cc334a2641d2e97c8</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1417,13 +1429,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.31/">0.0.31</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.32/">0.0.32</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 55f705536b4d7d94361a593d1fdec11f01605f90
+git checkout ffc29cddc172159dd79ed5477985852246f0e808
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

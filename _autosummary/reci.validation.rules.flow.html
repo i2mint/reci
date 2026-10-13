@@ -130,13 +130,13 @@
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_ambiguous_wiring" title="reci.validation.rules.flow.check_ambiguous_wiring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_ambiguous_wiring</span></code></a>(graph, config)</p></td>
-<td><p>An input name matches multiple upstream outputs.</p></td>
+<td><p>An input name matches multiple upstream outputs, in a job or across jobs.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_boolean_coercion" title="reci.validation.rules.flow.check_boolean_coercion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_boolean_coercion</span></code></a>(graph, config)</p></td>
 <td><p>A string output is wired to a likely-boolean input.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_matrix_output" title="reci.validation.rules.flow.check_matrix_output"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_matrix_output</span></code></a>(graph, config)</p></td>
-<td><p>Matrix job outputs consumed by downstream are non-deterministic.</p></td>
+<td><p>A job output consumed by another job comes from a matrix or conditional job.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.flow.check_unsourced_required_inputs" title="reci.validation.rules.flow.check_unsourced_required_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_unsourced_required_inputs</span></code></a>(graph, config)</p></td>
 <td><p>Required input has no source at any level.</p></td>
@@ -149,7 +149,9 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="reci.validation.rules.flow.check_ambiguous_wiring">
 <span class="sig-prename descclassname"><span class="pre">reci.validation.rules.flow.</span></span><span class="sig-name descname"><span class="pre">check_ambiguous_wiring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/flow.html#check_ambiguous_wiring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.flow.check_ambiguous_wiring" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.flow.check_ambiguous_wiring'">¶</a></dt>
-<dd><p>An input name matches multiple upstream outputs.</p>
+<dd><p>An input name matches multiple upstream outputs, in a job or across jobs.</p>
+<p>Within a job the nearest preceding step wins.  Across jobs there is no
+nearer: the first producing job in recipe order is used.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
@@ -169,7 +171,10 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="reci.validation.rules.flow.check_matrix_output">
 <span class="sig-prename descclassname"><span class="pre">reci.validation.rules.flow.</span></span><span class="sig-name descname"><span class="pre">check_matrix_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/flow.html#check_matrix_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.flow.check_matrix_output" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.flow.check_matrix_output'">¶</a></dt>
-<dd><p>Matrix job outputs consumed by downstream are non-deterministic.</p>
+<dd><p>A job output consumed by another job comes from a matrix or conditional job.</p>
+<p>A matrix job has one output value for all its legs: whichever leg finishes
+last wins.  A job with an <code class="docutils literal notranslate"><span class="pre">if:</span></code> that is false is skipped, and so is every
+job that <code class="docutils literal notranslate"><span class="pre">needs</span></code> it (unless it uses <code class="docutils literal notranslate"><span class="pre">always()</span></code> or similar).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
@@ -225,7 +230,7 @@ the job <code class="docutils literal notranslate"><span class="pre">outputs:</s
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=c5dbc6bb"></script>
+<script src="../_static/documentation_options.js?v=f2234cd1"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

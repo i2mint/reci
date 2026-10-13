@@ -46,11 +46,16 @@ All normalized output names this node produces.
 Declared (recipe) outputs come first; the action’s own `action.yml`
 spelling wins when both name the same output.
 
-### *class* reci.graph.CrossJobEdge(source_job, source_step_id, source_output, target_job, target_step_id, target_input)
+### *class* reci.graph.CrossJobEdge(source_job, source_step_id, source_output, target_job, target_step_id, target_input, alternatives=())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 Data-flow edge between steps in different jobs.
+
+#### alternatives *: [tuple](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[str](https://docs.python.org/3/builtins/stdtypes.html#str), ...]* *= ()*
+
+other jobs that also produce the output; the first producer in recipe
+order (`source_job`) is the one used
 
 ### *class* reci.graph.RecipeGraph
 

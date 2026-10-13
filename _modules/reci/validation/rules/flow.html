@@ -250,158 +250,247 @@
 <a class="viewcode-back" href="../../../../_autosummary/reci.validation.rules.flow.html#reci.validation.rules.flow.check_ambiguous_wiring">[docs]</a>
 </span><span id="line-72"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"FLOW002"</span><span class="p">)</span>
 </span><span id="line-73"><span class="k">def</span><span class="w"> </span><span class="nf">check_ambiguous_wiring</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
-</span><span id="line-74"><span class="w">    </span><span class="sd">"""An input name matches multiple upstream outputs."""</span>
-</span><span id="line-75">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
-</span><span id="line-76">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-77">            <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}:</span>
-</span><span id="line-78">                <span class="k">continue</span>
-</span><span id="line-79">            <span class="n">search_name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
-</span><span id="line-80">            <span class="c1"># Count matches in upstream</span>
-</span><span id="line-81">            <span class="n">matches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="line-82">            <span class="k">for</span> <span class="n">prev_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">):</span>
-</span><span id="line-83">                <span class="k">if</span> <span class="n">prev_node</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
-</span><span id="line-84">                    <span class="k">break</span>
-</span><span id="line-85">                <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">prev_node</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
-</span><span id="line-86">                    <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prev_node</span><span class="o">.</span><span class="n">step_id</span><span class="p">)</span>
-</span><span id="line-87">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="line-88">                <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
-</span><span id="line-89">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW002"</span><span class="p">,</span>
-</span><span id="line-90">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
-</span><span id="line-91">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
-</span><span id="line-92">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' matches "</span>
-</span><span id="line-93">                        <span class="sa">f</span><span class="s2">"outputs from multiple upstream steps: "</span>
-</span><span id="line-94">                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span><span class="si">}</span><span class="s2">. Using nearest predecessor."</span>
-</span><span id="line-95">                    <span class="p">),</span>
-</span><span id="line-96">                    <span class="n">location</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
-</span><span id="line-97">                <span class="p">)</span></div>
+</span><span id="line-74"><span class="w">    </span><span class="sd">"""An input name matches multiple upstream outputs, in a job or across jobs.</span>
+</span><span id="line-75">
+</span><span id="line-76"><span class="sd">    Within a job the nearest preceding step wins.  Across jobs there is no</span>
+</span><span id="line-77"><span class="sd">    nearer: the first producing job in recipe order is used.</span>
+</span><span id="line-78"><span class="sd">    """</span>
+</span><span id="line-79">    <span class="kn">from</span><span class="w"> </span><span class="nn">reci.compiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">detect_cross_job_edges</span>
+</span><span id="line-80">
+</span><span id="line-81">    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">detect_cross_job_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span><span id="line-82">        <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">alternatives</span><span class="p">:</span>
+</span><span id="line-83">            <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-84">                <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW002"</span><span class="p">,</span>
+</span><span id="line-85">                <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+</span><span id="line-86">                <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-87">                    <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_input</span><span class="si">}</span><span class="s2">' of "</span>
+</span><span id="line-88">                    <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_job</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">' matches outputs "</span>
+</span><span id="line-89">                    <span class="sa">f</span><span class="s2">"from several jobs: </span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">, "</span>
+</span><span id="line-90">                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">alternatives</span><span class="p">)</span><span class="si">}</span><span class="s2">. Using the first, "</span>
+</span><span id="line-91">                    <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">'."</span>
+</span><span id="line-92">                <span class="p">),</span>
+</span><span id="line-93">                <span class="n">location</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_job</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+</span><span id="line-94">                <span class="n">suggestion</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-95">                    <span class="s2">"Name the outputs differently and pick one with bind:, or "</span>
+</span><span id="line-96">                    <span class="s2">"give the input an explicit with:."</span>
+</span><span id="line-97">                <span class="p">),</span>
+</span><span id="line-98">            <span class="p">)</span>
+</span><span id="line-99">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+</span><span id="line-100">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-101">            <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}:</span>
+</span><span id="line-102">                <span class="k">continue</span>
+</span><span id="line-103">            <span class="n">search_name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
+</span><span id="line-104">            <span class="c1"># Count matches in upstream</span>
+</span><span id="line-105">            <span class="n">matches</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="line-106">            <span class="k">for</span> <span class="n">prev_node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">):</span>
+</span><span id="line-107">                <span class="k">if</span> <span class="n">prev_node</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
+</span><span id="line-108">                    <span class="k">break</span>
+</span><span id="line-109">                <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">prev_node</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
+</span><span id="line-110">                    <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prev_node</span><span class="o">.</span><span class="n">step_id</span><span class="p">)</span>
+</span><span id="line-111">            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="line-112">                <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-113">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW002"</span><span class="p">,</span>
+</span><span id="line-114">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+</span><span id="line-115">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-116">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' matches "</span>
+</span><span id="line-117">                        <span class="sa">f</span><span class="s2">"outputs from multiple upstream steps: "</span>
+</span><span id="line-118">                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span><span class="si">}</span><span class="s2">. Using nearest predecessor."</span>
+</span><span id="line-119">                    <span class="p">),</span>
+</span><span id="line-120">                    <span class="n">location</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+</span><span id="line-121">                <span class="p">)</span></div>
 
-</span><span id="line-98">
-</span><span id="line-99">
-</span><span id="line-100"><span class="c1"># ``steps.&lt;id&gt;.outputs.&lt;name&gt;`` in dot or bracket syntax, in any mix.</span>
-</span><span id="line-101"><span class="n">_STEP_OUTPUT_REF</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-</span><span id="line-102"><span class="w">    </span><span class="sa">r</span><span class="sd">"""\bsteps(?:\.|\s*\[\s*['"])([\w-]+)(?:['"]\s*\])?\s*\.\s*outputs"""</span>
-</span><span id="line-103"><span class="w">    </span><span class="sa">r</span><span class="sd">"""(?:\s*\.\s*|\s*\[\s*['"])([\w-]+)"""</span>
-</span><span id="line-104"><span class="p">)</span>
-</span><span id="line-105">
-</span><span id="line-106">
-</span><span id="line-107"><span class="k">def</span><span class="w"> </span><span class="nf">_strings_in</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-108"><span class="w">    </span><span class="sd">"""Every string anywhere inside a (possibly nested) value."""</span>
-</span><span id="line-109">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="line-110">        <span class="k">yield</span> <span class="n">value</span>
-</span><span id="line-111">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># values only: a key can never hold an expression</span>
-</span><span id="line-112">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-</span><span id="line-113">            <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="line-114">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-</span><span id="line-115">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-</span><span id="line-116">            <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-</span><span id="line-117">
-</span><span id="line-118">
-</span><span id="line-119"><span class="k">def</span><span class="w"> </span><span class="nf">_job_texts</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="line-120"><span class="w">    </span><span class="sd">"""Every string of a step of *job_id* where the ``steps`` context is available.</span>
-</span><span id="line-121">
-</span><span id="line-122"><span class="sd">    A job's own ``if``/``strategy``/``env``/``continue-on-error`` cannot see</span>
-</span><span id="line-123"><span class="sd">    ``steps``, so a reference there never resolves and does not count.</span>
-</span><span id="line-124"><span class="sd">    """</span>
-</span><span id="line-125">    <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
-</span><span id="line-126">        <span class="n">job</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span>
-</span><span id="line-127">        <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">extra</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outputs"</span><span class="p">))</span>  <span class="c1"># a job output sees steps</span>
-</span><span id="line-128">        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
-</span><span id="line-129">            <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span>
-</span><span id="line-130">                <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</span><span id="line-131">                <span class="o">+</span> <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">continue_on_error</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span>
-</span><span id="line-132">            <span class="p">)</span>
-</span><span id="line-133">        <span class="k">return</span>
-</span><span id="line-134">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
-</span><span id="line-135">        <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
-</span><span id="line-136">
-</span><span id="line-137">
+</span><span id="line-122">
+</span><span id="line-123">
+</span><span id="line-124"><span class="c1"># ``steps.&lt;id&gt;.outputs.&lt;name&gt;`` in dot or bracket syntax, in any mix.</span>
+</span><span id="line-125"><span class="n">_STEP_OUTPUT_REF</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+</span><span id="line-126"><span class="w">    </span><span class="sa">r</span><span class="sd">"""\bsteps(?:\.|\s*\[\s*['"])([\w-]+)(?:['"]\s*\])?\s*\.\s*outputs"""</span>
+</span><span id="line-127"><span class="w">    </span><span class="sa">r</span><span class="sd">"""(?:\s*\.\s*|\s*\[\s*['"])([\w-]+)"""</span>
+</span><span id="line-128"><span class="p">)</span>
+</span><span id="line-129">
+</span><span id="line-130">
+</span><span id="line-131"><span class="k">def</span><span class="w"> </span><span class="nf">_strings_in</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-132"><span class="w">    </span><span class="sd">"""Every string anywhere inside a (possibly nested) value."""</span>
+</span><span id="line-133">    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="line-134">        <span class="k">yield</span> <span class="n">value</span>
+</span><span id="line-135">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># values only: a key can never hold an expression</span>
+</span><span id="line-136">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span id="line-137">            <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="line-138">    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+</span><span id="line-139">        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+</span><span id="line-140">            <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span><span id="line-141">
+</span><span id="line-142">
+</span><span id="line-143"><span class="k">def</span><span class="w"> </span><span class="nf">_job_texts</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="line-144"><span class="w">    </span><span class="sd">"""Every string of a step of *job_id* where the ``steps`` context is available.</span>
+</span><span id="line-145">
+</span><span id="line-146"><span class="sd">    A job's own ``if``/``strategy``/``env``/``continue-on-error`` cannot see</span>
+</span><span id="line-147"><span class="sd">    ``steps``, so a reference there never resolves and does not count.</span>
+</span><span id="line-148"><span class="sd">    """</span>
+</span><span id="line-149">    <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span>
+</span><span id="line-150">        <span class="n">job</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span>
+</span><span id="line-151">        <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">extra</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"outputs"</span><span class="p">))</span>  <span class="c1"># a job output sees steps</span>
+</span><span id="line-152">        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+</span><span id="line-153">            <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">(</span>
+</span><span id="line-154">                <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span id="line-155">                <span class="o">+</span> <span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">continue_on_error</span><span class="p">,</span> <span class="n">step</span><span class="o">.</span><span class="n">extra</span><span class="p">)</span>
+</span><span id="line-156">            <span class="p">)</span>
+</span><span id="line-157">        <span class="k">return</span>
+</span><span id="line-158">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_nodes</span><span class="p">(</span><span class="n">job_id</span><span class="p">):</span>
+</span><span id="line-159">        <span class="k">yield from</span> <span class="n">_strings_in</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">if_</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+</span><span id="line-160">
+</span><span id="line-161">
 <div class="viewcode-block" id="check_unused_outputs">
 <a class="viewcode-back" href="../../../../_autosummary/reci.validation.rules.flow.html#reci.validation.rules.flow.check_unused_outputs">[docs]</a>
-</span><span id="line-138"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"FLOW004"</span><span class="p">)</span>
-</span><span id="line-139"><span class="k">def</span><span class="w"> </span><span class="nf">check_unused_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
-</span><span id="line-140"><span class="w">    </span><span class="sd">"""An output is declared but never consumed downstream.</span>
-</span><span id="line-141">
-</span><span id="line-142"><span class="sd">    Consumed means: matched by an input of a later step (by name, honouring</span>
-</span><span id="line-143"><span class="sd">    ``bind:``), or referenced explicitly as ``steps.&lt;id&gt;.outputs.&lt;name&gt;`` (dot or</span>
-</span><span id="line-144"><span class="sd">    bracket syntax, ids compared case-insensitively) in a step of the same job:</span>
-</span><span id="line-145"><span class="sd">    its ``with:``, ``env:``, ``run:``, ``if:``, ``name:`` or other keys, or in a</span>
-</span><span id="line-146"><span class="sd">    job ``outputs:`` entry (a job's other fields cannot read ``steps``).</span>
-</span><span id="line-147"><span class="sd">    ``needs.`` references are not counted: only the compiler's own forwarding and</span>
-</span><span id="line-148"><span class="sd">    the job ``outputs:`` the recipe declares make them resolve.</span>
-</span><span id="line-149"><span class="sd">    """</span>
-</span><span id="line-150">    <span class="n">consumed</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># normalized output names</span>
-</span><span id="line-151">    <span class="n">referenced</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># (job, step id, output name)</span>
-</span><span id="line-152">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
-</span><span id="line-153">        <span class="k">for</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="p">:</span>
-</span><span id="line-154">            <span class="n">consumed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">))</span>
-</span><span id="line-155">
-</span><span id="line-156">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
-</span><span id="line-157">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_job_texts</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
-</span><span id="line-158">            <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_STEP_OUTPUT_REF</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-</span><span id="line-159">                <span class="n">referenced</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">job_id</span><span class="p">,</span> <span class="n">step_id</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
-</span><span id="line-160">
-</span><span id="line-161">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
-</span><span id="line-162">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
-</span><span id="line-163">            <span class="k">if</span> <span class="p">(</span>
-</span><span id="line-164">                <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">consumed</span>
-</span><span id="line-165">                <span class="ow">and</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">name</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">referenced</span>
-</span><span id="line-166">            <span class="p">):</span>
-</span><span id="line-167">                <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
-</span><span id="line-168">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW004"</span><span class="p">,</span>
-</span><span id="line-169">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-</span><span id="line-170">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
-</span><span id="line-171">                        <span class="sa">f</span><span class="s2">"Output '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
-</span><span id="line-172">                        <span class="sa">f</span><span class="s2">"is not consumed by any downstream step."</span>
-</span><span id="line-173">                    <span class="p">),</span>
-</span><span id="line-174">                    <span class="n">location</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
-</span><span id="line-175">                <span class="p">)</span></div>
+</span><span id="line-162"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"FLOW004"</span><span class="p">)</span>
+</span><span id="line-163"><span class="k">def</span><span class="w"> </span><span class="nf">check_unused_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
+</span><span id="line-164"><span class="w">    </span><span class="sd">"""An output is declared but never consumed downstream.</span>
+</span><span id="line-165">
+</span><span id="line-166"><span class="sd">    Consumed means: matched by an input of a later step (by name, honouring</span>
+</span><span id="line-167"><span class="sd">    ``bind:``), or referenced explicitly as ``steps.&lt;id&gt;.outputs.&lt;name&gt;`` (dot or</span>
+</span><span id="line-168"><span class="sd">    bracket syntax, ids compared case-insensitively) in a step of the same job:</span>
+</span><span id="line-169"><span class="sd">    its ``with:``, ``env:``, ``run:``, ``if:``, ``name:`` or other keys, or in a</span>
+</span><span id="line-170"><span class="sd">    job ``outputs:`` entry (a job's other fields cannot read ``steps``).</span>
+</span><span id="line-171"><span class="sd">    ``needs.`` references are not counted: only the compiler's own forwarding and</span>
+</span><span id="line-172"><span class="sd">    the job ``outputs:`` the recipe declares make them resolve.</span>
+</span><span id="line-173"><span class="sd">    """</span>
+</span><span id="line-174">    <span class="n">consumed</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># normalized output names</span>
+</span><span id="line-175">    <span class="n">referenced</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># (job, step id, output name)</span>
+</span><span id="line-176">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+</span><span id="line-177">        <span class="k">for</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="p">:</span>
+</span><span id="line-178">            <span class="n">consumed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">))</span>
+</span><span id="line-179">
+</span><span id="line-180">    <span class="k">for</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">job_ids</span><span class="p">():</span>
+</span><span id="line-181">        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_job_texts</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+</span><span id="line-182">            <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_STEP_OUTPUT_REF</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span id="line-183">                <span class="n">referenced</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">job_id</span><span class="p">,</span> <span class="n">step_id</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">normalize_name</span><span class="p">(</span><span class="n">name</span><span class="p">)))</span>
+</span><span id="line-184">
+</span><span id="line-185">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+</span><span id="line-186">        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">output_names</span><span class="p">:</span>
+</span><span id="line-187">            <span class="k">if</span> <span class="p">(</span>
+</span><span id="line-188">                <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">consumed</span>
+</span><span id="line-189">                <span class="ow">and</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">step_id</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">name</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">referenced</span>
+</span><span id="line-190">            <span class="p">):</span>
+</span><span id="line-191">                <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-192">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW004"</span><span class="p">,</span>
+</span><span id="line-193">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+</span><span id="line-194">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-195">                        <span class="sa">f</span><span class="s2">"Output '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
+</span><span id="line-196">                        <span class="sa">f</span><span class="s2">"is not consumed by any downstream step."</span>
+</span><span id="line-197">                    <span class="p">),</span>
+</span><span id="line-198">                    <span class="n">location</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+</span><span id="line-199">                <span class="p">)</span></div>
 
-</span><span id="line-176">
-</span><span id="line-177">
+</span><span id="line-200">
+</span><span id="line-201">
 <div class="viewcode-block" id="check_boolean_coercion">
 <a class="viewcode-back" href="../../../../_autosummary/reci.validation.rules.flow.html#reci.validation.rules.flow.check_boolean_coercion">[docs]</a>
-</span><span id="line-178"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"FLOW005"</span><span class="p">)</span>
-</span><span id="line-179"><span class="k">def</span><span class="w"> </span><span class="nf">check_boolean_coercion</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
-</span><span id="line-180"><span class="w">    </span><span class="sd">"""A string output is wired to a likely-boolean input."""</span>
-</span><span id="line-181">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
-</span><span id="line-182">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="line-183">            <span class="n">is_boolean</span> <span class="o">=</span> <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span>
-</span><span id="line-184">                <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span>
-</span><span id="line-185">            <span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">)</span>
-</span><span id="line-186">            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_boolean</span><span class="p">:</span>
-</span><span id="line-187">                <span class="k">continue</span>
-</span><span id="line-188">            <span class="c1"># Check if this input is wired from an upstream output</span>
-</span><span id="line-189">            <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}:</span>
-</span><span id="line-190">                <span class="k">continue</span>
-</span><span id="line-191">            <span class="n">search_name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
-</span><span id="line-192">            <span class="n">upstream</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
-</span><span id="line-193">            <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">upstream</span><span class="p">:</span>
-</span><span id="line-194">                <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
-</span><span id="line-195">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW005"</span><span class="p">,</span>
-</span><span id="line-196">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
-</span><span id="line-197">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
-</span><span id="line-198">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
-</span><span id="line-199">                        <span class="sa">f</span><span class="s2">"appears boolean (default='</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">') "</span>
-</span><span id="line-200">                        <span class="sa">f</span><span class="s2">"but will receive a string from upstream output. "</span>
-</span><span id="line-201">                        <span class="sa">f</span><span class="s2">"Use == 'true' comparison."</span>
-</span><span id="line-202">                    <span class="p">),</span>
-</span><span id="line-203">                    <span class="n">location</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
-</span><span id="line-204">                    <span class="n">suggestion</span><span class="o">=</span><span class="s2">"Use ${{ steps.&lt;id&gt;.outputs.&lt;name&gt; == 'true' }}"</span><span class="p">,</span>
-</span><span id="line-205">                <span class="p">)</span></div>
+</span><span id="line-202"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"FLOW005"</span><span class="p">)</span>
+</span><span id="line-203"><span class="k">def</span><span class="w"> </span><span class="nf">check_boolean_coercion</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
+</span><span id="line-204"><span class="w">    </span><span class="sd">"""A string output is wired to a likely-boolean input."""</span>
+</span><span id="line-205">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+</span><span id="line-206">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-207">            <span class="n">is_boolean</span> <span class="o">=</span> <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span>
+</span><span id="line-208">                <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span>
+</span><span id="line-209">            <span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">)</span>
+</span><span id="line-210">            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_boolean</span><span class="p">:</span>
+</span><span id="line-211">                <span class="k">continue</span>
+</span><span id="line-212">            <span class="c1"># Check if this input is wired from an upstream output</span>
+</span><span id="line-213">            <span class="k">if</span> <span class="n">norm_name</span> <span class="ow">in</span> <span class="p">{</span><span class="n">normalize_name</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">with_</span><span class="p">}:</span>
+</span><span id="line-214">                <span class="k">continue</span>
+</span><span id="line-215">            <span class="n">search_name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">bind</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">norm_name</span><span class="p">,</span> <span class="n">norm_name</span><span class="p">)</span>
+</span><span id="line-216">            <span class="n">upstream</span> <span class="o">=</span> <span class="n">_build_upstream_outputs</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+</span><span id="line-217">            <span class="k">if</span> <span class="n">search_name</span> <span class="ow">in</span> <span class="n">upstream</span><span class="p">:</span>
+</span><span id="line-218">                <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-219">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW005"</span><span class="p">,</span>
+</span><span id="line-220">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+</span><span id="line-221">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-222">                        <span class="sa">f</span><span class="s2">"Input '</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">emitted_name</span><span class="si">}</span><span class="s2">' of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">' "</span>
+</span><span id="line-223">                        <span class="sa">f</span><span class="s2">"appears boolean (default='</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">') "</span>
+</span><span id="line-224">                        <span class="sa">f</span><span class="s2">"but will receive a string from upstream output. "</span>
+</span><span id="line-225">                        <span class="sa">f</span><span class="s2">"Use == 'true' comparison."</span>
+</span><span id="line-226">                    <span class="p">),</span>
+</span><span id="line-227">                    <span class="n">location</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+</span><span id="line-228">                    <span class="n">suggestion</span><span class="o">=</span><span class="s2">"Use ${{ steps.&lt;id&gt;.outputs.&lt;name&gt; == 'true' }}"</span><span class="p">,</span>
+</span><span id="line-229">                <span class="p">)</span></div>
 
-</span><span id="line-206">
-</span><span id="line-207">
+</span><span id="line-230">
+</span><span id="line-231">
+</span><span id="line-232"><span class="c1">#: A status function in an ``if:`` lets a job run although a job it needs was skipped.</span>
+</span><span id="line-233"><span class="n">_STATUS_FUNCTION_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\b(always|cancelled|failure)\s*\("</span><span class="p">)</span>
+</span><span id="line-234">
+</span><span id="line-235">
+</span><span id="line-236"><span class="k">def</span><span class="w"> </span><span class="nf">_always_true</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="line-237"><span class="w">    </span><span class="sd">"""An ``if:`` that never skips a job.</span>
+</span><span id="line-238">
+</span><span id="line-239"><span class="sd">    &gt;&gt;&gt; _always_true("always()"), _always_true("${{ true }}"), _always_true("x == 1")</span>
+</span><span id="line-240"><span class="sd">    (True, True, False)</span>
+</span><span id="line-241"><span class="sd">    """</span>
+</span><span id="line-242">    <span class="n">body</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-243">    <span class="k">if</span> <span class="n">body</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"${{"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">body</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"}}"</span><span class="p">):</span>
+</span><span id="line-244">        <span class="n">body</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="line-245">    <span class="k">return</span> <span class="n">body</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"true"</span><span class="p">,</span> <span class="s2">"always()"</span><span class="p">)</span>
+</span><span id="line-246">
+</span><span id="line-247">
 <div class="viewcode-block" id="check_matrix_output">
 <a class="viewcode-back" href="../../../../_autosummary/reci.validation.rules.flow.html#reci.validation.rules.flow.check_matrix_output">[docs]</a>
-</span><span id="line-208"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"FLOW006"</span><span class="p">)</span>
-</span><span id="line-209"><span class="k">def</span><span class="w"> </span><span class="nf">check_matrix_output</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
-</span><span id="line-210"><span class="w">    </span><span class="sd">"""Matrix job outputs consumed by downstream are non-deterministic."""</span>
-</span><span id="line-211">    <span class="c1"># This requires knowing which jobs have matrix strategies.</span>
-</span><span id="line-212">    <span class="c1"># We check via the graph's recipe reference (stored on JobSpec).</span>
-</span><span id="line-213">    <span class="c1"># For now, check if any job node has strategy info in the graph metadata.</span>
-</span><span id="line-214">    <span class="c1"># Since we don't store strategy on ActionNode, this is checked at</span>
-</span><span id="line-215">    <span class="c1"># compile time via the recipe. Stub for now — will be enhanced.</span>
-</span><span id="line-216">    <span class="k">return</span> <span class="p">[]</span></div>
+</span><span id="line-248"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"FLOW006"</span><span class="p">)</span>
+</span><span id="line-249"><span class="k">def</span><span class="w"> </span><span class="nf">check_matrix_output</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
+</span><span id="line-250"><span class="w">    </span><span class="sd">"""A job output consumed by another job comes from a matrix or conditional job.</span>
+</span><span id="line-251">
+</span><span id="line-252"><span class="sd">    A matrix job has one output value for all its legs: whichever leg finishes</span>
+</span><span id="line-253"><span class="sd">    last wins.  A job with an ``if:`` that is false is skipped, and so is every</span>
+</span><span id="line-254"><span class="sd">    job that ``needs`` it (unless it uses ``always()`` or similar).</span>
+</span><span id="line-255"><span class="sd">    """</span>
+</span><span id="line-256">    <span class="kn">from</span><span class="w"> </span><span class="nn">reci.compiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">detect_cross_job_edges</span>
+</span><span id="line-257">
+</span><span id="line-258">    <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-259">        <span class="k">return</span>
+</span><span id="line-260">    <span class="n">reported</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-261">    <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">detect_cross_job_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span><span id="line-262">        <span class="n">job</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="p">]</span>
+</span><span id="line-263">        <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_step_id</span><span class="si">}</span><span class="s2">'"</span>
+</span><span id="line-264">        <span class="n">reads</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="line-265">            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_job</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_step_id</span><span class="si">}</span><span class="s2">' reads "</span>
+</span><span id="line-266">            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="si">}</span><span class="s2">' from </span><span class="si">{</span><span class="n">where</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-267">        <span class="p">)</span>
+</span><span id="line-268">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">strategy</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"matrix"</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">strategy</span><span class="p">:</span>
+</span><span id="line-269">            <span class="k">if</span> <span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">,</span> <span class="s2">"matrix"</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reported</span><span class="p">:</span>
+</span><span id="line-270">                <span class="n">reported</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">,</span> <span class="s2">"matrix"</span><span class="p">))</span>
+</span><span id="line-271">                <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-272">                    <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW006"</span><span class="p">,</span>
+</span><span id="line-273">                    <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+</span><span id="line-274">                    <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-275">                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reads</span><span class="si">}</span><span class="s2">, but job '</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">' is a matrix: its "</span>
+</span><span id="line-276">                        <span class="sa">f</span><span class="s2">"output is the value of whichever leg finishes last."</span>
+</span><span id="line-277">                    <span class="p">),</span>
+</span><span id="line-278">                    <span class="n">location</span><span class="o">=</span><span class="n">where</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"'"</span><span class="p">),</span>
+</span><span id="line-279">                    <span class="n">suggestion</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-280">                        <span class="s2">"Produce the value in a job without a matrix, or "</span>
+</span><span id="line-281">                        <span class="s2">"aggregate the legs yourself."</span>
+</span><span id="line-282">                    <span class="p">),</span>
+</span><span id="line-283">                <span class="p">)</span>
+</span><span id="line-284">        <span class="n">consumer</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">edge</span><span class="o">.</span><span class="n">target_job</span><span class="p">]</span>
+</span><span id="line-285">        <span class="k">if</span> <span class="p">(</span>
+</span><span id="line-286">            <span class="n">job</span><span class="o">.</span><span class="n">if_</span>
+</span><span id="line-287">            <span class="ow">and</span> <span class="ow">not</span> <span class="n">_always_true</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">if_</span><span class="p">)</span>
+</span><span id="line-288">            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">if_</span> <span class="ow">and</span> <span class="n">_STATUS_FUNCTION_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">consumer</span><span class="o">.</span><span class="n">if_</span><span class="p">))</span>
+</span><span id="line-289">            <span class="ow">and</span> <span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">,</span> <span class="s2">"if"</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reported</span>
+</span><span id="line-290">        <span class="p">):</span>
+</span><span id="line-291">            <span class="n">reported</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">source_output</span><span class="p">,</span> <span class="s2">"if"</span><span class="p">))</span>
+</span><span id="line-292">            <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-293">                <span class="n">rule_id</span><span class="o">=</span><span class="s2">"FLOW006"</span><span class="p">,</span>
+</span><span id="line-294">                <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+</span><span id="line-295">                <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-296">                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">reads</span><span class="si">}</span><span class="s2">, but job '</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">source_job</span><span class="si">}</span><span class="s2">' has an if: "</span>
+</span><span id="line-297">                    <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">if_</span><span class="si">}</span><span class="s2">); when it is skipped, so is '</span><span class="si">{</span><span class="n">edge</span><span class="o">.</span><span class="n">target_job</span><span class="si">}</span><span class="s2">' "</span>
+</span><span id="line-298">                    <span class="sa">f</span><span class="s2">"(and the output is empty)."</span>
+</span><span id="line-299">                <span class="p">),</span>
+</span><span id="line-300">                <span class="n">location</span><span class="o">=</span><span class="n">where</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">"'"</span><span class="p">),</span>
+</span><span id="line-301">                <span class="n">suggestion</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-302">                    <span class="s2">"Give the consumer job an if: such as always() &amp;&amp; ..., or "</span>
+</span><span id="line-303">                    <span class="s2">"move the condition to the step."</span>
+</span><span id="line-304">                <span class="p">),</span>
+</span><span id="line-305">            <span class="p">)</span></div>
 
 </span></code></pre></div>
     </div></div>
@@ -416,7 +505,7 @@
 </footer>
     </div>
     
-    <script src="../../../../_static/documentation_options.js?v=c5dbc6bb"></script>
+    <script src="../../../../_static/documentation_options.js?v=f2234cd1"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
