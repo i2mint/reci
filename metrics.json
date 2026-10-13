@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 4.329708099365234,
+  "collection_duration_seconds": 4.16351580619812,
   "commit_message": "fix: setup job writes config values to GITHUB_OUTPUT verbatim (#13)\n\nprintf with shell-quoted words instead of echo \"k=v\": lists, dicts, quotes,\n$VAR and backticks survive; newlines use the key<<DELIM form.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "9fc32857339d463973e9c1b85e0440d16dfc67d3",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14874,
-      "comment_lines_ratio": 0.05145395296706034,
-      "docs_lines": 21245,
-      "empty_lines": 34063,
-      "empty_lines_ratio": 0.11783487965019337,
-      "files_analyzed": 725,
-      "function_lines": 112811,
-      "function_lines_ratio": 0.39024955547714424,
-      "mean_lines_per_function": 14.567536157024794,
-      "num_classes": 1970,
-      "num_functions": 7744,
+      "comment_lines": 15020,
+      "comment_lines_ratio": 0.05157382576837103,
+      "docs_lines": 21278,
+      "empty_lines": 34396,
+      "empty_lines_ratio": 0.11810474774493275,
+      "files_analyzed": 735,
+      "function_lines": 114370,
+      "function_lines_ratio": 0.39270961738539245,
+      "mean_lines_per_function": 14.588010204081632,
+      "num_classes": 1981,
+      "num_functions": 7840,
       "pypi_version": "0.0.11",
-      "total_lines": 289074
+      "total_lines": 291233
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:26:59.514275Z",
+  "timestamp": "2026-10-13T17:27:01.713115Z",
   "workflow_status": {}
 }

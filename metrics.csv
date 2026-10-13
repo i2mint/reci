@@ -1,6 +1,6 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:26:59.514275Z
+timestamp,2026-10-13T17:27:01.713115Z
 commit_sha,9fc32857339d463973e9c1b85e0440d16dfc67d3
 commit_message,"fix: setup job writes config values to GITHUB_OUTPUT verbatim (#13)
 
@@ -9,18 +9,18 @@ $VAR and backticks survive; newlines use the key<<DELIM form.
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7744
-metrics.umpyre_stats.num_classes,1970
-metrics.umpyre_stats.total_lines,289074
-metrics.umpyre_stats.empty_lines,34063
-metrics.umpyre_stats.comment_lines,14874
-metrics.umpyre_stats.docs_lines,21245
-metrics.umpyre_stats.function_lines,112811
-metrics.umpyre_stats.empty_lines_ratio,0.11783487965019337
-metrics.umpyre_stats.comment_lines_ratio,0.05145395296706034
-metrics.umpyre_stats.function_lines_ratio,0.39024955547714424
-metrics.umpyre_stats.mean_lines_per_function,14.567536157024794
-metrics.umpyre_stats.files_analyzed,725
+metrics.umpyre_stats.num_functions,7840
+metrics.umpyre_stats.num_classes,1981
+metrics.umpyre_stats.total_lines,291233
+metrics.umpyre_stats.empty_lines,34396
+metrics.umpyre_stats.comment_lines,15020
+metrics.umpyre_stats.docs_lines,21278
+metrics.umpyre_stats.function_lines,114370
+metrics.umpyre_stats.empty_lines_ratio,0.11810474774493275
+metrics.umpyre_stats.comment_lines_ratio,0.05157382576837103
+metrics.umpyre_stats.function_lines_ratio,0.39270961738539245
+metrics.umpyre_stats.mean_lines_per_function,14.588010204081632
+metrics.umpyre_stats.files_analyzed,735
 metrics.umpyre_stats.pypi_version,0.0.11
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T17:26:55Z
@@ -41,4 +41,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.329708099365234
+collection_duration_seconds,4.16351580619812
