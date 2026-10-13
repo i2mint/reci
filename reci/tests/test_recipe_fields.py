@@ -83,9 +83,44 @@ def test_declared_job_outputs_are_kept_next_to_forwarded_ones():
     )
     outputs = _compile(recipe, specs)["jobs"]["p"]["outputs"]
     assert set(outputs) == {"mine", "v"}
-    clash = recipe.replace("{mine:", "{v:")
-    with pytest.raises(CompilationError, match="rename one"):
-        _compile(clash, specs)
+    same = recipe.replace("{mine:", "{v:")  # same name, same value as generated
+    assert _compile(same, specs)["jobs"]["p"]["outputs"] == {
+        "v": "${{ steps.a.outputs.v }}"
+    }
+    for clash in (
+        recipe.replace("{mine: '${{ steps.a.outputs.v }}'}", "{v: other}"),
+        recipe.replace("{mine:", "{V:"),  # output ids are case-insensitive
+    ):
+        with pytest.raises(CompilationError, match="rename one"):
+            _compile(clash, specs)
+
+
+def test_job_outputs_must_be_a_mapping():
+    with pytest.raises(RecipeParseError, match="outputs: must be a mapping"):
+        parse_recipe_string(
+            "on: push\njobs:\n  j:\n    outputs: [a]\n    steps: [{run: x}]\n"
+        )
+
+
+def test_anchor_holding_keys_are_dropped_and_anchored_scalars_come_out_plain():
+    wf = _compile(
+        "on: push\nx-common: &c {timeout-minutes: 5}\njobs:\n  j:\n"
+        "    x-tmp: &s {run: echo a}\n    <<: *c\n    steps:\n"
+        "      - {run: a, timeout-minutes: &n 10}\n"
+        "      - {run: b, env: {T: *n}}\n      - *s\n"
+    )
+    assert "x-common" not in wf and "x-tmp" not in wf["jobs"]["j"]
+    from reci.yaml_gen import dump_workflow
+
+    assert "&" not in dump_workflow(wf) and "*" not in dump_workflow(wf)
+
+
+def test_numbers_in_unmodelled_keys_keep_their_spelling():
+    wf = _compile(
+        "on: push\njobs:\n  j:\n    container: {image: x, env: {PY: 3.10}}\n"
+        "    steps: [{run: x}]\n"
+    )
+    assert wf["jobs"]["j"]["container"]["env"] == {"PY": "3.10"}
 
 
 def test_workflow_defaults_and_other_top_level_keys_are_emitted():

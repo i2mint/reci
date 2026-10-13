@@ -12,6 +12,8 @@ import json
 import shlex
 from typing import Any
 
+from ruamel.yaml.scalarbool import ScalarBoolean
+
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
 from reci.recipe import Recipe, StepSpec, JobSpec
 from reci.recipe_checks import find_recipe_problems, sub_config_refs
@@ -32,13 +34,23 @@ def _rewrite_config_refs(value: str) -> str:
 
 
 def _rewrite_all_config_refs(obj: Any) -> Any:
-    """Recursively rewrite config references in strings, dicts, and lists."""
+    """Recursively rewrite config references in strings, dicts, and lists.
+
+    Also returns plain Python values for the YAML loader's anchored scalars, so
+    the output carries no anchor whose alias was rewritten away.
+    """
     if isinstance(obj, str):
         return _rewrite_config_refs(obj)
     if isinstance(obj, dict):
         return {k: _rewrite_all_config_refs(v) for k, v in obj.items()}
     if isinstance(obj, list):
         return [_rewrite_all_config_refs(v) for v in obj]
+    if isinstance(obj, (bool, ScalarBoolean)):
+        return bool(obj)
+    if isinstance(obj, int):
+        return int(obj)
+    if isinstance(obj, float):
+        return float(obj)
     return obj
 
 
@@ -232,7 +244,13 @@ def _build_job(
         forwarded = _build_job_outputs(
             job_spec.id, graph.job_nodes(job_spec.id), cross_job_edges
         )
-        clash = sorted(set(job_outputs) & set(forwarded))
+        declared = {k.casefold(): (k, v) for k, v in job_outputs.items()}
+        clash = sorted(
+            k
+            for k, v in forwarded.items()
+            if k.casefold() in declared
+            and (declared[k.casefold()][0] != k or declared[k.casefold()][1] != v)
+        )
         if clash:
             raise CompilationError(
                 f"Job '{job_spec.id}' declares outputs {clash} that the compiler "

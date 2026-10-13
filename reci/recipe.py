@@ -184,9 +184,18 @@ def _extra(data: dict, known: frozenset) -> dict[str, Any]:
 
     ``timeout-minutes``, ``container``, ``services``, ``concurrency``, ``shell``,
     ``working-directory``... are plain GitHub keys with no recipe meaning;
-    dropping them silently would change what the workflow does.
+    dropping them silently would change what the workflow does.  Keys starting
+    with ``x-`` or ``.`` are the YAML idiom for holding anchors and are dropped:
+    GitHub rejects them.
+
+    >>> _extra({"id": "a", "shell": "bash", "x-common": {"k": 1}}, frozenset({"id"}))
+    {'shell': 'bash'}
     """
-    return {k: v for k, v in data.items() if k not in known}
+    return {
+        k: _spell_numbers(v)
+        for k, v in data.items()
+        if k not in known and not (isinstance(k, str) and k.startswith(("x-", ".")))
+    }
 
 
 _STEP_KEYS = frozenset(
@@ -295,6 +304,13 @@ def _ensure_unique_step_ids(
     return result
 
 
+def _job_extra(job_id: str, job_data: dict) -> dict[str, Any]:
+    extra = _extra(job_data, _JOB_KEYS)
+    if "outputs" in extra and not isinstance(extra["outputs"], dict):
+        raise RecipeParseError(f"Job '{job_id}' outputs: must be a mapping.")
+    return extra
+
+
 def _parse_job(job_id: str, job_data: dict) -> JobSpec:
     raw_steps = job_data.get("steps", [])
     if not raw_steps:
@@ -322,7 +338,7 @@ def _parse_job(job_id: str, job_data: dict) -> JobSpec:
             where=f"Job '{job_id}' continue-on-error:",
         ),
         env=_str_map(job_data.get("env"), where=f"Job '{job_id}' env:"),
-        extra=_extra(job_data, _JOB_KEYS),
+        extra=_job_extra(job_id, job_data),
     )
 
 

@@ -124,9 +124,11 @@ def _job_texts(graph, job_id: str) -> Iterable[str]:
     """
     if graph.recipe is not None and job_id in graph.recipe.jobs:
         job = graph.recipe.jobs[job_id]
+        yield from _strings_in(job.extra.get("outputs"))  # a job output sees steps
         for step in job.steps:
             yield from _strings_in(
                 (step.with_, step.env, step.run, step.if_, step.name)
+                + (step.continue_on_error, step.extra)
             )
         return
     for node in graph.job_nodes(job_id):
@@ -140,10 +142,10 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
     Consumed means: matched by an input of a later step (by name, honouring
     ``bind:``), or referenced explicitly as ``steps.<id>.outputs.<name>`` (dot or
     bracket syntax, ids compared case-insensitively) in a step of the same job:
-    its ``with:``, ``env:``, ``run:``, ``if:`` or ``name:`` (job-level fields
-    cannot read ``steps``).  ``needs.`` references
-    are not counted: a recipe cannot declare job outputs, so only the compiler's
-    own forwarding makes them resolve.
+    its ``with:``, ``env:``, ``run:``, ``if:``, ``name:`` or other keys, or in a
+    job ``outputs:`` entry (a job's other fields cannot read ``steps``).
+    ``needs.`` references are not counted: only the compiler's own forwarding and
+    the job ``outputs:`` the recipe declares make them resolve.
     """
     consumed: set[str] = set()  # normalized output names
     referenced: set[tuple[str, str, str]] = set()  # (job, step id, output name)
