@@ -674,7 +674,7 @@ def test_config_refs_inside_lists_and_nested_strategy_values_are_rewritten():
 
 
 def test_serialize_config_value_types():
-    from reci.compiler import _serialize_config_value as ser
+    from reci.recipe_checks import serialize_config_value as ser
 
     assert ser({"a": [1]}) == '{"a": [1]}' and ser(["x"]) == '["x"]'
     assert (ser(True), ser(False), ser(3), ser("s")) == ("true", "false", "3", "s")

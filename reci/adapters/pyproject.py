@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 import tomlkit
@@ -23,8 +24,11 @@ class PyprojectTomlAdapter:
         return _flatten(dict(section))
 
     def write(self, path: str, config: dict[str, Any]) -> None:
-        with open(path) as f:
-            doc = tomlkit.load(f)
+        if Path(path).exists():
+            with open(path) as f:
+                doc = tomlkit.load(f)
+        else:
+            doc = tomlkit.document()
 
         # Navigate to parent, creating sections as needed
         parent = doc

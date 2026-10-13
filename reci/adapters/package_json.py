@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
 from reci.adapters._flat import flatten as _flatten, merge_flat
@@ -17,8 +18,11 @@ class PackageJsonAdapter:
         return _flatten(data.get("ci") or {})
 
     def write(self, path: str, config: dict[str, Any]) -> None:
-        with open(path) as f:
-            data = json.load(f)
+        if Path(path).exists():
+            with open(path) as f:
+                data = json.load(f)
+        else:
+            data = {}
         if not isinstance(data.get("ci"), dict):  # missing or null
             data["ci"] = {}
         merge_flat(data["ci"], config)

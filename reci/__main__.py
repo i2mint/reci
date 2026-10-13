@@ -145,11 +145,11 @@ def scaffold(
         if is_required and key not in existing:
             existing[key] = f"<REQUIRED: {key}>"
 
+    # Compile before writing anything: a refused recipe leaves no half-written config
+    workflow = _compile_or_exit(rec, specs, existing)
     adapter.write(path, existing)
     print(f"Updated config: {path}")
 
-    # Compile with skeleton config
-    workflow = _compile_or_exit(rec, specs, existing)
     out_path = Path(output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
