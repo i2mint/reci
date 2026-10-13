@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.7134437561035156,
-  "commit_message": "Merge 2a4267a3d5487a7e031f4c64c7f0285934f53d7f into 6e7b48a1908d59844adefaee418309ee926c531d",
-  "commit_sha": "5076a8c3a972db69d7482c79d8481a34243792b0",
+  "collection_duration_seconds": 4.752126216888428,
+  "commit_message": "fix: keep recipe keys reci does not model, safe step ids, matrix number spelling (#49, #54, #56, #43 part)\n\nStep and job keys without recipe meaning (timeout-minutes, shell, concurrency, ...) and\nworkflow-level defaults/concurrency/permissions were silently dropped; they are now emitted\n(config refs rewritten, CONF004 checked, workflow-level ones refused as no needs context).\nDerived step ids avoid every explicit id; duplicate explicit ids are refused. Matrix numbers\nkeep their spelling (3.10). List-valued runs-on no longer crashes.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "2a4267a3d5487a7e031f4c64c7f0285934f53d7f",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.602588503996955,
       "num_classes": 1982,
       "num_functions": 7881,
-      "pypi_version": "0.0.29",
+      "pypi_version": "0.0.28",
       "total_lines": 292111
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:48:52.240488Z",
+  "timestamp": "2026-10-13T22:48:54.232892Z",
   "workflow_status": {}
 }
