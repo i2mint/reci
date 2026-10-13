@@ -263,3 +263,15 @@ def test_a_new_key_under_an_existing_table_goes_inside_that_table(
     text = p.read_text()
     assert "testing__fresh" not in text  # nested under [testing], not flat
     assert "other__fresh" in text  # no such table: stays flat
+
+
+def test_writing_a_key_that_names_a_table_does_not_wipe_the_table():
+    from reci.adapters._flat import flatten, merge_flat
+
+    target = {"testing": {"pytest": {"args": "-x", "markers": "slow"}}}
+    merge_flat(target, {"testing__pytest": "-q"})
+    assert flatten(target) == {
+        "testing__pytest__args": "-x",
+        "testing__pytest__markers": "slow",
+        "testing__pytest": "-q",
+    }

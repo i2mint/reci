@@ -40,7 +40,7 @@ def merge_flat(target: MutableMapping, flat: dict[str, Any]) -> None:
 
     A key that matches an existing nested leaf (``testing__coverage``) updates
     that leaf; a new key whose ``__`` prefix names an existing table
-    (``testing__new``) is added inside it; any other key is stored flat.
+    (``testing__new``) is added inside it (never over a table of that name); any other key is stored flat.
     :func:`flatten` reads all of these back as the same key.  Existing keys that
     *flat* does not mention are left alone.
 
@@ -72,7 +72,9 @@ def _set_new(target: MutableMapping, key: str, value: Any) -> None:
         node: Any = target
         for part in parts[:end]:
             node = node.get(part) if isinstance(node, dict) else None
-        if isinstance(node, dict):
-            node["__".join(parts[end:])] = value
+        rest = "__".join(parts[end:])
+        # Never overwrite a table: that would drop the leaves flattened under it
+        if isinstance(node, dict) and not isinstance(node.get(rest), dict):
+            node[rest] = value
             return
     target[key] = value
