@@ -1,0 +1,26 @@
+reci.recipe\_checks
+===================
+
+.. automodule:: reci.recipe_checks
+
+   
+   .. rubric:: Module Attributes
+
+   .. autosummary::
+   
+      SETUP_JOB_ID
+      CONFIG_REF_RE
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      config_references
+      find_recipe_problems
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      RecipeProblem
+   

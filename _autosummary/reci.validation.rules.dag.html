@@ -89,6 +89,7 @@
 <li class="toctree-l3"><a class="reference internal" href="reci.config.html">reci.config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reci.graph.html">reci.graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reci.recipe.html">reci.recipe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reci.recipe_checks.html">reci.recipe_checks</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="reci.validation.html">reci.validation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="reci.yaml_gen.html">reci.yaml_gen</a></li>
 </ul>
@@ -140,6 +141,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.dag.check_isolated_nodes" title="reci.validation.rules.dag.check_isolated_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_isolated_nodes</span></code></a>(graph, config)</p></td>
 <td><p>Flag nodes with no data connections (no outputs consumed, no inputs from graph).</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.dag.check_needs_unknown_job" title="reci.validation.rules.dag.check_needs_unknown_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_needs_unknown_job</span></code></a>(graph, config)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">needs:</span></code> names a job that does not exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.dag.check_reserved_setup_job" title="reci.validation.rules.dag.check_reserved_setup_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_reserved_setup_job</span></code></a>(graph, config)</p></td>
+<td><p>A recipe job uses the id of the generated <code class="docutils literal notranslate"><span class="pre">setup</span></code> job.</p></td>
+</tr>
 </tbody>
 </table>
 <dl class="py function">
@@ -186,6 +193,26 @@ explicit <code class="docutils literal notranslate"><span class="pre">needs:</sp
 </dd>
 </dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.validation.rules.dag.check_needs_unknown_job">
+<span class="sig-prename descclassname"><span class="pre">reci.validation.rules.dag.</span></span><span class="sig-name descname"><span class="pre">check_needs_unknown_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/dag.html#check_needs_unknown_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.dag.check_needs_unknown_job" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.dag.check_needs_unknown_job'">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">needs:</span></code> names a job that does not exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.validation.rules.dag.check_reserved_setup_job">
+<span class="sig-prename descclassname"><span class="pre">reci.validation.rules.dag.</span></span><span class="sig-name descname"><span class="pre">check_reserved_setup_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/dag.html#check_reserved_setup_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.dag.check_reserved_setup_job" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.dag.check_reserved_setup_job'">¶</a></dt>
+<dd><p>A recipe job uses the id of the generated <code class="docutils literal notranslate"><span class="pre">setup</span></code> job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
@@ -194,6 +221,8 @@ explicit <code class="docutils literal notranslate"><span class="pre">needs:</sp
 <li><a :data-current="activeSection === '#reci.validation.rules.dag.check_data_flow_needs_cycles'" class="reference internal" href="#reci.validation.rules.dag.check_data_flow_needs_cycles"><code class="docutils literal notranslate"><span class="pre">check_data_flow_needs_cycles()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.dag.check_duplicate_outputs'" class="reference internal" href="#reci.validation.rules.dag.check_duplicate_outputs"><code class="docutils literal notranslate"><span class="pre">check_duplicate_outputs()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.dag.check_isolated_nodes'" class="reference internal" href="#reci.validation.rules.dag.check_isolated_nodes"><code class="docutils literal notranslate"><span class="pre">check_isolated_nodes()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.validation.rules.dag.check_needs_unknown_job'" class="reference internal" href="#reci.validation.rules.dag.check_needs_unknown_job"><code class="docutils literal notranslate"><span class="pre">check_needs_unknown_job()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.validation.rules.dag.check_reserved_setup_job'" class="reference internal" href="#reci.validation.rules.dag.check_reserved_setup_job"><code class="docutils literal notranslate"><span class="pre">check_reserved_setup_job()</span></code></a></li>
 </ul>
 </div>
 </aside>
@@ -207,7 +236,7 @@ explicit <code class="docutils literal notranslate"><span class="pre">needs:</sp
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=8bafd125"></script>
+<script src="../_static/documentation_options.js?v=2fd7553c"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

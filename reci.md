@@ -1,4 +1,4 @@
-> built 2026-10-13 18:02 UTC from 131e5a0 (main) · reci 0.0.18. Details: build_info.json
+> built 2026-10-13 18:11 UTC from 27573a9 (main) · reci 0.0.19. Details: build_info.json
 
 # index.html.md
 
@@ -151,17 +151,20 @@ For each action input, the compiler resolves its value using this precedence:
 
 ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 
-| Rule    | Category   | What it catches                                           |
-|---------|------------|-----------------------------------------------------------|
-| DAG001  | Structure  | Cycle detected                                            |
-| DAG002  | Structure  | Duplicate output name in a job                            |
-| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle   |
-| FLOW001 | Data flow  | Required input has no source                              |
-| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)              |
-| FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic) |
-| CONF001 | Config     | Required config key missing                               |
-| PURE001 | Purity     | `run:` step breaks typed contract                         |
-| ACT002  | Action     | Referenced action not found                               |
+| Rule    | Category   | What it catches                                                                                                                          |
+|---------|------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| DAG001  | Structure  | Cycle detected                                                                                                                           |
+| DAG002  | Structure  | Duplicate output name in a job                                                                                                           |
+| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                  |
+| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                               |
+| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                   |
+| FLOW001 | Data flow  | Required input has no source                                                                                                             |
+| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches)                                                                                             |
+| FLOW006 | Data flow  | Matrix job output consumed downstream (non-deterministic)                                                                                |
+| CONF001 | Config     | Required config key missing                                                                                                              |
+| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`) |
+| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                        |
+| ACT002  | Action     | Referenced action not found                                                                                                              |
 
 ## Config adapters
 
@@ -576,7 +579,7 @@ Scan a recipe and return config keys needed by its actions.
 Returns `{key: required}` where *required* is True when the input
 has `required=True` and no default.  Inputs given by an explicit
 `with:` or fed by an upstream step output (`bind:` honoured) need no
-config key.
+config key.  Keys the recipe references as `${{ config.X }}` are required.
 
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]
@@ -739,15 +742,16 @@ reci — Compile declarative CI recipes into GitHub Actions workflows.
 
 ### Modules
 
-| [`action_spec`](_autosummary/reci.action_spec.html.md#module-reci.action_spec)   | Action contract model — parsed from `action.yml` metadata.                                                               |
-|----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
-| [`adapters`](_autosummary/reci.adapters.html.md#module-reci.adapters)         | Config adapter registry.                                                                                                 |
-| [`compiler`](_autosummary/reci.compiler.html.md#module-reci.compiler)         | Compiler — recipe + action specs + config → GitHub Actions workflow YAML.                                                |
-| [`config`](_autosummary/reci.config.html.md#module-reci.config)             | Config resolution — flat dict with scoped overrides.                                                                     |
-| [`graph`](_autosummary/reci.graph.html.md#module-reci.graph)               | Recipe DAG — computational graph built on [`graphlib`](https://docs.python.org/3/library/graphlib.html#module-graphlib). |
-| [`recipe`](_autosummary/reci.recipe.html.md#module-reci.recipe)             | Recipe model — declarative CI pipeline description.                                                                      |
-| [`validation`](_autosummary/reci.validation.html.md#module-reci.validation)     | Validation system — ESLint-style severity, ruff-style rule prefixes.                                                     |
-| [`yaml_gen`](_autosummary/reci.yaml_gen.html.md#module-reci.yaml_gen)         | YAML I/O wrapper using ruamel.yaml (YAML 1.2).                                                                           |
+| [`action_spec`](_autosummary/reci.action_spec.html.md#module-reci.action_spec)     | Action contract model — parsed from `action.yml` metadata.                                                               |
+|------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| [`adapters`](_autosummary/reci.adapters.html.md#module-reci.adapters)           | Config adapter registry.                                                                                                 |
+| [`compiler`](_autosummary/reci.compiler.html.md#module-reci.compiler)           | Compiler — recipe + action specs + config → GitHub Actions workflow YAML.                                                |
+| [`config`](_autosummary/reci.config.html.md#module-reci.config)               | Config resolution — flat dict with scoped overrides.                                                                     |
+| [`graph`](_autosummary/reci.graph.html.md#module-reci.graph)                 | Recipe DAG — computational graph built on [`graphlib`](https://docs.python.org/3/library/graphlib.html#module-graphlib). |
+| [`recipe`](_autosummary/reci.recipe.html.md#module-reci.recipe)               | Recipe model — declarative CI pipeline description.                                                                      |
+| [`recipe_checks`](_autosummary/reci.recipe_checks.html.md#module-reci.recipe_checks) | Whole-recipe checks that need the recipe text and the config, not the step graph.                                        |
+| [`validation`](_autosummary/reci.validation.html.md#module-reci.validation)       | Validation system — ESLint-style severity, ruff-style rule prefixes.                                                     |
+| [`yaml_gen`](_autosummary/reci.yaml_gen.html.md#module-reci.yaml_gen)           | YAML I/O wrapper using ruamel.yaml (YAML 1.2).                                                                           |
 
 
 # _autosummary/reci.recipe.html.md
@@ -815,6 +819,73 @@ Parse a recipe from a YAML string (useful for testing).
 
 * **Return type:**
   [`Recipe`](_autosummary/reci.recipe.html.md#reci.recipe.Recipe)
+
+
+# _autosummary/reci.recipe_checks.html.md
+
+# reci.recipe_checks
+
+Whole-recipe checks that need the recipe text and the config, not the step graph.
+
+Shared by the compiler (which refuses to emit a workflow with these problems)
+and the validation rules (which report them), so both always agree.
+
+### Module Attributes
+
+| [`SETUP_JOB_ID`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.SETUP_JOB_ID)   | The generated job that exports config values; recipe jobs may not use the id when config is supplied.    |
+|-----------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| [`CONFIG_REF_RE`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.CONFIG_REF_RE)  | `${{ config.X }}` — the one form the compiler rewrites (see reci#19 for refs inside larger expressions). |
+
+### Functions
+
+| [`config_references`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.   |
+|---------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| [`find_recipe_problems`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                    |
+
+### Classes
+
+| [`RecipeProblem`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.RecipeProblem)(rule_id, message[, location])   | One problem found by [`find_recipe_problems()`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems).   |
+|------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+
+### reci.recipe_checks.CONFIG_REF_RE *= re.compile('\\\\$\\\\{\\\\{\\\\s\*config\\\\.(\\\\w+)\\\\s\*\\\\}\\\\}')*
+
+`${{ config.X }}` — the one form the compiler rewrites (see reci#19 for refs
+inside larger expressions).  Plain text such as `config.json` does not match.
+
+### *class* reci.recipe_checks.RecipeProblem(rule_id, message, location=None)
+
+Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
+
+One problem found by [`find_recipe_problems()`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems).
+
+### reci.recipe_checks.SETUP_JOB_ID *= 'setup'*
+
+The generated job that exports config values; recipe jobs may not use the id
+when config is supplied.
+
+### reci.recipe_checks.config_references(recipe)
+
+`(location, key, needs_context_available)` for each `${{ config.key }}`.
+
+Duplicates within one location are reported once.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]]
+
+### reci.recipe_checks.find_recipe_problems(recipe, config)
+
+Problems that would make the compiled workflow invalid.
+
+* `CONF004` — `${{ config.X }}` where `X` is not a config key (the
+  rewritten `needs.setup.outputs.X` would be empty or the setup job absent),
+  or that sits where the `needs` context is unavailable.
+* `DAG006` — `needs:` naming a job that does not exist (`setup` exists
+  only when config is supplied).
+* `DAG007` — a recipe job named `setup` while config is supplied: it
+  would replace the generated setup job.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`RecipeProblem`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.RecipeProblem)]
 
 
 # _autosummary/reci.validation.formatters.html.md
@@ -925,13 +996,21 @@ Config validation rules (CONF001–CONF003).
 
 ### Functions
 
-| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)   | Config keys that are required but not present.        |
-|-------------------------------------------------------------------------------------------------|-------------------------------------------------------|
-| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)             | Config keys present but not referenced by any action. |
+| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)     | Config keys that are required but not present.        |
+|---------------------------------------------------------------------------------------------------|-------------------------------------------------------|
+| [`check_undefined_config_references`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_undefined_config_references)(graph, config) | `${{ config.X }}` where `X` is not a config key.      |
+| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)               | Config keys present but not referenced by any action. |
 
 ### reci.validation.rules.config_rules.check_missing_required_config(graph, config)
 
 Config keys that are required but not present.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
+
+### reci.validation.rules.config_rules.check_undefined_config_references(graph, config)
+
+`${{ config.X }}` where `X` is not a config key.
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
@@ -957,6 +1036,8 @@ DAG structure validation rules (DAG001–DAG004).
 | [`check_data_flow_needs_cycles`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_data_flow_needs_cycles)(graph, config) | Data flow between jobs must not make their `needs` form a cycle.                 |
 | [`check_duplicate_outputs`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_duplicate_outputs)(graph, config)      | Flag duplicate output names within a job (at the job output level).              |
 | [`check_isolated_nodes`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_isolated_nodes)(graph, config)         | Flag nodes with no data connections (no outputs consumed, no inputs from graph). |
+| [`check_needs_unknown_job`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_needs_unknown_job)(graph, config)      | `needs:` names a job that does not exist.                                        |
+| [`check_reserved_setup_job`](_autosummary/reci.validation.rules.dag.html.md#reci.validation.rules.dag.check_reserved_setup_job)(graph, config)     | A recipe job uses the id of the generated `setup` job.                           |
 
 ### reci.validation.rules.dag.check_cycles(graph, config)
 
@@ -987,6 +1068,20 @@ Flag duplicate output names within a job (at the job output level).
 ### reci.validation.rules.dag.check_isolated_nodes(graph, config)
 
 Flag nodes with no data connections (no outputs consumed, no inputs from graph).
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
+
+### reci.validation.rules.dag.check_needs_unknown_job(graph, config)
+
+`needs:` names a job that does not exist.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
+
+### reci.validation.rules.dag.check_reserved_setup_job(graph, config)
+
+A recipe job uses the id of the generated `setup` job.
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
@@ -1157,7 +1252,7 @@ Load YAML from a string and return a plain dict.
 
 # About this build
 
-This documentation was built on **2026-10-13 18:02 UTC** from commit <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e"><code>131e5a0</code></a> on branch <code>main</code>, for **reci 0.0.18** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-13 18:11 UTC** from commit <a href="https://github.com/i2mint/reci/commit/27573a9112e248b6fff57fdb01ee20b66ff5dfd2"><code>27573a9</code></a> on branch <code>main</code>, for **reci 0.0.19** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1166,9 +1261,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e"><code>131e5a0bbf0136ed1a198c3897b92492864b816e</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/27573a9112e248b6fff57fdb01ee20b66ff5dfd2"><code>27573a9112e248b6fff57fdb01ee20b66ff5dfd2</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.18</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.19</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1177,9 +1272,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38443216969">38443216969</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38444435426">38444435426</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>b520dae13052613e4d923eb56b5dc45a19b99b47</code> (in the history of the built commit) |
+| Event commit | <code>58dd73ef0de6dd4b3c89592b108c9c9337828724</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1204,13 +1299,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.18/">0.0.18</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.19/">0.0.19</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 131e5a0bbf0136ed1a198c3897b92492864b816e
+git checkout 27573a9112e248b6fff57fdb01ee20b66ff5dfd2
 pip install "epythet==0.2.17"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

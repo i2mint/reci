@@ -9,6 +9,8 @@ DAG structure validation rules (DAG001–DAG004).
 | [`check_data_flow_needs_cycles`](#reci.validation.rules.dag.check_data_flow_needs_cycles)(graph, config) | Data flow between jobs must not make their `needs` form a cycle.                 |
 | [`check_duplicate_outputs`](#reci.validation.rules.dag.check_duplicate_outputs)(graph, config)      | Flag duplicate output names within a job (at the job output level).              |
 | [`check_isolated_nodes`](#reci.validation.rules.dag.check_isolated_nodes)(graph, config)         | Flag nodes with no data connections (no outputs consumed, no inputs from graph). |
+| [`check_needs_unknown_job`](#reci.validation.rules.dag.check_needs_unknown_job)(graph, config)      | `needs:` names a job that does not exist.                                        |
+| [`check_reserved_setup_job`](#reci.validation.rules.dag.check_reserved_setup_job)(graph, config)     | A recipe job uses the id of the generated `setup` job.                           |
 
 ### reci.validation.rules.dag.check_cycles(graph, config)
 
@@ -39,6 +41,20 @@ Flag duplicate output names within a job (at the job output level).
 ### reci.validation.rules.dag.check_isolated_nodes(graph, config)
 
 Flag nodes with no data connections (no outputs consumed, no inputs from graph).
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](reci.validation.report.html.md#reci.validation.report.Finding)]
+
+### reci.validation.rules.dag.check_needs_unknown_job(graph, config)
+
+`needs:` names a job that does not exist.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](reci.validation.report.html.md#reci.validation.report.Finding)]
+
+### reci.validation.rules.dag.check_reserved_setup_job(graph, config)
+
+A recipe job uses the id of the generated `setup` job.
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](reci.validation.report.html.md#reci.validation.report.Finding)]

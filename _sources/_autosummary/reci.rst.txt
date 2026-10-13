@@ -16,5 +16,6 @@
    config
    graph
    recipe
+   recipe_checks
    validation
    yaml_gen

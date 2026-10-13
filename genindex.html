@@ -119,6 +119,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.config.html">reci.config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.graph.html">reci.graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.recipe.html">reci.recipe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.recipe_checks.html">reci.recipe_checks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.validation.html">reci.validation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.yaml_gen.html">reci.yaml_gen</a></li>
 </ul>
@@ -208,11 +209,17 @@
 </li>
       <li><a href="_autosummary/reci.validation.rules.config_rules.html#reci.validation.rules.config_rules.check_missing_required_config">check_missing_required_config() (in module reci.validation.rules.config_rules)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/reci.validation.rules.dag.html#reci.validation.rules.dag.check_needs_unknown_job">check_needs_unknown_job() (in module reci.validation.rules.dag)</a>
+</li>
+      <li><a href="_autosummary/reci.validation.rules.dag.html#reci.validation.rules.dag.check_reserved_setup_job">check_reserved_setup_job() (in module reci.validation.rules.dag)</a>
+</li>
       <li><a href="_autosummary/reci.validation.rules.purity.html#reci.validation.rules.purity.check_run_step_outputs">check_run_step_outputs() (in module reci.validation.rules.purity)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
       <li><a href="_autosummary/reci.validation.rules.purity.html#reci.validation.rules.purity.check_run_steps">check_run_steps() (in module reci.validation.rules.purity)</a>
+</li>
+      <li><a href="_autosummary/reci.validation.rules.config_rules.html#reci.validation.rules.config_rules.check_undefined_config_references">check_undefined_config_references() (in module reci.validation.rules.config_rules)</a>
 </li>
       <li><a href="_autosummary/reci.validation.rules.flow.html#reci.validation.rules.flow.check_unsourced_required_inputs">check_unsourced_required_inputs() (in module reci.validation.rules.flow)</a>
 </li>
@@ -225,6 +232,10 @@
       <li><a href="_autosummary/reci.compiler.html#reci.compiler.CompilationError">CompilationError</a>
 </li>
       <li><a href="_autosummary/reci.compiler.html#reci.compiler.compile_recipe">compile_recipe() (in module reci.compiler)</a>
+</li>
+      <li><a href="_autosummary/reci.recipe_checks.html#reci.recipe_checks.CONFIG_REF_RE">CONFIG_REF_RE (in module reci.recipe_checks)</a>
+</li>
+      <li><a href="_autosummary/reci.recipe_checks.html#reci.recipe_checks.config_references">config_references() (in module reci.recipe_checks)</a>
 </li>
       <li><a href="_autosummary/reci.adapters.base.html#reci.adapters.base.ConfigAdapter">ConfigAdapter (class in reci.adapters.base)</a>
 </li>
@@ -277,12 +288,14 @@
 </li>
       <li><a href="_autosummary/reci.graph.html#reci.graph.find_cycle">find_cycle() (in module reci.graph)</a>
 </li>
-      <li><a href="_autosummary/reci.validation.report.html#reci.validation.report.Finding">Finding (class in reci.validation.report)</a>
+      <li><a href="_autosummary/reci.recipe_checks.html#reci.recipe_checks.find_recipe_problems">find_recipe_problems() (in module reci.recipe_checks)</a>
 </li>
-      <li><a href="_autosummary/reci.config.html#reci.config.flatten_config">flatten_config() (in module reci.config)</a>
+      <li><a href="_autosummary/reci.validation.report.html#reci.validation.report.Finding">Finding (class in reci.validation.report)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/reci.config.html#reci.config.flatten_config">flatten_config() (in module reci.config)</a>
+</li>
       <li><a href="_autosummary/reci.validation.formatters.html#reci.validation.formatters.format_cli">format_cli() (in module reci.validation.formatters)</a>
 </li>
       <li><a href="_autosummary/reci.validation.formatters.html#reci.validation.formatters.format_github_annotations">format_github_annotations() (in module reci.validation.formatters)</a>
@@ -373,6 +386,8 @@
         <li><a href="_autosummary/reci.graph.html#module-reci.graph">reci.graph</a>
 </li>
         <li><a href="_autosummary/reci.recipe.html#module-reci.recipe">reci.recipe</a>
+</li>
+        <li><a href="_autosummary/reci.recipe_checks.html#module-reci.recipe_checks">reci.recipe_checks</a>
 </li>
         <li><a href="_autosummary/reci.validation.html#module-reci.validation">reci.validation</a>
 </li>
@@ -531,6 +546,13 @@
         <li><a href="_autosummary/reci.recipe.html#module-reci.recipe">module</a>
 </li>
       </ul></li>
+      <li>
+    reci.recipe_checks
+
+      <ul style="list-style-type:none">
+        <li><a href="_autosummary/reci.recipe_checks.html#module-reci.recipe_checks">module</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
       <li>
@@ -609,6 +631,8 @@
 </li>
       <li><a href="_autosummary/reci.recipe.html#reci.recipe.RecipeParseError">RecipeParseError</a>
 </li>
+      <li><a href="_autosummary/reci.recipe_checks.html#reci.recipe_checks.RecipeProblem">RecipeProblem (class in reci.recipe_checks)</a>
+</li>
       <li><a href="_autosummary/reci.validation.rules.html#reci.validation.rules.register_rule">register_rule() (in module reci.validation.rules)</a>
 </li>
       <li><a href="_autosummary/reci.config.html#reci.config.resolve_config_for_input">resolve_config_for_input() (in module reci.config)</a>
@@ -622,10 +646,12 @@
   <h2 id="S">S</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
-      <li><a href="_autosummary/reci.validation.report.html#reci.validation.report.Severity">Severity (class in reci.validation.report)</a>
+      <li><a href="_autosummary/reci.recipe_checks.html#reci.recipe_checks.SETUP_JOB_ID">SETUP_JOB_ID (in module reci.recipe_checks)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul style="margin-left:0;list-style-type:none">
+      <li><a href="_autosummary/reci.validation.report.html#reci.validation.report.Severity">Severity (class in reci.validation.report)</a>
+</li>
       <li><a href="_autosummary/reci.recipe.html#reci.recipe.StepSpec">StepSpec (class in reci.recipe)</a>
 </li>
   </ul></td>
@@ -694,7 +720,7 @@
 </footer>
     </div>
     
-    <script src="_static/documentation_options.js?v=8bafd125"></script>
+    <script src="_static/documentation_options.js?v=2fd7553c"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>

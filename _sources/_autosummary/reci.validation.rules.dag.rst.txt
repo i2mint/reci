@@ -12,4 +12,6 @@ reci.validation.rules.dag
       check_data_flow_needs_cycles
       check_duplicate_outputs
       check_isolated_nodes
+      check_needs_unknown_job
+      check_reserved_setup_job
    

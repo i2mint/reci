@@ -88,6 +88,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.config.html">reci.config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.graph.html">reci.graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.recipe.html">reci.recipe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.recipe_checks.html">reci.recipe_checks</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.validation.html">reci.validation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/reci.yaml_gen.html">reci.yaml_gen</a></li>
 </ul>
@@ -284,6 +285,14 @@ and other tools, see the standard’s
 <td><p>Structure</p></td>
 <td><p>Data flow between jobs makes their <code class="docutils literal notranslate"><span class="pre">needs</span></code> form a cycle</p></td>
 </tr>
+<tr class="row-odd"><td><p>DAG006</p></td>
+<td><p>Structure</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">needs:</span></code> names a job that does not exist (<code class="docutils literal notranslate"><span class="pre">setup</span></code> exists only with config)</p></td>
+</tr>
+<tr class="row-even"><td><p>DAG007</p></td>
+<td><p>Structure</p></td>
+<td><p>A recipe job is named <code class="docutils literal notranslate"><span class="pre">setup</span></code> while config is supplied</p></td>
+</tr>
 <tr class="row-odd"><td><p>FLOW001</p></td>
 <td><p>Data flow</p></td>
 <td><p>Required input has no source</p></td>
@@ -300,11 +309,15 @@ and other tools, see the standard’s
 <td><p>Config</p></td>
 <td><p>Required config key missing</p></td>
 </tr>
-<tr class="row-odd"><td><p>PURE001</p></td>
+<tr class="row-odd"><td><p>CONF004</p></td>
+<td><p>Config</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">config.X</span> <span class="pre">}}</span></code> names a key that is not in the config, or sits where GitHub has no <code class="docutils literal notranslate"><span class="pre">needs</span></code> context (workflow <code class="docutils literal notranslate"><span class="pre">env</span></code>, job <code class="docutils literal notranslate"><span class="pre">permissions</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>PURE001</p></td>
 <td><p>Purity</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">run:</span></code> step breaks typed contract</p></td>
 </tr>
-<tr class="row-even"><td><p>ACT002</p></td>
+<tr class="row-odd"><td><p>ACT002</p></td>
 <td><p>Action</p></td>
 <td><p>Referenced action not found</p></td>
 </tr>
@@ -376,7 +389,7 @@ and other tools, see the standard’s
 
 </section>
 </section>
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 18:02 UTC from <a href="https://github.com/i2mint/reci/commit/131e5a0bbf0136ed1a198c3897b92492864b816e">131e5a0</a> (main) · reci 0.0.18 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-13 18:11 UTC from <a href="https://github.com/i2mint/reci/commit/27573a9112e248b6fff57fdb01ee20b66ff5dfd2">27573a9</a> (main) · reci 0.0.19 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
@@ -405,7 +418,7 @@ and other tools, see the standard’s
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=8bafd125"></script>
+<script src="_static/documentation_options.js?v=2fd7553c"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>

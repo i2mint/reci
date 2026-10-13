@@ -17,6 +17,7 @@
 - [reci.config](reci.config.html.md): Config resolution — flat dict with scoped overrides.
 - [reci.graph](reci.graph.html.md): Recipe DAG — computational graph built on &#96;graphlib&#96;.
 - [reci.recipe](reci.recipe.html.md): Recipe model — declarative CI pipeline description.
+- [reci.recipe_checks](reci.recipe_checks.html.md): Whole-recipe checks that need the recipe text and the config, not the step graph.
 - [reci.validation](reci.validation.html.md): Validation system — ESLint-style severity, ruff-style rule prefixes.
 - [reci.validation.formatters](reci.validation.formatters.html.md): Output formatters for validation reports.
 - [reci.validation.report](reci.validation.report.html.md): Core validation data structures.

@@ -25,7 +25,7 @@ Scan a recipe and return config keys needed by its actions.
 Returns `{key: required}` where *required* is True when the input
 has `required=True` and no default.  Inputs given by an explicit
 `with:` or fed by an upstream step output (`bind:` honoured) need no
-config key.
+config key.  Keys the recipe references as `${{ config.X }}` are required.
 
 * **Return type:**
   [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`bool`](https://docs.python.org/3/builtins/functions.html#bool)]

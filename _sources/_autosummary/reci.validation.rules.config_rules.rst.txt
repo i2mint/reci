@@ -9,5 +9,6 @@ reci.validation.rules.config\_rules
    .. autosummary::
    
       check_missing_required_config
+      check_undefined_config_references
       check_unused_config
    
