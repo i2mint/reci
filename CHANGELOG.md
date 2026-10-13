@@ -10,11 +10,11 @@ published to PyPI). Entries are commit subjects and PR titles, verbatim.
 
 ### Added
 
-- Behavioural test suite for the compiler (golden workflows, five-level input wiring), recipe parsing, graph, config, action specs, every validation rule, formatters and config adapters ([#4](https://github.com/i2mint/reci/issues/4))
+- Behavioural test suite for the compiler (golden workflows, five-level input wiring), recipe parsing, graph, config, action specs, every implemented validation rule, formatters, config adapters and the CLI command bodies; known defects pinned as strict xfails ([#4](https://github.com/i2mint/reci/issues/4))
 
 ## [0.0.8] - 2026-10-13
 
-- Move agent skills to reci/data/skills (canonical location) ([#3](https://github.com/i2mint/reci/pull/3))
+- Move agent skills to reci/data/skills (canonical location) ([#7](https://github.com/i2mint/reci/pull/7))
 
 ## [0.0.7] - 2026-09-04
 

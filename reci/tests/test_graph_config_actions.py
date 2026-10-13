@@ -174,6 +174,17 @@ def test_parse_action_spec_normalizes_and_coerces_required():
     assert list(spec.outputs) == ["new_version"]
 
 
+@pytest.mark.parametrize(
+    "raw, expected",
+    [("yes", True), ("1", True), ("TRUE", True), ("no", False), (1, True), (0, False)],
+)
+def test_required_flag_coercion(raw, expected):
+    spec = parse_action_spec(
+        "x/y@v1", action_yml_data={"inputs": {"a": {"required": raw}}}
+    )
+    assert spec.inputs["a"].required is expected
+
+
 def test_parse_action_spec_without_inputs_or_outputs():
     spec = parse_action_spec("x/y@v1", action_yml_data={"name": "n"})
     assert spec.inputs == {} and spec.outputs == {}
@@ -185,6 +196,10 @@ def test_action_spec_from_declaration():
     )
     assert spec.inputs["a_b"].required and list(spec.outputs) == ["out_put"]
     assert action_spec_from_declaration("x").inputs == {}
+    spec2 = action_spec_from_declaration(
+        "local", inputs={"k": {"default": "d", "description": "dd"}}
+    )
+    assert (spec2.inputs["k"].default, spec2.inputs["k"].description) == ("d", "dd")
 
 
 class _Resp:
@@ -196,6 +211,7 @@ def test_fetch_tries_action_yml_then_action_yaml(monkeypatch):
     seen = []
 
     def fake_get(url, **kw):
+        assert kw.get("follow_redirects") is True and kw.get("timeout")
         seen.append(url)
         if url.endswith("action.yaml"):
             return _Resp(200, "inputs:\n  a-b:\n    required: true\n")

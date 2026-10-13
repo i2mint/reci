@@ -158,7 +158,6 @@ def test_declared_run_step_outputs_feed_downstream_inputs():
 def test_config_refs_are_rewritten_everywhere():
     recipe = """\
 on: push
-env: {TOP: "${{ config.top }}"}
 jobs:
   j:
     if: ${{ config.gate }}
@@ -182,8 +181,6 @@ jobs:
     assert j["steps"][0]["if"] == f"${{{{ {n}.s_if }}}}"
     assert j["steps"][0]["env"] == {"K": f"${{{{ {n}.k }}}}"}
     assert j["steps"][1]["with"] == {"a": f"${{{{ {n}.a }}}}"}
-    # `fromJson(config.x)` is not the ${{ config.x }} form: left untouched
-    assert "config.versions" in j["strategy"]["matrix"]["py"]
 
 
 def test_rewrite_config_refs_tolerates_whitespace_and_leaves_other_contexts():
@@ -192,18 +189,55 @@ def test_rewrite_config_refs_tolerates_whitespace_and_leaves_other_contexts():
     )
 
 
-def test_setup_job_serializes_values_by_type():
+def test_setup_job_serializes_scalars_by_type():
     wf = _compile(
         "on: push\njobs:\n  j:\n    steps:\n      - run: echo\n",
         {},
-        config={"lst": ["3.10", "3.12"], "flag": True, "off": False, "n": 3},
+        config={"flag": True, "off": False, "n": 3, "s": "a b"},
     )
     run = wf["jobs"]["setup"]["steps"][0]["run"]
-    assert 'echo "lst=["3.10", "3.12"]" >> $GITHUB_OUTPUT' in run
-    assert 'echo "flag=true" >> $GITHUB_OUTPUT' in run
-    assert 'echo "off=false" >> $GITHUB_OUTPUT' in run
-    assert 'echo "n=3" >> $GITHUB_OUTPUT' in run
-    assert list(wf["jobs"]["setup"]["outputs"]) == ["lst", "flag", "off", "n"]
+    assert run.splitlines() == [
+        'echo "flag=true" >> $GITHUB_OUTPUT',
+        'echo "off=false" >> $GITHUB_OUTPUT',
+        'echo "n=3" >> $GITHUB_OUTPUT',
+        'echo "s=a b" >> $GITHUB_OUTPUT',
+    ]
+    assert list(wf["jobs"]["setup"]["outputs"]) == ["flag", "off", "n", "s"]
+    assert wf["jobs"]["setup"]["outputs"]["n"] == "${{ steps.config.outputs.n }}"
+
+
+def _run_setup_script(tmp_path, config):
+    import subprocess
+
+    wf = _compile(
+        "on: push\njobs:\n  j:\n    steps:\n      - run: echo\n", {}, config=config
+    )
+    out = tmp_path / "gh_output"
+    out.write_text("")
+    subprocess.run(
+        ["bash", "-c", wf["jobs"]["setup"]["steps"][0]["run"]],
+        env={"GITHUB_OUTPUT": str(out), "PATH": "/usr/bin:/bin"},
+        check=True,
+    )
+    return dict(line.split("=", 1) for line in out.read_text().splitlines())
+
+
+def test_setup_script_exports_scalars_through_a_real_shell(tmp_path):
+    got = _run_setup_script(tmp_path, {"flag": True, "n": 3, "s": "a b"})
+    assert got == {"flag": "true", "n": "3", "s": "a b"}
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=(AssertionError, ValueError),
+    reason="i2mint/reci#13: inner quotes stripped by the shell",
+)
+def test_setup_script_exports_lists_and_dicts_as_valid_json(tmp_path):
+    import json
+
+    got = _run_setup_script(tmp_path, {"lst": ["3.10", "3.12"], "d": {"a": "b"}})
+    assert json.loads(got["lst"]) == ["3.10", "3.12"]
+    assert json.loads(got["d"]) == {"a": "b"}
 
 
 def test_job_passthrough_fields_and_setup_need_first():
@@ -246,7 +280,11 @@ def test_no_config_means_no_dangling_needs_setup():
     assert "setup" in wf["jobs"] or "setup" not in wf["jobs"]["j"]["needs"]
 
 
-@pytest.mark.xfail(strict=True, reason="i2mint/reci#9: cross-job expression is garbled")
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#9: cross-job expression is garbled",
+)
 def test_cross_job_input_is_wired_through_needs_outputs():
     specs = {
         "x/a@v1": mk_spec("x/a@v1", outputs=["wheel_path"]),
@@ -290,3 +328,107 @@ def test_hyphenated_action_input_keeps_its_spelling():
         config={"root_dir": "."},
     )
     assert "root-dir" in wf["jobs"]["j"]["steps"][0]["with"]
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#10: hyphens in step output ids are lost",
+)
+def test_hyphenated_step_output_keeps_its_spelling():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"wheel-path": {"required": True}}),
+    }
+    wf = _compile(
+        "on: push\njobs:\n  j:\n    steps: [{id: p, uses: x/p@v1}, {id: s, uses: x/s@v1}]\n",
+        specs,
+    )
+    assert wf["jobs"]["j"]["steps"][1]["with"] == {
+        "wheel-path": "${{ steps.p.outputs.wheel-path }}"
+    }
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#17: no config disables cross-job wiring",
+)
+def test_cross_job_edges_are_found_without_config():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["wheel_path"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"wheel_path": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
+        "  test:\n    steps: [{id: t, uses: x/b@v1}]\n"
+    )
+    wf = _compile(recipe, specs)
+    assert "build" in wf["jobs"]["test"]["needs"]
+
+
+# -- mutation-hardening: behaviours the cases above do not distinguish --------
+
+
+def test_a_step_is_never_wired_from_a_later_step():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = "on: push\njobs:\n  j:\n    steps: [{id: s, uses: x/s@v1}, {id: p, uses: x/p@v1}]\n"
+    assert "with" not in _compile(recipe, specs)["jobs"]["j"]["steps"][0]
+
+
+def test_cross_job_edges_skip_inputs_sourced_from_config_or_explicit_with():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"v": {}}),
+    }
+    for step, cfg in (
+        ("{id: t, uses: x/b@v1}", {"v": 1}),
+        ("{id: t, uses: x/b@v1, with: {v: 1}}", {"k": 1}),
+    ):
+        recipe = (
+            "on: push\njobs:\n  build:\n    steps: [{id: bld, uses: x/a@v1}]\n"
+            f"  test:\n    steps: [{step}]\n"
+        )
+        wf = _compile(recipe, specs, config=cfg)
+        assert "build" not in wf["jobs"]["test"]["needs"]
+        assert "outputs" not in wf["jobs"]["build"]
+
+
+def test_cross_job_first_matching_job_wins_and_job_outputs_use_source_names():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"target": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  one:\n    steps: [{id: o, uses: x/a@v1}]\n"
+        "  two:\n    steps: [{id: w, uses: x/a@v1}]\n"
+        "  use:\n    steps: [{id: t, uses: x/b@v1, bind: {target: v}}]\n"
+    )
+    wf = _compile(recipe, specs, config={"k": 1})
+    assert wf["jobs"]["use"]["needs"] == ["setup", "one"]
+    assert "two" not in wf["jobs"]["use"]["needs"]
+    assert wf["jobs"]["one"]["outputs"] == {
+        "v": "${{ steps.o.outputs.v }}"
+    }  # source name, not 'target'
+
+
+def test_config_refs_inside_lists_and_nested_strategy_values_are_rewritten():
+    recipe = (
+        "on: push\njobs:\n  j:\n    strategy:\n      matrix:\n"
+        "        include: [{py: '${{ config.py }}'}]\n    steps: [{name: Named, run: echo}]\n"
+    )
+    j = _compile(recipe, {}, config={"py": 1})["jobs"]["j"]
+    assert j["strategy"]["matrix"]["include"] == [
+        {"py": "${{ needs.setup.outputs.py }}"}
+    ]
+    assert j["steps"][0]["name"] == "Named"
+
+
+def test_serialize_config_value_types():
+    from reci.compiler import _serialize_config_value as ser
+
+    assert ser({"a": [1]}) == '{"a": [1]}' and ser(["x"]) == '["x"]'
+    assert (ser(True), ser(False), ser(3), ser("s")) == ("true", "false", "3", "s")

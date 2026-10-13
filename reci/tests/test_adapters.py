@@ -128,13 +128,43 @@ def test_package_json_round_trip_and_other_keys_preserved(tmp_path):
     cfg = ad.read(str(p))
     assert cfg == {"node__version": 20}
     ad.write(str(p), {**cfg, "extra": [1, 2]})
-    data = json.loads(p.read_text())
-    assert data["name"] == "pkg" and data["ci"] == {
-        "node__version": 20,
-        "extra": [1, 2],
-    }
+    assert json.loads(p.read_text())["name"] == "pkg"
     assert p.read_text().endswith("}\n")
     assert ad.read(str(p)) == {"node__version": 20, "extra": [1, 2]}
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#16: write flattens nested structure",
+)
+def test_package_json_write_keeps_the_nested_structure(tmp_path):
+    p = tmp_path / "package.json"
+    p.write_text(json.dumps({"ci": {"node": {"version": 20}}}))
+    ad = PackageJsonAdapter()
+    ad.write(str(p), ad.read(str(p)))
+    assert json.loads(p.read_text())["ci"] == {"node": {"version": 20}}
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#16: write duplicates nested keys",
+)
+def test_pyproject_write_does_not_duplicate_nested_keys(tmp_path):
+    p = tmp_path / "pyproject.toml"
+    p.write_text(PYPROJECT)
+    ad = PyprojectTomlAdapter()
+    ad.write(str(p), ad.read(str(p)))
+    assert p.read_text().count("coverage") == 1
+
+
+def test_pyproject_write_keeps_comments_inside_its_own_section(tmp_path):
+    p = tmp_path / "pyproject.toml"
+    p.write_text(PYPROJECT)
+    ad = PyprojectTomlAdapter()
+    ad.write(str(p), {"python_versions": ["3.10", "3.12"]})
+    assert "# comment survives" in p.read_text()
 
 
 def test_package_json_without_ci_key_reads_empty(tmp_path):
@@ -158,3 +188,10 @@ def test_yaml_non_mapping_reads_empty(tmp_path, text):
     p = tmp_path / ".ci.yml"
     p.write_text(text)
     assert YamlAdapter().read(str(p)) == {}
+
+
+def test_package_json_write_keeps_non_ascii_characters_readable(tmp_path):
+    p = tmp_path / "package.json"
+    p.write_text("{}")
+    PackageJsonAdapter().write(str(p), {"name": "café"})
+    assert "café" in p.read_text()

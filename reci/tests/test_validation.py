@@ -265,3 +265,96 @@ def test_format_github_annotations_levels():
         "::warning::[W1] meh",
         "::notice file=j.t::[I1] fyi",
     ]
+
+
+# -- mutation-hardening: each exemption path of a rule, one at a time -----------
+
+
+def test_CONF001_is_satisfied_by_default_explicit_with_or_bind_individually():
+    dflt = {
+        "x/s@v1": mk_spec("x/s@v1", inputs={"v": {"required": True, "default": "d"}})
+    }
+    assert _only("CONF001", mk_graph(_steps("{id: s, uses: x/s@v1}"), dflt)) == []
+    explicit = mk_graph(_steps("{id: s, uses: x/s@v1, with: {v: 1}}"), NEEDS_V)
+    assert _only("CONF001", explicit) == []
+    bound = mk_graph(
+        _steps(
+            "{id: p, run: e, outputs: [other]}",
+            "{id: s, uses: x/s@v1, bind: {v: other}}",
+        ),
+        NEEDS_V,
+    )
+    assert _only("CONF001", bound) == []
+    up = {**NEEDS_V, "x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    assert (
+        _only(
+            "CONF001",
+            mk_graph(_steps("{id: p, uses: x/p@v1}", "{id: s, uses: x/s@v1}"), up),
+        )
+        == []
+    )
+    # an upstream producer that comes *later* does not count
+    late = mk_graph(_steps("{id: s, uses: x/s@v1}", "{id: p, uses: x/p@v1}"), up)
+    assert len(_only("CONF001", late)) == 1
+
+
+def test_CONF003_ignores_config_for_inputs_given_explicitly():
+    g = mk_graph(_steps("{id: s, uses: x/s@v1, with: {v: 1}}"), NEEDS_V)
+    assert [f.message for f in _only("CONF003", g, {"v": 1})] == [
+        "Config key 'v' is not referenced by any action input."
+    ]
+
+
+def test_FLOW002_does_not_flag_inputs_given_explicitly():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"v": {}}),
+    }
+    recipe = _steps(
+        "{id: a, uses: x/p@v1}",
+        "{id: b, uses: x/p@v1}",
+        "{id: s, uses: x/s@v1, with: {v: 1}}",
+    )
+    assert _only("FLOW002", mk_graph(recipe, specs)) == []
+
+
+def test_FLOW005_follows_bind_and_accepts_yaml_boolean_defaults():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["out"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"flag": {"default": "True"}}),
+    }
+    bound = _steps("{id: p, uses: x/p@v1}", "{id: s, uses: x/s@v1, bind: {flag: out}}")
+    assert (
+        len(_only("FLOW005", mk_graph(bound, specs))) == 1
+    )  # 'True' counts as boolean
+    unbound_name = _steps("{id: p, uses: x/p@v1}", "{id: s, uses: x/s@v1}")
+    assert _only("FLOW005", mk_graph(unbound_name, specs)) == []
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#18: explicit with: refs not counted",
+)
+def test_FLOW004_counts_an_explicit_steps_reference_as_consumption():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/s@v1": mk_spec("x/s@v1", inputs={"other": {}}),
+    }
+    recipe = _steps(
+        "{id: p, uses: x/p@v1}",
+        "{id: s, uses: x/s@v1, with: {other: '${{ steps.p.outputs.v }}'}}",
+    )
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
+
+
+def test_severity_override_keeps_location_and_suggestion():
+    g = mk_graph(_steps("{id: r, run: make}"))
+    (f,) = run_all_rules(g, {}, severity_overrides={"PURE001": "info"}).findings
+    assert f.severity is Severity.INFO and f.location == "j.r" and f.suggestion
+
+
+def test_DAG002_reports_the_job_as_location():
+    specs = {"x/a@v1": mk_spec("x/a@v1", outputs=["v"])}
+    g = mk_graph(_steps("{id: one, uses: x/a@v1}", "{id: two, uses: x/a@v1}"), specs)
+    assert _only("DAG002", g)[0].location == "j"

@@ -32,10 +32,37 @@ jobs:
 
 def test_with_values_are_coerced_to_strings():
     r = parse_recipe_string(
-        "on: push\njobs:\n  j:\n    steps:\n      - uses: a/b@v1\n"
-        "        with: {n: 3, flag: true}\n"
+        "on: push\njobs:\n  j:\n    steps:\n      - uses: a/b@v1\n        with: {n: 3}\n"
     )
-    assert r.jobs["j"].steps[0].with_ == {"n": "3", "flag": "True"}
+    assert r.jobs["j"].steps[0].with_ == {"n": "3"}
+
+
+@pytest.mark.xfail(
+    strict=True, raises=AssertionError, reason="i2mint/reci#14: bools become 'True'"
+)
+def test_yaml_booleans_in_with_are_rendered_lowercase():
+    r = parse_recipe_string(
+        "on: push\njobs:\n  j:\n    steps:\n      - uses: a/b@v1\n        with: {flag: true}\n"
+    )
+    assert r.jobs["j"].steps[0].with_ == {"flag": "true"}
+
+
+def test_bind_survives_step_id_deduplication():
+    r = parse_recipe_string(
+        "on: push\njobs:\n  j:\n    steps:\n      - uses: a/t@v1\n      - uses: a/t@v1\n"
+        "        bind: {x: y}\n        env: {E: '1'}\n        outputs: [o]\n        name: n\n"
+        "        if: ${{ always() }}\n        with: {k: v}\n"
+    )
+    dup = r.jobs["j"].steps[1]
+    assert dup.id == "t_1"
+    assert (dup.bind, dup.env, dup.outputs, dup.name, dup.if_, dup.with_) == (
+        {"x": "y"},
+        {"E": "1"},
+        ["o"],
+        "n",
+        "${{ always() }}",
+        {"k": "v"},
+    )
 
 
 @pytest.mark.parametrize(
@@ -115,3 +142,10 @@ def test_dump_workflow_writes_to_a_stream(tmp_path):
     with open(p, "w") as f:
         assert dump_workflow({"name": "n"}, stream=f) is None
     assert p.read_text() == "name: n\n"
+
+
+def test_workflow_defaults_are_parsed():
+    r = parse_recipe_string(
+        "on: push\ndefaults: {run: {shell: bash}}\njobs:\n  j:\n    steps: [{run: echo}]\n"
+    )
+    assert r.defaults == {"run": {"shell": "bash"}}

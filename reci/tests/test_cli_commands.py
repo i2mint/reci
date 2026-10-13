@@ -121,7 +121,7 @@ def test_scaffold_fills_missing_keys_without_clobbering_existing(project, capsys
     )
     text = cfg.read_text()
     assert 'python_version = "3.12"' in text  # existing value kept
-    assert "<REQUIRED: wheel>" in text  # missing required key gets a placeholder
+    assert "<REQUIRED: python_version>" not in text  # present: not overwritten
     assert (project / "ci.yml").exists()
     assert "Updated config" in capsys.readouterr().out
 
@@ -137,3 +137,29 @@ def test_inspect_prints_the_contract(capsys):
     assert "python_version (required)" in out and "Outputs:\n  wheel" in out
     cli.inspect("x/test@v1")
     assert "Outputs: none" in capsys.readouterr().out
+
+
+@pytest.mark.xfail(
+    strict=True,
+    raises=AssertionError,
+    reason="i2mint/reci#15: upstream outputs ignored",
+)
+def test_scaffold_does_not_ask_for_inputs_an_upstream_step_supplies(project):
+    cfg = project / "pyproject.toml"
+    cli.scaffold(
+        str(project / "recipe.yml"),
+        config_path=str(cfg),
+        output=str(project / "ci.yml"),
+    )
+    assert "<REQUIRED: wheel>" not in cfg.read_text()
+
+
+def test_scaffold_writes_a_placeholder_for_a_truly_missing_required_input(project):
+    cfg = project / "empty.toml"
+    cfg.write_text("")
+    cli.scaffold(
+        str(project / "recipe.yml"),
+        config_path=str(cfg),
+        output=str(project / "ci.yml"),
+    )
+    assert "<REQUIRED: python_version>" in cfg.read_text()
