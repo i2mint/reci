@@ -22,6 +22,9 @@ SPECS = {
         "x/build@v1", inputs={"python_version": {"required": True}}, outputs=["wheel"]
     ),
     "x/test@v1": mk_spec("x/test@v1", inputs={"wheel": {"required": True}}),
+    "x/opt@v1": mk_spec(
+        "x/opt@v1", inputs={"flavor": {"default": "vanilla"}, "tag": {}, "n": {"required": True}}
+    ),
 }
 RECIPE = """\
 name: demo
@@ -164,6 +167,37 @@ def test_scaffold_writes_a_placeholder_for_a_truly_missing_required_input(projec
         output=str(project / "ci.yml"),
     )
     assert "<REQUIRED: python_version>" in cfg.read_text()
+
+
+def test_scaffold_leaves_optional_inputs_to_the_action_default(project):
+    (project / "opt.yml").write_text(
+        "on: push\njobs:\n  t:\n    steps: [{id: o, uses: x/opt@v1}]\n"
+    )
+    cfg = project / "empty.toml"
+    cfg.write_text("")
+    out = project / "opt-ci.yml"
+    cli.scaffold(str(project / "opt.yml"), config_path=str(cfg), output=str(out))
+    text = cfg.read_text()
+    assert "<REQUIRED: n>" in text
+    assert "flavor" not in text and "tag" not in text
+    assert "flavor" not in out.read_text()  # the action default applies
+
+
+def test_scaffold_keeps_a_cross_job_consumer_on_the_upstream_output(
+    project, monkeypatch
+):
+    (project / "x.yml").write_text(
+        "on: push\njobs:\n  build:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  test:\n    steps: [{id: c, uses: x/test@v1}]\n"
+    )
+    spec = mk_spec("x/p@v1", inputs={"wheel": {}}, outputs=["wheel"])
+    monkeypatch.setitem(SPECS, "x/p@v1", spec)
+    cfg = project / "empty.toml"
+    cfg.write_text("")
+    out = project / "x-ci.yml"
+    cli.scaffold(str(project / "x.yml"), config_path=str(cfg), output=str(out))
+    assert "wheel" not in cfg.read_text()
+    assert "needs.build.outputs.wheel" in out.read_text()
 
 
 def test_compile_reports_a_data_flow_needs_cycle_as_a_finding_not_a_traceback(

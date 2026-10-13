@@ -139,9 +139,11 @@ def scaffold(
 
     # Read existing config or start fresh
     existing = adapter.read(path) if Path(path).exists() else {}
+    # Only required inputs get a placeholder: a "" for an optional one would
+    # override the action's own default.
     for key, is_required in required.items():
-        if key not in existing:
-            existing[key] = f"<REQUIRED: {key}>" if is_required else ""
+        if is_required and key not in existing:
+            existing[key] = f"<REQUIRED: {key}>"
 
     adapter.write(path, existing)
     print(f"Updated config: {path}")

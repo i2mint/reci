@@ -70,7 +70,6 @@ def collect_required_config_keys(
     def record(name: str, is_required: bool) -> None:
         keys[name] = keys.get(name, False) or is_required
 
-    cross_job_fed: list[tuple[str, bool]] = []
     for node in graph.nodes():
         provided = {normalize_name(k) for k in node.with_}
         same_job = graph.upstream_output_names(node, other_jobs=False)
@@ -82,17 +81,8 @@ def collect_required_config_keys(
             is_required = inp.required and inp.default is None
             if search in same_job:
                 continue
-            if search in everywhere:
-                cross_job_fed.append((norm_name, is_required))
-            else:
+            if search not in everywhere:  # fed from another job: needs no key
                 record(norm_name, is_required)
-
-    # The compiler lets a config value beat another job's output: if the key is
-    # written anyway (another step needs it), a cross-job consumer reads it too,
-    # so its requiredness must count.
-    for norm_name, is_required in cross_job_fed:
-        if norm_name in keys:
-            record(norm_name, is_required)
 
     # Keys the recipe itself references as ${{ config.X }} must exist too.
     for _, name, needs_ok in config_references(recipe):
