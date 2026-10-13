@@ -1,26 +1,26 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:41:32.456347Z
+timestamp,2026-10-13T17:41:44.342014Z
 commit_sha,3fa0cea3cbbd1477bb157b42c448bfbdd70f8fb6
 commit_message,Merge 5f83c5f94a4ebc802ae50d41555eff6fbaa68f4c into ff96594841fa2d90fc2043547ea632345df860a2
 python_version,3.10
-metrics.umpyre_stats.num_functions,7845
-metrics.umpyre_stats.num_classes,1981
-metrics.umpyre_stats.total_lines,291348
-metrics.umpyre_stats.empty_lines,34418
-metrics.umpyre_stats.comment_lines,15022
-metrics.umpyre_stats.docs_lines,21320
-metrics.umpyre_stats.function_lines,114475
-metrics.umpyre_stats.empty_lines_ratio,0.11813364086933839
-metrics.umpyre_stats.comment_lines_ratio,0.05156033334706262
-metrics.umpyre_stats.function_lines_ratio,0.39291500199074647
-metrics.umpyre_stats.mean_lines_per_function,14.592096876991715
-metrics.umpyre_stats.files_analyzed,735
+metrics.umpyre_stats.num_functions,7749
+metrics.umpyre_stats.num_classes,1970
+metrics.umpyre_stats.total_lines,289189
+metrics.umpyre_stats.empty_lines,34085
+metrics.umpyre_stats.comment_lines,14876
+metrics.umpyre_stats.docs_lines,21287
+metrics.umpyre_stats.function_lines,112916
+metrics.umpyre_stats.empty_lines_ratio,0.11786409579894118
+metrics.umpyre_stats.comment_lines_ratio,0.051440407484378725
+metrics.umpyre_stats.function_lines_ratio,0.3904574517011366
+metrics.umpyre_stats.mean_lines_per_function,14.571686669247645
+metrics.umpyre_stats.files_analyzed,725
 metrics.umpyre_stats.pypi_version,0.0.14
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T17:39:44Z
+metrics.workflow_status.last_success_timestamp,2026-10-13T17:41:41Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38440385012
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38440557823
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -36,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.449831485748291
+collection_duration_seconds,3.806424140930176
