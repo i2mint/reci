@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.230424642562866,
-  "commit_message": "Merge ae9812489c341638384fda39cafbeb11aae96d68 into 7cff011c0ac06cf83e15244d249b4f28e4ae4d30",
-  "commit_sha": "e2d81c304c3f25032389ea43cc4d09a1054573c9",
+  "collection_duration_seconds": 4.292832374572754,
+  "commit_message": "fix: CONF005 also refuses case-colliding and non-string keys and lone surrogates (#29)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "ae9812489c341638384fda39cafbeb11aae96d68",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.579292604501608,
       "num_classes": 1971,
       "num_functions": 7775,
-      "pypi_version": "0.0.22",
+      "pypi_version": "0.0.21",
       "total_lines": 289740
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:11:22.529181Z",
+  "timestamp": "2026-10-13T22:11:30.353133Z",
   "workflow_status": {}
 }
