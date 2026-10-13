@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.993844747543335,
-  "commit_message": "Merge 37a6551117e7f55a8f4bf2c4280b10e513e384e4 into e1aca33d1b574beb4024fa17bf5bde96909c69b4",
-  "commit_sha": "db61edb66d635fd96841e7324c46792a79bbf883",
+  "collection_duration_seconds": 4.07730770111084,
+  "commit_message": "test: address review \u2014 pin real defects as strict xfails, harden against surviving mutants, fix CHANGELOG links\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "37a6551117e7f55a8f4bf2c4280b10e513e384e4",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T16:54:01.288622Z",
+  "timestamp": "2026-10-13T16:54:08.329201Z",
   "workflow_status": {}
 }

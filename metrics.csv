@@ -1,8 +1,10 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T16:54:01.288622Z
-commit_sha,db61edb66d635fd96841e7324c46792a79bbf883
-commit_message,Merge 37a6551117e7f55a8f4bf2c4280b10e513e384e4 into e1aca33d1b574beb4024fa17bf5bde96909c69b4
+timestamp,2026-10-13T16:54:08.329201Z
+commit_sha,37a6551117e7f55a8f4bf2c4280b10e513e384e4
+commit_message,"test: address review — pin real defects as strict xfails, harden against surviving mutants, fix CHANGELOG links
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7710
 metrics.umpyre_stats.num_classes,1964
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.993844747543335
+collection_duration_seconds,4.07730770111084
