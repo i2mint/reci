@@ -1,31 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:20:42.440303Z
-commit_sha,817e2ca5c3be7786719418db49e1154bf39b60e8
-commit_message,"fix: emit action input/output ids with their original spelling (#10)
-
-Matching stays normalized; InputSpec/OutputSpec keep original_name and the
-compiler writes it into with: and steps./needs.<job>.outputs references.
+timestamp,2026-10-13T17:23:11.237890Z
+commit_sha,f8b6af7c2416cf6ca4baf9ccf5bd2fe3cab2de12
+commit_message,"fix: normalize bind: names; inspect and validation messages show the declared spelling
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7839
 metrics.umpyre_stats.num_classes,1981
-metrics.umpyre_stats.total_lines,291203
+metrics.umpyre_stats.total_lines,291208
 metrics.umpyre_stats.empty_lines,34391
 metrics.umpyre_stats.comment_lines,15019
 metrics.umpyre_stats.docs_lines,21272
-metrics.umpyre_stats.function_lines,114348
-metrics.umpyre_stats.empty_lines_ratio,0.11809974485152969
-metrics.umpyre_stats.comment_lines_ratio,0.051575704920622384
-metrics.umpyre_stats.function_lines_ratio,0.3926745260179325
-metrics.umpyre_stats.mean_lines_per_function,14.587064676616915
+metrics.umpyre_stats.function_lines,114351
+metrics.umpyre_stats.empty_lines_ratio,0.11809771709568419
+metrics.umpyre_stats.comment_lines_ratio,0.05157481937309415
+metrics.umpyre_stats.function_lines_ratio,0.3926780857668745
+metrics.umpyre_stats.mean_lines_per_function,14.587447378492154
 metrics.umpyre_stats.files_analyzed,735
 metrics.umpyre_stats.pypi_version,0.0.10
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-13T17:20:21Z
-metrics.workflow_status.recent_failure_count,1
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38437534311
+metrics.workflow_status.last_success_timestamp,2026-10-13T17:20:46Z
+metrics.workflow_status.recent_failure_count,0
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/38437835000
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -41,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.380073308944702
+collection_duration_seconds,4.09781289100647
