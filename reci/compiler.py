@@ -89,10 +89,10 @@ def _build_setup_job(config: dict[str, Any]) -> dict:
         lines.append("  " + _output_command(key, _serialize_config_value(value)))
         outputs[key] = f"${{{{ steps.config.outputs.{key} }}}}"
 
-    # One grouped, quoted redirect: shellcheck-clean (SC2086, SC2129).  A `$` or
-    # backtick in a value is meant literally (SC2016 would suggest expanding it).
-    literal_expr = any(ch in line for line in lines for ch in "$`")
-    header = "# shellcheck disable=SC2016\n" if literal_expr else ""
+    # One grouped, quoted redirect: shellcheck-clean (SC2086, SC2129).  Values are
+    # single-quoted and meant literally, so the "this won't expand" hints do not
+    # apply: `$`/backtick (SC2016), leading `~` (SC2088), trailing `\` (SC1003).
+    header = "# shellcheck disable=SC2016,SC2088,SC1003\n"
     run_script = (
         header + "{\n" + "\n".join(lines) + '\n} >> "$GITHUB_OUTPUT"'
         if lines

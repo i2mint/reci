@@ -43,6 +43,7 @@ jobs:
       - name: Export config
         id: config
         run: |-
+          # shellcheck disable=SC2016,SC2088,SC1003
           {
             printf '%s=%s\\n' python_version 3.12
             printf '%s=%s\\n' acme_ci_extra 'a b'
@@ -274,6 +275,30 @@ def test_setup_script_exports_lists_and_dicts_as_valid_json(tmp_path):
     got = _run_setup_script(tmp_path, {"lst": ["3.10", "3.12"], "d": {"a": "b"}})
     assert json.loads(got["lst"]) == ["3.10", "3.12"]
     assert json.loads(got["d"]) == {"a": "b"}
+
+
+@needs_posix_bash
+def test_setup_script_roundtrips_awkward_values_verbatim(tmp_path):
+    values = {
+        "quote": "say \"hi\" and it's fine",
+        "back": "a\\b %s %d",
+        "empty": "",
+        "multi": "line1\nline2",
+        "trailing_nl": "a\n",
+        "clash": "x\nRECI_EOF\ny",
+        "tilde": "~/.cache/pip",
+        "backslash_end": "C:\\tmp\\",
+        "dollar": "cost $5 `echo X` ${HOME}",
+    }
+    assert _run_setup_script(tmp_path, values) == values
+
+
+@needs_posix_bash
+def test_setup_script_serializes_json_with_newlines_inside_strings(tmp_path):
+    import json
+
+    got = _run_setup_script(tmp_path, {"lst": ["a\nb", "RECI_EOF"]})
+    assert json.loads(got["lst"]) == ["a\nb", "RECI_EOF"]
 
 
 def test_job_passthrough_fields_and_setup_need_first():
