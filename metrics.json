@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 2.8581414222717285,
+  "collection_duration_seconds": 3.6989586353302,
   "commit_message": "Merge 54f0a03a724dec2f053d3160ccc31e59e79e631e into 89854112f544a5b7901d9fa033eacd358ed7987e",
   "commit_sha": "ba9d4d4e981318851e5801a7857b772f6f768c4e",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14893,
-      "comment_lines_ratio": 0.05139362902585728,
-      "docs_lines": 21400,
-      "empty_lines": 34186,
-      "empty_lines_ratio": 0.11797103349747914,
-      "files_analyzed": 727,
-      "function_lines": 113395,
-      "function_lines_ratio": 0.39131004924374446,
-      "mean_lines_per_function": 14.582690329218106,
-      "num_classes": 1971,
-      "num_functions": 7776,
+      "comment_lines": 15039,
+      "comment_lines_ratio": 0.05151365682224551,
+      "docs_lines": 21433,
+      "empty_lines": 34519,
+      "empty_lines_ratio": 0.11823923930095703,
+      "files_analyzed": 737,
+      "function_lines": 114954,
+      "function_lines_ratio": 0.39375629405840884,
+      "mean_lines_per_function": 14.602896341463415,
+      "num_classes": 1982,
+      "num_functions": 7872,
       "pypi_version": "0.0.23",
-      "total_lines": 289783
+      "total_lines": 291942
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T22:15:47Z",
+      "last_success_timestamp": "2026-10-13T22:17:56Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38476441423",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38476705044",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:17:50.966966Z",
+  "timestamp": "2026-10-13T22:18:08.837374Z",
   "workflow_status": {}
 }
