@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.297067642211914,
-  "commit_message": "fix: DAG005 and cross-job producer choice (FLOW002, FLOW006) (#41, #47) (#64)\n\nCloses #41, #47.",
-  "commit_sha": "44015e3949e91b28f61e035cc334a2641d2e97c8",
+  "collection_duration_seconds": 4.364925384521484,
+  "commit_message": "fix: FLOW004 reads only expressions, later steps and exact output spellings; new FLOW007 for empty output references (#38)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "0f26d39426a52c44ef7a4bb2e3b23cad120300ba",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14903,
-      "comment_lines_ratio": 0.05133089015334169,
-      "docs_lines": 21508,
-      "empty_lines": 34256,
-      "empty_lines_ratio": 0.11798906079936074,
-      "files_analyzed": 727,
-      "function_lines": 113850,
-      "function_lines_ratio": 0.39213727732389125,
-      "mean_lines_per_function": 14.605516356638871,
-      "num_classes": 1971,
-      "num_functions": 7795,
+      "comment_lines": 15052,
+      "comment_lines_ratio": 0.05143222270439456,
+      "docs_lines": 21561,
+      "empty_lines": 34608,
+      "empty_lines_ratio": 0.11825447537561036,
+      "files_analyzed": 737,
+      "function_lines": 115557,
+      "function_lines_ratio": 0.39485472754794865,
+      "mean_lines_per_function": 14.631172448721195,
+      "num_classes": 1982,
+      "num_functions": 7898,
       "pypi_version": "0.0.31",
-      "total_lines": 290332
+      "total_lines": 292657
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T23:15:55Z",
+      "last_success_timestamp": "2026-10-13T23:18:46Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38483029753",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38483435761",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:17:21.332991Z",
+  "timestamp": "2026-10-13T23:19:28.837892Z",
   "workflow_status": {}
 }
