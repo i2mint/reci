@@ -11,7 +11,7 @@ import cw
 from reci.action_spec import action_spec_from_ref, ActionSpec, ActionFetchError
 from reci.recipe import parse_recipe, RecipeParseError
 from reci.graph import RecipeGraph
-from reci.compiler import compile_recipe
+from reci.compiler import CompilationError, compile_recipe
 from reci.config import collect_required_config_keys
 from reci.yaml_gen import dump_workflow
 from reci.validation.formatters import (
@@ -46,6 +46,15 @@ def _fetch_specs(recipe) -> dict[str, ActionSpec]:
     return specs
 
 
+def _compile_or_exit(rec, specs, config) -> dict:
+    """:func:`compile_recipe`, turning a :class:`CompilationError` into a clean exit."""
+    try:
+        return compile_recipe(rec, specs, config=config)
+    except CompilationError as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def compile(
     recipe: str,
     *,
@@ -58,9 +67,8 @@ def compile(
     specs = _fetch_specs(rec)
     config = _load_config(config_adapter=config_adapter, config_path=config_path)
 
-    workflow = compile_recipe(rec, specs, config=config)
-
-    # Validate and print warnings
+    # Validate first (its findings explain problems better than a compile
+    # error), print warnings, then compile.
     graph = RecipeGraph.from_recipe(rec, specs)
     report = graph.validate(config)
     if report.findings:
@@ -68,6 +76,8 @@ def compile(
     if report.has_errors:
         print("Compilation aborted due to errors.", file=sys.stderr)
         sys.exit(1)
+
+    workflow = _compile_or_exit(rec, specs, config)
 
     # Write output
     out_path = Path(output)
@@ -137,7 +147,7 @@ def scaffold(
     print(f"Updated config: {path}")
 
     # Compile with skeleton config
-    workflow = compile_recipe(rec, specs, config=existing)
+    workflow = _compile_or_exit(rec, specs, existing)
     out_path = Path(output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:

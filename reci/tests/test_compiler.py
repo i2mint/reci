@@ -620,3 +620,28 @@ def test_a_needs_cycle_is_a_compilation_error_not_an_invalid_workflow():
     )
     with pytest.raises(CompilationError, match="cycle"):
         _compile(explicit, {})
+
+
+_CHAIN_SPECS = {
+    f"x/{n}@v1": mk_spec(f"x/{n}@v1", inputs={i: {"required": True}}, outputs=[o])
+    for n, i, o in [("a", "z", "x"), ("b", "x", "y"), ("c", "y", "z")]
+}
+_CHAIN = (
+    "on: push\njobs:\n  ja:\n    steps: [{id: sa, uses: x/a@v1}]\n"
+    "  jb:\n    steps: [{id: sb, uses: x/b@v1}]\n"
+    "  jc:\n    steps: [{id: sc, uses: x/c@v1}]\n"
+)
+
+
+def test_a_three_job_cycle_is_reported_with_the_reads_that_cause_it():
+    with pytest.raises(CompilationError) as e:
+        _compile(_CHAIN, _CHAIN_SPECS)
+    msg = str(e.value)
+    for reason in ("'jb.sb' reads 'x' from 'ja.sa'", "'jc.sc' reads 'y' from 'jb.sb'"):
+        assert reason in msg
+    assert msg.startswith("The jobs' needs form a cycle: ")
+
+
+def test_config_that_supplies_an_input_breaks_the_loop():
+    wf = _compile(_CHAIN, _CHAIN_SPECS, config={"z": "from config"})
+    assert wf["jobs"]["ja"]["steps"][0]["with"] == {"z": "${{ needs.setup.outputs.z }}"}

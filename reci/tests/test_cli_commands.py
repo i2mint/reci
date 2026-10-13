@@ -12,6 +12,12 @@ from reci.action_spec import ActionFetchError
 from reci.tests._helpers import mk_spec
 
 SPECS = {
+    "x/a@v1": mk_spec(
+        "x/a@v1", inputs={"w": {"required": True}}, outputs=["v"]
+    ),
+    "x/b@v1": mk_spec(
+        "x/b@v1", inputs={"v": {"required": True}}, outputs=["w"]
+    ),
     "x/build@v1": mk_spec(
         "x/build@v1", inputs={"python_version": {"required": True}}, outputs=["wheel"]
     ),
@@ -158,3 +164,39 @@ def test_scaffold_writes_a_placeholder_for_a_truly_missing_required_input(projec
         output=str(project / "ci.yml"),
     )
     assert "<REQUIRED: python_version>" in cfg.read_text()
+
+
+def test_compile_reports_a_data_flow_needs_cycle_as_a_finding_not_a_traceback(
+    project, capsys
+):
+    (project / "loop.yml").write_text(
+        "on: push\njobs:\n  a:\n    steps: [{id: s, uses: x/a@v1}]\n"
+        "  b:\n    steps: [{id: t, uses: x/b@v1}]\n"
+    )
+    out = project / "ci.yml"
+    with pytest.raises(SystemExit) as e:
+        cli.compile(
+            str(project / "loop.yml"),
+            config_path=str(project / "pyproject.toml"),
+            output=str(out),
+        )
+    assert e.value.code == 1
+    err = capsys.readouterr().err
+    assert "DAG005" in err and "reads 'v' from 'a.s'" in err
+    assert "Compilation aborted" in err and not out.exists()
+
+
+def test_a_compilation_error_that_validation_misses_exits_cleanly(project, capsys):
+    # a job named `setup` collides with the generated one (reci#22); validation
+    # does not see it yet, the compiler does: a message and exit 1, no traceback
+    (project / "clash.yml").write_text(
+        "on: push\njobs:\n  setup:\n    steps: [{run: echo}]\n"
+    )
+    with pytest.raises(SystemExit) as e:
+        cli.compile(
+            str(project / "clash.yml"),
+            config_path=str(project / "pyproject.toml"),
+            output=str(project / "ci.yml"),
+        )
+    assert e.value.code == 1
+    assert "error: The jobs' needs form a cycle" in capsys.readouterr().err

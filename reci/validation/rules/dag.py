@@ -35,7 +35,7 @@ def check_data_flow_needs_cycles(graph, config: dict[str, Any]) -> Iterable[Find
     reverse flow) that can close a loop, which GitHub rejects.  A cycle made of
     explicit ``needs:`` alone is DAG001's.
     """
-    from reci.compiler import detect_cross_job_edges
+    from reci.compiler import describe_cycle_edges, detect_cross_job_edges
 
     explicit = {job_id: list(graph.job_needs(job_id)) for job_id in graph.job_ids()}
     if find_cycle(explicit):
@@ -47,13 +47,7 @@ def check_data_flow_needs_cycles(graph, config: dict[str, Any]) -> Iterable[Find
     cycle = find_cycle(combined)
     if not cycle:
         return
-    reasons = [
-        f"'{e.target_job}.{e.target_step_id}' reads '{e.source_output}' "
-        f"from '{e.source_job}.{e.source_step_id}'"
-        for e in edges
-        for consumer, producer in zip(cycle, cycle[1:])
-        if (e.target_job, e.source_job) == (consumer, producer)
-    ]
+    reasons = describe_cycle_edges(cycle, edges)
     yield Finding(
         rule_id="DAG005",
         severity=Severity.ERROR,
