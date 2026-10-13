@@ -133,11 +133,6 @@ def test_package_json_round_trip_and_other_keys_preserved(tmp_path):
     assert ad.read(str(p)) == {"node__version": 20, "extra": [1, 2]}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#16: write flattens nested structure",
-)
 def test_package_json_write_keeps_the_nested_structure(tmp_path):
     p = tmp_path / "package.json"
     p.write_text(json.dumps({"ci": {"node": {"version": 20}}}))
@@ -146,11 +141,6 @@ def test_package_json_write_keeps_the_nested_structure(tmp_path):
     assert json.loads(p.read_text())["ci"] == {"node": {"version": 20}}
 
 
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#16: write duplicates nested keys",
-)
 def test_pyproject_write_does_not_duplicate_nested_keys(tmp_path):
     p = tmp_path / "pyproject.toml"
     p.write_text(PYPROJECT)
@@ -195,3 +185,61 @@ def test_package_json_write_keeps_non_ascii_characters_readable(tmp_path):
     p.write_text("{}")
     PackageJsonAdapter().write(str(p), {"name": "café"})
     assert "café" in p.read_text()
+
+
+def test_yaml_write_keeps_nested_structure_and_comments(tmp_path):
+    p = tmp_path / ".ci.yml"
+    p.write_text("# top comment\ntesting:\n  coverage: true  # keep\nname: x\n")
+    ad = YamlAdapter()
+    ad.write(str(p), {**ad.read(str(p)), "testing__coverage": False, "extra": 1})
+    text = p.read_text()
+    assert "# top comment" in text and "# keep" in text
+    assert ad.read(str(p)) == {"testing__coverage": False, "name": "x", "extra": 1}
+    assert "testing__coverage" not in text  # updated in place, not duplicated
+
+
+def test_yaml_write_creates_a_missing_file(tmp_path):
+    p = tmp_path / "new.yml"
+    YamlAdapter().write(str(p), {"a": 1})
+    assert YamlAdapter().read(str(p)) == {"a": 1}
+
+
+@pytest.mark.parametrize("adapter_name", ["pyproject", "wads", "package-json", "yaml"])
+def test_write_updates_nested_leaves_in_place_and_keeps_new_keys_flat(
+    tmp_path, adapter_name
+):
+    ad = get_adapter(adapter_name)
+    p = tmp_path / ad.default_path()
+    p.write_text(
+        {
+            "pyproject": PYPROJECT,
+            "wads": PYPROJECT,
+            "package-json": json.dumps({"ci": {"testing": {"threshold": 80}}}),
+            "yaml": "testing:\n  threshold: 80\n",
+        }[adapter_name]
+    )
+    key, leaf = (
+        ("testing__pytest_args", "pytest_args")
+        if adapter_name == "wads"
+        else ("testing__threshold", "threshold")
+    )
+    ad.write(str(p), {key: 90, "scoped__new": "v"})
+    got = ad.read(str(p))
+    assert got[key] == 90 and got["scoped__new"] == "v"
+    assert p.read_text().count(leaf) == 1  # updated in place, no flat duplicate
+
+
+def test_package_json_null_ci_and_yaml_top_level_list_are_replaced_by_a_mapping(
+    tmp_path,
+):
+    p = tmp_path / "package.json"
+    p.write_text('{"name": "x", "ci": null}')
+    ad = PackageJsonAdapter()
+    assert ad.read(str(p)) == {}
+    ad.write(str(p), {"a": 1})
+    assert json.loads(p.read_text()) == {"name": "x", "ci": {"a": 1}}
+
+    y = tmp_path / ".ci.yml"
+    y.write_text("- not\n- a mapping\n")
+    YamlAdapter().write(str(y), {"a": 1})
+    assert YamlAdapter().read(str(y)) == {"a": 1}
