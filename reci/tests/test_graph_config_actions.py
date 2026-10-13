@@ -1,0 +1,219 @@
+"""Graph structure, config resolution, and action-spec parsing/fetching."""
+
+import httpx
+import pytest
+
+from reci.action_spec import (
+    ActionFetchError,
+    _parse_ref,
+    action_local_name,
+    action_spec_from_declaration,
+    action_spec_from_ref,
+    normalize_name,
+    parse_action_spec,
+)
+from reci.config import (
+    collect_required_config_keys,
+    flatten_config,
+    resolve_config_for_input,
+)
+from reci.recipe import parse_recipe_string
+from reci.tests._helpers import mk_graph, mk_spec
+
+# -- graph -------------------------------------------------------------------
+
+TWO_JOBS = """\
+on: push
+jobs:
+  a:
+    steps: [{id: a1, run: echo}, {id: a2, run: echo}]
+  b:
+    needs: [a]
+    steps: [{id: b1, run: echo}]
+"""
+
+
+def test_steps_are_sequential_and_jobs_chain_on_needs():
+    g = mk_graph(TWO_JOBS)
+    assert g.job_ids() == ["a", "b"]
+    assert g.predecessors("a.a2") == {"a.a1"}
+    assert g.predecessors("b.b1") == {"a.a2"}  # first step waits for last of `a`
+    assert g.execution_waves() == [("a.a1",), ("a.a2",), ("b.b1",)]
+
+
+def test_independent_jobs_share_a_wave():
+    g = mk_graph(
+        "on: push\njobs:\n  x:\n    steps: [{id: s, run: e}]\n"
+        "  y:\n    steps: [{id: s, run: e}]\n"
+    )
+    (wave,) = g.execution_waves()
+    assert sorted(wave) == ["x.s", "y.s"]
+
+
+def test_node_output_names_merge_declared_and_action_outputs_without_duplicates():
+    specs = {"x/a@v1": mk_spec("x/a@v1", outputs=["wheel", "sha"])}
+    g = mk_graph(
+        "on: push\njobs:\n  j:\n    steps: [{id: s, uses: x/a@v1, outputs: [sha, extra]}]\n",
+        specs,
+    )
+    assert g["j.s"].output_names == ["sha", "extra", "wheel"]
+    assert g["j.s"].input_specs == {}
+
+
+def test_cyclic_needs_fail_execution_waves_and_validation():
+    from graphlib import CycleError
+
+    g = mk_graph(
+        "on: push\njobs:\n  a:\n    needs: [b]\n    steps: [{run: e}]\n"
+        "  b:\n    needs: [a]\n    steps: [{run: e}]\n"
+    )
+    with pytest.raises(CycleError):
+        g.execution_waves()
+    assert [
+        f.rule_id for f in g.validate().findings if f.severity.value == "error"
+    ] == ["DAG001"]
+
+
+def test_needs_on_unknown_job_is_ignored_by_the_graph():
+    g = mk_graph(
+        "on: push\njobs:\n  a:\n    needs: [ghost]\n    steps: [{id: s, run: e}]\n"
+    )
+    assert g.predecessors("a.s") == set()
+
+
+# -- config ------------------------------------------------------------------
+
+
+def test_flatten_config_uses_double_underscore_and_keeps_lists():
+    assert flatten_config({"t": {"py": ["3.10"], "deep": {"x": 1}}, "top": 2}) == {
+        "t__py": ["3.10"],
+        "t__deep__x": 1,
+        "top": 2,
+    }
+
+
+def test_resolve_config_scoped_then_shared_then_none():
+    cfg = {"run_tests__root": "scoped", "root": "shared"}
+    assert resolve_config_for_input("root", "o/r/actions/run-tests@v1", cfg) == (
+        "run_tests__root",
+        "scoped",
+    )
+    assert resolve_config_for_input("root", "o/r/actions/other@v1", cfg) == (
+        "root",
+        "shared",
+    )
+    assert resolve_config_for_input("root", None, {"x": 1}) is None
+
+
+def test_collect_required_config_keys():
+    specs = {
+        "x/a@v1": mk_spec(
+            "x/a@v1",
+            inputs={
+                "need": {"required": True},
+                "has-default": {"required": True, "default": "d"},
+                "opt": {},
+                "given": {"required": True},
+            },
+        ),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"opt": {"required": True}}),
+    }
+    recipe = parse_recipe_string(
+        "on: push\njobs:\n  j:\n    steps:\n"
+        "      - {uses: x/a@v1, with: {given: 1}}\n      - {uses: x/b@v1}\n      - run: e\n"
+    )
+    assert collect_required_config_keys(recipe, specs) == {
+        "need": True,
+        "has_default": False,
+        "opt": True,  # optional in a, required in b -> required wins
+    }
+
+
+# -- action specs -------------------------------------------------------------
+
+
+def test_normalize_and_local_name():
+    assert normalize_name("  Root-Dir x ") == "root_dir_x"
+    assert action_local_name("i2mint/wads/actions/run-tests@master") == "run_tests"
+    assert action_local_name("run-tests") == "run_tests"
+
+
+@pytest.mark.parametrize(
+    "ref, expected",
+    [
+        ("a/b", ("a", "b", "", "main")),
+        ("a/b/c/d@v1", ("a", "b", "c/d", "v1")),
+        ("a", ("a", "", "", "main")),
+    ],
+)
+def test_parse_ref(ref, expected):
+    assert _parse_ref(ref) == expected
+
+
+def test_parse_action_spec_normalizes_and_coerces_required():
+    spec = parse_action_spec(
+        "x/y@v1",
+        action_yml_data={
+            "inputs": {
+                "Root-Dir": {"required": "true", "default": ".", "description": 5},
+                "flag": {"required": "no"},
+                "bare": None,
+            },
+            "outputs": {"New-Version": {"description": "v"}},
+        },
+    )
+    assert set(spec.inputs) == {"root_dir", "flag", "bare"}
+    assert spec.inputs["root_dir"].required is True
+    assert (
+        spec.inputs["root_dir"].default == "."
+        and spec.inputs["root_dir"].description == "5"
+    )
+    assert (
+        spec.inputs["flag"].required is False and spec.inputs["bare"].required is False
+    )
+    assert list(spec.outputs) == ["new_version"]
+
+
+def test_parse_action_spec_without_inputs_or_outputs():
+    spec = parse_action_spec("x/y@v1", action_yml_data={"name": "n"})
+    assert spec.inputs == {} and spec.outputs == {}
+
+
+def test_action_spec_from_declaration():
+    spec = action_spec_from_declaration(
+        "local", inputs={"A-b": {"required": True}}, outputs=["Out-Put"]
+    )
+    assert spec.inputs["a_b"].required and list(spec.outputs) == ["out_put"]
+    assert action_spec_from_declaration("x").inputs == {}
+
+
+class _Resp:
+    def __init__(self, status, text=""):
+        self.status_code, self.text = status, text
+
+
+def test_fetch_tries_action_yml_then_action_yaml(monkeypatch):
+    seen = []
+
+    def fake_get(url, **kw):
+        seen.append(url)
+        if url.endswith("action.yaml"):
+            return _Resp(200, "inputs:\n  a-b:\n    required: true\n")
+        return _Resp(404)
+
+    monkeypatch.setattr(httpx, "get", fake_get)
+    spec = action_spec_from_ref("o/r/sub/dir@v2")
+    assert seen == [
+        "https://raw.githubusercontent.com/o/r/v2/sub/dir/action.yml",
+        "https://raw.githubusercontent.com/o/r/v2/sub/dir/action.yaml",
+    ]
+    assert spec.ref == "o/r/sub/dir@v2" and spec.inputs["a_b"].required
+
+
+def test_fetch_failure_lists_urls_and_survives_http_errors(monkeypatch):
+    def boom(url, **kw):
+        raise httpx.ConnectError("offline")
+
+    monkeypatch.setattr(httpx, "get", boom)
+    with pytest.raises(ActionFetchError, match=r"action\.yml.*\n.*action\.yaml"):
+        action_spec_from_ref("o/r@v1")
