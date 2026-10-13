@@ -476,6 +476,24 @@ def test_cross_job_edge_applies_only_to_the_step_that_needs_it():
     assert steps[2]["with"] == {"v": "${{ steps.s.outputs.v }}"}  # same job wins
 
 
+def test_a_sibling_binding_to_a_config_input_does_not_steal_its_wiring():
+    # ``w`` is bound to ``v`` (produced by job p); ``v`` itself is in config, so
+    # it must stay on config rather than follow ``w``'s edge to p.
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"v": {}, "w": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  p:\n    steps: [{id: prod, uses: x/a@v1}]\n"
+        "  c:\n    steps: [{id: t, uses: x/b@v1, bind: {w: v}}]\n"
+    )
+    wf = _compile(recipe, specs, config={"v": "cfg"})
+    assert wf["jobs"]["c"]["steps"][0]["with"] == {
+        "v": "${{ needs.setup.outputs.v }}",
+        "w": "${{ needs.p.outputs.v }}",
+    }
+
+
 def test_cross_job_wiring_honours_bind():
     specs = {
         "x/a@v1": mk_spec("x/a@v1", outputs=["artifact"]),
