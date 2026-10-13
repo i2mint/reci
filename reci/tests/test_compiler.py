@@ -13,7 +13,7 @@ import pytest
 
 from reci.compiler import _rewrite_config_refs, compile_recipe
 from reci.recipe import parse_recipe_string
-from reci.yaml_gen import dump_workflow
+from reci.yaml_gen import dump_workflow, load_yaml_string
 
 from reci.tests._helpers import assert_valid_workflow, mk_spec
 
@@ -44,8 +44,8 @@ jobs:
         id: config
         run: |-
           {
-            echo "python_version=3.12"
-            echo "acme_ci_extra=a b"
+            printf '%s=%s\\n' python_version 3.12
+            printf '%s=%s\\n' acme_ci_extra 'a b'
           } >> "$GITHUB_OUTPUT"
   test:
     runs-on: ubuntu-latest
@@ -225,6 +225,8 @@ def _run_setup_script(tmp_path, config):
     wf = _compile(
         "on: push\njobs:\n  j:\n    steps:\n      - run: echo\n", {}, config=config
     )
+    # through the YAML text, as the runner would read it
+    wf = load_yaml_string(dump_workflow(wf))
     out = tmp_path / "gh_output"
     out.write_text("")
     subprocess.run(
@@ -232,7 +234,25 @@ def _run_setup_script(tmp_path, config):
         env={**os.environ, "GITHUB_OUTPUT": str(out)},
         check=True,
     )
-    return dict(line.split("=", 1) for line in out.read_text().splitlines())
+    return _parse_github_output(out.read_text())
+
+
+def _parse_github_output(text):
+    """Parse a GITHUB_OUTPUT file as the Actions runner does (k=v and k<<DELIM)."""
+    result, lines = {}, iter(text.split("\n"))
+    for line in lines:
+        if "<<" in line.split("=", 1)[0]:
+            key, delimiter = line.split("<<", 1)
+            body = []
+            for body_line in lines:
+                if body_line == delimiter:
+                    break
+                body.append(body_line)
+            result[key] = "\n".join(body)
+        elif "=" in line:
+            key, value = line.split("=", 1)
+            result[key] = value
+    return result
 
 
 @needs_posix_bash
@@ -242,22 +262,12 @@ def test_setup_script_exports_scalars_through_a_real_shell(tmp_path):
 
 
 @needs_posix_bash
-@pytest.mark.xfail(
-    strict=True,
-    raises=AssertionError,
-    reason="i2mint/reci#13: the shell expands $VAR and backticks in values",
-)
 def test_setup_script_does_not_expand_shell_syntax_in_values(tmp_path):
     got = _run_setup_script(tmp_path, {"s": "cost $5 `echo X`"})
     assert got == {"s": "cost $5 `echo X`"}
 
 
 @needs_posix_bash
-@pytest.mark.xfail(
-    strict=True,
-    raises=(AssertionError, ValueError),
-    reason="i2mint/reci#13: inner quotes stripped by the shell",
-)
 def test_setup_script_exports_lists_and_dicts_as_valid_json(tmp_path):
     import json
 
