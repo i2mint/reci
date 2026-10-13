@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T22:39:50.640004Z
+timestamp,2026-10-13T22:39:54.288518Z
 commit_sha,c7155cdb70589dcdb87cd4e3051eddd65d0d4ef7
 commit_message,"fix: FLOW004 sees bracket syntax, step names, job-level references, case-insensitive ids (#38)
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7876
-metrics.umpyre_stats.num_classes,1982
-metrics.umpyre_stats.total_lines,292023
-metrics.umpyre_stats.empty_lines,34532
-metrics.umpyre_stats.comment_lines,15043
-metrics.umpyre_stats.docs_lines,21457
-metrics.umpyre_stats.function_lines,115020
-metrics.umpyre_stats.empty_lines_ratio,0.11825095968468237
-metrics.umpyre_stats.comment_lines_ratio,0.051513065751670244
-metrics.umpyre_stats.function_lines_ratio,0.3938730853391685
-metrics.umpyre_stats.mean_lines_per_function,14.603859827323515
-metrics.umpyre_stats.files_analyzed,737
+metrics.umpyre_stats.num_functions,7780
+metrics.umpyre_stats.num_classes,1971
+metrics.umpyre_stats.total_lines,289864
+metrics.umpyre_stats.empty_lines,34199
+metrics.umpyre_stats.comment_lines,14897
+metrics.umpyre_stats.docs_lines,21424
+metrics.umpyre_stats.function_lines,113461
+metrics.umpyre_stats.empty_lines_ratio,0.11798291612618331
+metrics.umpyre_stats.comment_lines_ratio,0.05139306709353352
+metrics.umpyre_stats.function_lines_ratio,0.39142839400546464
+metrics.umpyre_stats.mean_lines_per_function,14.583676092544987
+metrics.umpyre_stats.files_analyzed,727
 metrics.umpyre_stats.pypi_version,0.0.27
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T22:37:45Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.302546501159668
+collection_duration_seconds,4.330369472503662
