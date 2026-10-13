@@ -1,6 +1,6 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:15:06.779726Z
+timestamp,2026-10-13T17:15:08.213492Z
 commit_sha,aa039d860472c2982e3b3f924c2fd741db6a5cfe
 commit_message,"fix: cross-job wiring emits needs.<job>.outputs.<name> (#9)
 
@@ -9,18 +9,18 @@ needs.<job>.outputs) instead of a bare step id.
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7836
-metrics.umpyre_stats.num_classes,1981
-metrics.umpyre_stats.total_lines,291170
-metrics.umpyre_stats.empty_lines,34386
-metrics.umpyre_stats.comment_lines,15019
-metrics.umpyre_stats.docs_lines,21261
-metrics.umpyre_stats.function_lines,114328
-metrics.umpyre_stats.empty_lines_ratio,0.11809595768794862
-metrics.umpyre_stats.comment_lines_ratio,0.05158155029707731
-metrics.umpyre_stats.function_lines_ratio,0.3926503417247656
-metrics.umpyre_stats.mean_lines_per_function,14.590096988259315
-metrics.umpyre_stats.files_analyzed,735
+metrics.umpyre_stats.num_functions,7740
+metrics.umpyre_stats.num_classes,1970
+metrics.umpyre_stats.total_lines,289011
+metrics.umpyre_stats.empty_lines,34053
+metrics.umpyre_stats.comment_lines,14873
+metrics.umpyre_stats.docs_lines,21228
+metrics.umpyre_stats.function_lines,112769
+metrics.umpyre_stats.empty_lines_ratio,0.11782596510167433
+metrics.umpyre_stats.comment_lines_ratio,0.05146170906989699
+metrics.umpyre_stats.function_lines_ratio,0.39018930075325853
+metrics.umpyre_stats.mean_lines_per_function,14.569638242894056
+metrics.umpyre_stats.files_analyzed,725
 metrics.umpyre_stats.pypi_version,0.0.9
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T17:12:42Z
@@ -41,4 +41,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.162626504898071
+collection_duration_seconds,3.474046468734741
