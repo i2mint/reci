@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T23:23:50.512963Z
+timestamp,2026-10-13T23:23:52.720400Z
 commit_sha,417810b44b217dcb0c1882d892dc57efe3a189b8
 commit_message,"fix: review of #65: FLOW007 only judges composite outputs (or typos), dedupes, tolerates odd output keys
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7803
-metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,290514
-metrics.umpyre_stats.empty_lines,34277
-metrics.umpyre_stats.comment_lines,14908
-metrics.umpyre_stats.docs_lines,21528
-metrics.umpyre_stats.function_lines,114009
-metrics.umpyre_stats.empty_lines_ratio,0.11798742917725136
-metrics.umpyre_stats.comment_lines_ratio,0.05131594346571938
-metrics.umpyre_stats.function_lines_ratio,0.39243891860633223
-metrics.umpyre_stats.mean_lines_per_function,14.610918877354864
-metrics.umpyre_stats.files_analyzed,727
+metrics.umpyre_stats.num_functions,7899
+metrics.umpyre_stats.num_classes,1982
+metrics.umpyre_stats.total_lines,292673
+metrics.umpyre_stats.empty_lines,34610
+metrics.umpyre_stats.comment_lines,15054
+metrics.umpyre_stats.docs_lines,21561
+metrics.umpyre_stats.function_lines,115568
+metrics.umpyre_stats.empty_lines_ratio,0.11825484414346386
+metrics.umpyre_stats.comment_lines_ratio,0.05143624454596085
+metrics.umpyre_stats.function_lines_ratio,0.3948707260321246
+metrics.umpyre_stats.mean_lines_per_function,14.63071274844917
+metrics.umpyre_stats.files_analyzed,737
 metrics.umpyre_stats.pypi_version,0.0.31
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T23:19:42Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,2.941840410232544
+collection_duration_seconds,2.7682156562805176

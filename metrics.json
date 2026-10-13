@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 2.941840410232544,
+  "collection_duration_seconds": 2.7682156562805176,
   "commit_message": "fix: review of #65: FLOW007 only judges composite outputs (or typos), dedupes, tolerates odd output keys\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "417810b44b217dcb0c1882d892dc57efe3a189b8",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14908,
-      "comment_lines_ratio": 0.05131594346571938,
-      "docs_lines": 21528,
-      "empty_lines": 34277,
-      "empty_lines_ratio": 0.11798742917725136,
-      "files_analyzed": 727,
-      "function_lines": 114009,
-      "function_lines_ratio": 0.39243891860633223,
-      "mean_lines_per_function": 14.610918877354864,
-      "num_classes": 1971,
-      "num_functions": 7803,
+      "comment_lines": 15054,
+      "comment_lines_ratio": 0.05143624454596085,
+      "docs_lines": 21561,
+      "empty_lines": 34610,
+      "empty_lines_ratio": 0.11825484414346386,
+      "files_analyzed": 737,
+      "function_lines": 115568,
+      "function_lines_ratio": 0.3948707260321246,
+      "mean_lines_per_function": 14.63071274844917,
+      "num_classes": 1982,
+      "num_functions": 7899,
       "pypi_version": "0.0.31",
-      "total_lines": 290514
+      "total_lines": 292673
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:23:50.512963Z",
+  "timestamp": "2026-10-13T23:23:52.720400Z",
   "workflow_status": {}
 }
