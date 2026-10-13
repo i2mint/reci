@@ -1,8 +1,10 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T16:41:59.177889Z
-commit_sha,ecae3f0f97faf496e7b95ba6cfa66b710b97d455
-commit_message,Merge 21508f1cc95dddb3053c49f49c2bd8c681b1c77d into e1aca33d1b574beb4024fa17bf5bde96909c69b4
+timestamp,2026-10-13T16:42:03.265095Z
+commit_sha,21508f1cc95dddb3053c49f49c2bd8c681b1c77d
+commit_message,"test: CLI command bodies end to end (compile, validate, scaffold, inspect)
+
+Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
 metrics.umpyre_stats.num_functions,7710
 metrics.umpyre_stats.num_classes,1964
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,2.6055688858032227
+collection_duration_seconds,4.156018972396851
