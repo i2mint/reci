@@ -12,6 +12,8 @@ import json
 import shlex
 from typing import Any
 
+from ruamel.yaml.scalarbool import ScalarBoolean
+
 from reci.action_spec import ActionSpec, normalize_name, action_local_name
 from reci.recipe import Recipe, StepSpec, JobSpec
 from reci.recipe_checks import find_recipe_problems, sub_config_refs
@@ -32,13 +34,23 @@ def _rewrite_config_refs(value: str) -> str:
 
 
 def _rewrite_all_config_refs(obj: Any) -> Any:
-    """Recursively rewrite config references in strings, dicts, and lists."""
+    """Recursively rewrite config references in strings, dicts, and lists.
+
+    Also returns plain Python values for the YAML loader's anchored scalars, so
+    the output carries no anchor whose alias was rewritten away.
+    """
     if isinstance(obj, str):
         return _rewrite_config_refs(obj)
     if isinstance(obj, dict):
         return {k: _rewrite_all_config_refs(v) for k, v in obj.items()}
     if isinstance(obj, list):
         return [_rewrite_all_config_refs(v) for v in obj]
+    if isinstance(obj, (bool, ScalarBoolean)):
+        return bool(obj)
+    if isinstance(obj, int):
+        return int(obj)
+    if isinstance(obj, float):
+        return float(obj)
     return obj
 
 
@@ -166,6 +178,9 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
         d["with"] = {keys[k]: _rewrite_config_refs(v) for k, v in step.with_.items()}
     if step.env:
         d["env"] = {k: _rewrite_config_refs(v) for k, v in step.env.items()}
+    if step.continue_on_error:
+        d["continue-on-error"] = _continue_on_error_value(step.continue_on_error)
+    d.update(_rewrite_all_config_refs(step.extra))
 
     return d
 
@@ -173,6 +188,11 @@ def _build_step(step: StepSpec, *, action_spec: ActionSpec | None = None) -> dic
 # ---------------------------------------------------------------------------
 # Job building
 # ---------------------------------------------------------------------------
+
+
+def _continue_on_error_value(value: bool | str) -> bool | str:
+    """``continue-on-error`` as emitted: ``true``, or an expression with config refs."""
+    return _rewrite_config_refs(value) if isinstance(value, str) else True
 
 
 def _build_job(
@@ -193,7 +213,7 @@ def _build_job(
 
     if job_spec.if_:
         d["if"] = _rewrite_config_refs(job_spec.if_)
-    d["runs-on"] = _rewrite_config_refs(job_spec.runs_on)
+    d["runs-on"] = _rewrite_all_config_refs(job_spec.runs_on)
 
     # needs: explicit + setup + data-flow driven
     needs = list(job_spec.needs)
@@ -210,23 +230,35 @@ def _build_job(
     if job_spec.strategy:
         d["strategy"] = _rewrite_all_config_refs(job_spec.strategy)
     if job_spec.permissions:
-        d["permissions"] = job_spec.permissions
+        d["permissions"] = _rewrite_all_config_refs(job_spec.permissions)
     if job_spec.continue_on_error:
-        # True, or an expression (rewritten for config refs)
-        coe = job_spec.continue_on_error
-        d["continue-on-error"] = (
-            _rewrite_config_refs(coe) if isinstance(coe, str) else True
-        )
+        d["continue-on-error"] = _continue_on_error_value(job_spec.continue_on_error)
     if job_spec.env:
         d["env"] = {k: _rewrite_config_refs(v) for k, v in job_spec.env.items()}
+    extra = _rewrite_all_config_refs(job_spec.extra)
+    d.update({k: v for k, v in extra.items() if k != "outputs"})
 
-    # Job-level outputs for cross-job forwarding
+    # Job-level outputs: those the recipe declares, plus cross-job forwarding
+    job_outputs = dict(extra.get("outputs") or {})
     if cross_job_edges:
-        job_outputs = _build_job_outputs(
+        forwarded = _build_job_outputs(
             job_spec.id, graph.job_nodes(job_spec.id), cross_job_edges
         )
-        if job_outputs:
-            d["outputs"] = job_outputs
+        declared = {k.casefold(): (k, v) for k, v in job_outputs.items()}
+        clash = sorted(
+            k
+            for k, v in forwarded.items()
+            if k.casefold() in declared
+            and (declared[k.casefold()][0] != k or declared[k.casefold()][1] != v)
+        )
+        if clash:
+            raise CompilationError(
+                f"Job '{job_spec.id}' declares outputs {clash} that the compiler "
+                f"also generates to forward them to other jobs; rename one."
+            )
+        job_outputs.update(forwarded)
+    if job_outputs:
+        d["outputs"] = job_outputs
 
     # Steps
     steps: list[dict] = []
@@ -536,6 +568,9 @@ def compile_recipe(
 
     if recipe.env:
         workflow["env"] = recipe.env
+    if recipe.defaults:
+        workflow["defaults"] = _rewrite_all_config_refs(recipe.defaults)
+    workflow.update(_rewrite_all_config_refs(recipe.extra))
 
     jobs: dict[str, Any] = {}
 

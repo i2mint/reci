@@ -136,8 +136,17 @@ def _recipe_strings(recipe: Recipe) -> Iterator[tuple[str, str, bool]]:
     does not offer the ``needs`` context in workflow-level ``env`` or in job
     ``permissions``.
     """
+    workflow_fields = {
+        "name": recipe.name,
+        "on": recipe.on,
+        "defaults": recipe.defaults,
+        **recipe.extra,
+    }
     for text in _walk_strings(recipe.env):
         yield "workflow env", text, False
+    for key, value in workflow_fields.items():
+        for text in _walk_strings(value):
+            yield f"workflow {key}", text, False
     for job_id, job in recipe.jobs.items():
         for text in _walk_strings(job.permissions):
             yield f"{job_id} permissions", text, False
@@ -147,11 +156,20 @@ def _recipe_strings(recipe: Recipe) -> Iterator[tuple[str, str, bool]]:
             job.strategy,
             job.env,
             job.continue_on_error,  # a bool contributes no strings
+            job.extra,
         )
         for text in _walk_strings(list(job_fields)):
             yield job_id, text, True
         for step in job.steps:
-            step_fields = (step.name, step.run, step.if_, step.with_, step.env)
+            step_fields = (
+                step.name,
+                step.run,
+                step.if_,
+                step.with_,
+                step.env,
+                step.continue_on_error,
+                step.extra,
+            )
             for text in _walk_strings(list(step_fields)):
                 yield f"{job_id}.{step.id}", text, True
 

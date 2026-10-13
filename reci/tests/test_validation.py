@@ -694,3 +694,13 @@ def test_FLOW004_ignores_job_level_references_and_dict_keys(extra):
         "{id: p, uses: x/p@v1}", "{id: r, run: e, env: {'${{ steps.p.outputs.v }}': 1}}"
     )
     assert len(_only("FLOW004", mk_graph(keyed, specs))) == 1
+
+
+def test_FLOW004_counts_a_declared_job_output_and_step_extra_keys_as_consumption():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v", "w"])}
+    recipe = (
+        "on: push\njobs:\n  j:\n    outputs: {o: '${{ steps.p.outputs.v }}'}\n"
+        "    steps:\n      - {id: p, uses: x/p@v1}\n"
+        "      - {run: x, working-directory: '${{ steps.p.outputs.w }}'}\n"
+    )
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
