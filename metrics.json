@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.474046468734741,
-  "commit_message": "fix: cross-job wiring emits needs.<job>.outputs.<name> (#9)\n\nUpstream outputs now carry the full outputs path (steps.<id>.outputs or\nneeds.<job>.outputs) instead of a bare step id.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "aa039d860472c2982e3b3f924c2fd741db6a5cfe",
+  "collection_duration_seconds": 4.355112552642822,
+  "commit_message": "Merge aa039d860472c2982e3b3f924c2fd741db6a5cfe into 06731d08030a2dd98b107afbefc0a6e3cf64fa49",
+  "commit_sha": "732967cf54c1b3065823840fa6d4082fb1435844",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14873,
-      "comment_lines_ratio": 0.05146170906989699,
-      "docs_lines": 21228,
-      "empty_lines": 34053,
-      "empty_lines_ratio": 0.11782596510167433,
-      "files_analyzed": 725,
-      "function_lines": 112769,
-      "function_lines_ratio": 0.39018930075325853,
-      "mean_lines_per_function": 14.569638242894056,
-      "num_classes": 1970,
-      "num_functions": 7740,
+      "comment_lines": 15019,
+      "comment_lines_ratio": 0.05158155029707731,
+      "docs_lines": 21261,
+      "empty_lines": 34386,
+      "empty_lines_ratio": 0.11809595768794862,
+      "files_analyzed": 735,
+      "function_lines": 114328,
+      "function_lines_ratio": 0.3926503417247656,
+      "mean_lines_per_function": 14.590096988259315,
+      "num_classes": 1981,
+      "num_functions": 7836,
       "pypi_version": "0.0.9",
-      "total_lines": 289011
+      "total_lines": 291170
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:15:08.213492Z",
+  "timestamp": "2026-10-13T17:15:10.431642Z",
   "workflow_status": {}
 }
