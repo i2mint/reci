@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-13T22:34:49Z",
+  "built_at": "2026-10-13T22:39:51Z",
   "package": {
     "name": "reci",
-    "version": "0.0.27",
+    "version": "0.0.28",
     "display_name": "reci",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "e080efe1eac92128fe70930643158d37fd6adc77",
-    "short_commit": "e080efe",
+    "commit": "7c8f67cbef4cf239cc6da5a460f7d139d5d250f9",
+    "short_commit": "7c8f67c",
     "branch": "main",
     "tags": [
-      "0.0.27"
+      "0.0.28"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/reci",
-    "commit_url": "https://github.com/i2mint/reci/commit/e080efe1eac92128fe70930643158d37fd6adc77",
+    "commit_url": "https://github.com/i2mint/reci/commit/7c8f67cbef4cf239cc6da5a460f7d139d5d250f9",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/reci",
-    "sha": "b41be8c31bb91020580b692002a7ba043775399f",
+    "sha": "e38378e60a5c19d60b6a9a4b70065f5918a6918c",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "38478528128",
-    "run_url": "https://github.com/i2mint/reci/actions/runs/38478528128",
+    "run_id": "38479075085",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/38479075085",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -63,13 +63,15 @@
   "pypi": {
     "checked": true,
     "latest": "0.0.27",
-    "relation": "same",
+    "relation": "ahead",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout e080efe1eac92128fe70930643158d37fd6adc77\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 7c8f67cbef4cf239cc6da5a460f7d139d5d250f9\npip install \"epythet==0.2.17\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.0.28) is ahead of the latest release on PyPI (0.0.27): these docs describe unreleased code."
+    ]
   }
 }
