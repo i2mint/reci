@@ -341,6 +341,21 @@ def test_cross_job_wiring_honours_bind_and_prefers_same_job_producer():
     assert "needs" not in wf["jobs"]["test"]
 
 
+def test_cross_job_edge_applies_only_to_the_step_that_needs_it():
+    specs = {
+        "x/a@v1": mk_spec("x/a@v1", outputs=["v"]),
+        "x/b@v1": mk_spec("x/b@v1", inputs={"v": {"required": True}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  p:\n    steps: [{id: prod, uses: x/a@v1}]\n"
+        "  c:\n    steps:\n      - {id: t, uses: x/b@v1}\n"
+        "      - {id: s, uses: x/a@v1}\n      - {id: u, uses: x/b@v1}\n"
+    )
+    steps = _compile(recipe, specs)["jobs"]["c"]["steps"]
+    assert steps[0]["with"] == {"v": "${{ needs.p.outputs.v }}"}  # nothing earlier
+    assert steps[2]["with"] == {"v": "${{ steps.s.outputs.v }}"}  # same job wins
+
+
 def test_cross_job_wiring_honours_bind():
     specs = {
         "x/a@v1": mk_spec("x/a@v1", outputs=["artifact"]),
