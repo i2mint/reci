@@ -1,35 +1,20 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T17:25:49.448552Z
-commit_sha,b794df51766a9024a5dab95f8f705f6c0843a8a8
-commit_message,"fix: emit action input/output ids with their original spelling (#10) (#26)
-
-* fix: emit action input/output ids with their original spelling (#10)
-
-Matching stays normalized; InputSpec/OutputSpec keep original_name and the
-compiler writes it into with: and steps./needs.<job>.outputs references.
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
-* fix: normalize bind: names; inspect and validation messages show the declared spelling
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-13T17:26:50.585527Z
+commit_sha,baadafc5cadb2403a72e07e934045b743c1b280a
+commit_message,Merge 9fc32857339d463973e9c1b85e0440d16dfc67d3 into b794df51766a9024a5dab95f8f705f6c0843a8a8
 python_version,3.10
-metrics.umpyre_stats.num_functions,7839
+metrics.umpyre_stats.num_functions,7840
 metrics.umpyre_stats.num_classes,1981
-metrics.umpyre_stats.total_lines,291208
-metrics.umpyre_stats.empty_lines,34391
-metrics.umpyre_stats.comment_lines,15019
-metrics.umpyre_stats.docs_lines,21272
-metrics.umpyre_stats.function_lines,114351
-metrics.umpyre_stats.empty_lines_ratio,0.11809771709568419
-metrics.umpyre_stats.comment_lines_ratio,0.05157481937309415
-metrics.umpyre_stats.function_lines_ratio,0.3926780857668745
-metrics.umpyre_stats.mean_lines_per_function,14.587447378492154
+metrics.umpyre_stats.total_lines,291233
+metrics.umpyre_stats.empty_lines,34396
+metrics.umpyre_stats.comment_lines,15020
+metrics.umpyre_stats.docs_lines,21278
+metrics.umpyre_stats.function_lines,114370
+metrics.umpyre_stats.empty_lines_ratio,0.11810474774493275
+metrics.umpyre_stats.comment_lines_ratio,0.05157382576837103
+metrics.umpyre_stats.function_lines_ratio,0.39270961738539245
+metrics.umpyre_stats.mean_lines_per_function,14.588010204081632
 metrics.umpyre_stats.files_analyzed,735
 metrics.umpyre_stats.pypi_version,0.0.11
 metrics.workflow_status.last_run_status,success
@@ -51,4 +36,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.488722562789917
+collection_duration_seconds,2.59605073928833

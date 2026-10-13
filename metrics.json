@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.488722562789917,
-  "commit_message": "fix: emit action input/output ids with their original spelling (#10) (#26)\n\n* fix: emit action input/output ids with their original spelling (#10)\n\nMatching stays normalized; InputSpec/OutputSpec keep original_name and the\ncompiler writes it into with: and steps./needs.<job>.outputs references.\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: normalize bind: names; inspect and validation messages show the declared spelling\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "b794df51766a9024a5dab95f8f705f6c0843a8a8",
+  "collection_duration_seconds": 2.59605073928833,
+  "commit_message": "Merge 9fc32857339d463973e9c1b85e0440d16dfc67d3 into b794df51766a9024a5dab95f8f705f6c0843a8a8",
+  "commit_sha": "baadafc5cadb2403a72e07e934045b743c1b280a",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15019,
-      "comment_lines_ratio": 0.05157481937309415,
-      "docs_lines": 21272,
-      "empty_lines": 34391,
-      "empty_lines_ratio": 0.11809771709568419,
+      "comment_lines": 15020,
+      "comment_lines_ratio": 0.05157382576837103,
+      "docs_lines": 21278,
+      "empty_lines": 34396,
+      "empty_lines_ratio": 0.11810474774493275,
       "files_analyzed": 735,
-      "function_lines": 114351,
-      "function_lines_ratio": 0.3926780857668745,
-      "mean_lines_per_function": 14.587447378492154,
+      "function_lines": 114370,
+      "function_lines_ratio": 0.39270961738539245,
+      "mean_lines_per_function": 14.588010204081632,
       "num_classes": 1981,
-      "num_functions": 7839,
+      "num_functions": 7840,
       "pypi_version": "0.0.11",
-      "total_lines": 291208
+      "total_lines": 291233
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T17:25:49.448552Z",
+  "timestamp": "2026-10-13T17:26:50.585527Z",
   "workflow_status": {}
 }
