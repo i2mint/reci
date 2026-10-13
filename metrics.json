@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.320164203643799,
-  "commit_message": "Merge 9324f1d743fe98284b8f2c71e124daac74626c72 into 7c8f67cbef4cf239cc6da5a460f7d139d5d250f9",
-  "commit_sha": "f3654cf14e03652b686015881600cccec9a8a8e5",
+  "collection_duration_seconds": 4.288999080657959,
+  "commit_message": "fix: FLOW004 counts step-level references only, values only (#38)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "9324f1d743fe98284b8f2c71e124daac74626c72",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14897,
-      "comment_lines_ratio": 0.05139271249473895,
-      "docs_lines": 21427,
-      "empty_lines": 34200,
-      "empty_lines_ratio": 0.11798555194469168,
-      "files_analyzed": 727,
-      "function_lines": 113463,
-      "function_lines_ratio": 0.3914325929912442,
-      "mean_lines_per_function": 14.583933161953727,
-      "num_classes": 1971,
-      "num_functions": 7780,
-      "pypi_version": "0.0.28",
-      "total_lines": 289866
+      "comment_lines": 15043,
+      "comment_lines_ratio": 0.05151271295265816,
+      "docs_lines": 21460,
+      "empty_lines": 34533,
+      "empty_lines_ratio": 0.11825357418029278,
+      "files_analyzed": 737,
+      "function_lines": 115022,
+      "function_lines_ratio": 0.39387723653796763,
+      "mean_lines_per_function": 14.60411376333164,
+      "num_classes": 1982,
+      "num_functions": 7876,
+      "pypi_version": "0.0.27",
+      "total_lines": 292025
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T22:42:10.208363Z",
+  "timestamp": "2026-10-13T22:42:11.752705Z",
   "workflow_status": {}
 }
