@@ -300,6 +300,7 @@ def _wire_step_inputs(
     node: ActionNode,
     *,
     upstream_outputs: dict[str, tuple[str, str]],
+    cross_job_sources: dict[str, tuple[str, str]] | None = None,
     config: dict[str, Any],
 ) -> dict[str, str]:
     """Resolve each input using the five-level precedence.
@@ -312,7 +313,13 @@ def _wire_step_inputs(
     *upstream_outputs*: ``{normalized_output_name: (outputs_path, output_name)}``
     where *outputs_path* is the context holding the output: ``steps.<id>.outputs``
     for a step in the same job, ``needs.<job>.outputs`` for another job.
+
+    *cross_job_sources*: ``{normalized input name: (outputs_path, output_name)}``
+    for the inputs of this step fed by another job's output.  Keyed by the
+    target input (not the output name) so one input's edge never feeds a
+    different input that happens to search for the same name.
     """
+    cross_job_sources = cross_job_sources or {}
     wired: dict[str, str] = {}
     specs = node.input_specs
 
@@ -327,6 +334,13 @@ def _wire_step_inputs(
         # Level 2: upstream output name match
         if search_name in upstream_outputs:
             outputs_path, out_name = upstream_outputs[search_name]
+            wired[input_spec.emitted_name] = f"${{{{ {outputs_path}.{out_name} }}}}"
+            continue
+
+        # Another job's output.  Placed before config only because
+        # detect_cross_job_edges never makes an edge for an input config supplies.
+        if norm_name in cross_job_sources:
+            outputs_path, out_name = cross_job_sources[norm_name]
             wired[input_spec.emitted_name] = f"${{{{ {outputs_path}.{out_name} }}}}"
             continue
 
@@ -497,17 +511,19 @@ def compile_recipe(
         for node in graph.job_nodes(job_id):
             upstream = _build_upstream_outputs(graph, job_id, up_to_key=node.key)
 
-            # Add cross-job sources
-            for edge in cross_job_edges:
-                if edge.target_job == job_id and edge.target_step_id == node.step_id:
-                    upstream[normalize_name(edge.source_output)] = (
-                        f"needs.{edge.source_job}.outputs",  # job-level outputs
-                        edge.source_output,
-                    )
+            cross_job_sources = {
+                edge.target_input: (
+                    f"needs.{edge.source_job}.outputs",  # job-level outputs
+                    edge.source_output,
+                )
+                for edge in cross_job_edges
+                if edge.target_job == job_id and edge.target_step_id == node.step_id
+            }
 
             wired = _wire_step_inputs(
                 node,
                 upstream_outputs=upstream,
+                cross_job_sources=cross_job_sources,
                 config=config,
             )
             if wired:
