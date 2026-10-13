@@ -668,20 +668,29 @@ def test_FLOW004_counts_bracket_and_case_variants_of_a_reference(ref):
     assert _only("FLOW004", mk_graph(recipe, specs)) == []
 
 
-_REF = "${{ steps.p.outputs.v }}"
+def test_FLOW004_counts_a_reference_in_a_step_name():
+    specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
+    recipe = _steps(
+        "{id: p, uses: x/p@v1}", "{id: r, name: 'n ${{ steps.p.outputs.v }}', run: e}"
+    )
+    assert _only("FLOW004", mk_graph(recipe, specs)) == []
 
 
 @pytest.mark.parametrize(
     "extra",
     [
-        f"    steps: [{{id: p, uses: x/p@v1}}, {{id: r, name: 'n {_REF}', run: echo}}]\n",
-        f"    if: '{_REF}'\n    steps: [{{id: p, uses: x/p@v1}}]\n",
-        f"    env: {{E: '{_REF}'}}\n    steps: [{{id: p, uses: x/p@v1}}]\n",
-        f"    strategy: {{matrix: {{x: ['{_REF}']}}}}\n"
-        "    steps: [{id: p, uses: x/p@v1}]\n",
+        "    if: ${{ steps.p.outputs.v }}\n",  # job-level `steps` never resolves
+        "    continue-on-error: ${{ steps.p.outputs.v }}\n",
+        "    env: {E: '${{ steps.p.outputs.v }}'}\n",
     ],
 )
-def test_FLOW004_counts_step_names_and_job_level_references(extra):
+def test_FLOW004_ignores_job_level_references_and_dict_keys(extra):
     specs = {"x/p@v1": mk_spec("x/p@v1", outputs=["v"])}
-    recipe = f"on: push\njobs:\n  a:\n{extra}"
-    assert _only("FLOW004", mk_graph(recipe, specs)) == []
+    recipe = (
+        f"on: push\njobs:\n  a:\n{extra}    steps: [{{id: p, uses: x/p@v1}}]\n"
+    )
+    assert len(_only("FLOW004", mk_graph(recipe, specs))) == 1
+    keyed = _steps(
+        "{id: p, uses: x/p@v1}", "{id: r, run: e, env: {'${{ steps.p.outputs.v }}': 1}}"
+    )
+    assert len(_only("FLOW004", mk_graph(keyed, specs))) == 1

@@ -108,9 +108,8 @@ def _strings_in(value) -> Iterable[str]:
     """Every string anywhere inside a (possibly nested) value."""
     if isinstance(value, str):
         yield value
-    elif isinstance(value, dict):
-        for k, v in value.items():
-            yield from _strings_in(k)
+    elif isinstance(value, dict):  # values only: a key can never hold an expression
+        for v in value.values():
             yield from _strings_in(v)
     elif isinstance(value, (list, tuple)):
         for v in value:
@@ -118,10 +117,13 @@ def _strings_in(value) -> Iterable[str]:
 
 
 def _job_texts(graph, job_id: str) -> Iterable[str]:
-    """Every string of job *job_id* in which a ``${{ ... }}`` reference can appear."""
+    """Every string of a step of *job_id* where the ``steps`` context is available.
+
+    A job's own ``if``/``strategy``/``env``/``continue-on-error`` cannot see
+    ``steps``, so a reference there never resolves and does not count.
+    """
     if graph.recipe is not None and job_id in graph.recipe.jobs:
         job = graph.recipe.jobs[job_id]
-        yield from _strings_in((job.if_, job.strategy, job.env, job.continue_on_error))
         for step in job.steps:
             yield from _strings_in(
                 (step.with_, step.env, step.run, step.if_, step.name)
@@ -137,9 +139,9 @@ def check_unused_outputs(graph, config: dict[str, Any]) -> Iterable[Finding]:
 
     Consumed means: matched by an input of a later step (by name, honouring
     ``bind:``), or referenced explicitly as ``steps.<id>.outputs.<name>`` (dot or
-    bracket syntax, ids compared case-insensitively) anywhere in the same job: a
-    step's ``with:``, ``env:``, ``run:``, ``if:`` or ``name:``, or the job's
-    ``if:``, ``strategy``, ``env`` or ``continue-on-error``.  ``needs.`` references
+    bracket syntax, ids compared case-insensitively) in a step of the same job:
+    its ``with:``, ``env:``, ``run:``, ``if:`` or ``name:`` (job-level fields
+    cannot read ``steps``).  ``needs.`` references
     are not counted: a recipe cannot declare job outputs, so only the compiler's
     own forwarding makes them resolve.
     """
