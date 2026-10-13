@@ -1,0 +1,47 @@
+{
+  "collection_duration_seconds": 3.609140634536743,
+  "commit_message": "fix: scaffold writes placeholders only for required inputs (#34) (#57)\n\n* fix: scaffold writes placeholders only for required inputs (#34)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix: drop the cross-job requiredness merge now that scaffold writes only required keys (#34)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "b41be8c31bb91020580b692002a7ba043775399f",
+  "metrics": {
+    "coverage": {
+      "branch_coverage": 0.0,
+      "error": "No coverage file found",
+      "line_coverage": 0.0,
+      "statements_covered": 0,
+      "statements_total": 0
+    },
+    "umpyre_stats": {
+      "comment_lines": 15041,
+      "comment_lines_ratio": 0.05151433160831161,
+      "docs_lines": 21449,
+      "empty_lines": 34526,
+      "empty_lines_ratio": 0.11824904016412252,
+      "files_analyzed": 737,
+      "function_lines": 114982,
+      "function_lines_ratio": 0.3938049914890556,
+      "mean_lines_per_function": 14.60274320548641,
+      "num_classes": 1982,
+      "num_functions": 7874,
+      "pypi_version": "0.0.26",
+      "total_lines": 291977
+    },
+    "wily": {
+      "cyclomatic_avg": 0.0,
+      "error": "wily report failed: Usage: wily report [OPTIONS] FILE [METRICS]...\nTry 'wily report --help' for help.\n\nError: Invalid value for '-f' / '--format': 'json' is not one of 'CONSOLE', 'HTML'.\n",
+      "files_analyzed": 0,
+      "maintainability_index": 0.0,
+      "total_loc": 0
+    },
+    "workflow_status": {
+      "last_run_status": "success",
+      "last_success_timestamp": "2026-10-13T22:32:41Z",
+      "recent_failure_count": 0,
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38478376839",
+      "total_runs_analyzed": 10
+    }
+  },
+  "python_version": "3.10",
+  "schema_version": "1.0",
+  "timestamp": "2026-10-13T22:33:54.911352Z",
+  "workflow_status": {}
+}
