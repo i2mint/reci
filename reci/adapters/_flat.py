@@ -39,14 +39,15 @@ def merge_flat(target: MutableMapping, flat: dict[str, Any]) -> None:
     """Merge a flat config into the nested mapping *target*, in place.
 
     A key that matches an existing nested leaf (``testing__coverage``) updates
-    that leaf; any other key (including a brand-new ``a__b``) is stored flat,
-    which :func:`flatten` reads back as the same key.  Existing keys that
+    that leaf; a new key whose ``__`` prefix names an existing table
+    (``testing__new``) is added inside it; any other key is stored flat.
+    :func:`flatten` reads all of these back as the same key.  Existing keys that
     *flat* does not mention are left alone.
 
     >>> t = {'testing': {'coverage': True}}
-    >>> merge_flat(t, {'testing__coverage': False, 'new': 1})
+    >>> merge_flat(t, {'testing__coverage': False, 'testing__new': 2, 'new': 1})
     >>> t
-    {'testing': {'coverage': False}, 'new': 1}
+    {'testing': {'coverage': False, 'new': 2}, 'new': 1}
     """
     leaves = _leaves(target)
     for key, value in flat.items():
@@ -57,4 +58,21 @@ def merge_flat(target: MutableMapping, flat: dict[str, Any]) -> None:
                 node = node[part]
             node[last] = value
         else:
-            target[key] = value
+            _set_new(target, key, value)
+
+
+def _set_new(target: MutableMapping, key: str, value: Any) -> None:
+    """Store a new *key* in the deepest existing table its ``__`` prefix names.
+
+    ``testing__new`` goes inside ``[testing]`` when that table exists, else it is
+    stored flat; :func:`flatten` reads both back as the same key.
+    """
+    parts = key.split("__")
+    for end in range(len(parts) - 1, 0, -1):
+        node: Any = target
+        for part in parts[:end]:
+            node = node.get(part) if isinstance(node, dict) else None
+        if isinstance(node, dict):
+            node["__".join(parts[end:])] = value
+            return
+    target[key] = value

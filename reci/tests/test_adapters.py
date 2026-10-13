@@ -243,3 +243,23 @@ def test_package_json_null_ci_and_yaml_top_level_list_are_replaced_by_a_mapping(
     y.write_text("- not\n- a mapping\n")
     YamlAdapter().write(str(y), {"a": 1})
     assert YamlAdapter().read(str(y)) == {"a": 1}
+
+
+@pytest.mark.parametrize("adapter_name", ["pyproject", "package-json", "yaml"])
+def test_a_new_key_under_an_existing_table_goes_inside_that_table(
+    tmp_path, adapter_name
+):
+    ad = get_adapter(adapter_name)
+    p = tmp_path / ad.default_path()
+    p.write_text(
+        {
+            "pyproject": PYPROJECT,
+            "package-json": json.dumps({"ci": {"testing": {"threshold": 80}}}),
+            "yaml": "testing:\n  threshold: 80\n",
+        }[adapter_name]
+    )
+    ad.write(str(p), {"testing__fresh": 1, "other__fresh": 2})
+    assert ad.read(str(p))["testing__fresh"] == 1
+    text = p.read_text()
+    assert "testing__fresh" not in text  # nested under [testing], not flat
+    assert "other__fresh" in text  # no such table: stays flat
