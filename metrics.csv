@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-13T23:15:42.889365Z
+timestamp,2026-10-13T23:15:44.679382Z
 commit_sha,ed860d445dd351865369dd9684cc2071a6489ea7
 commit_message,"fix: review of #64: DAG005 leaves explicit-only cycles to DAG001, suggests only avoiding producers; FLOW006 skips always-true/resilient cases
 
 Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7795
-metrics.umpyre_stats.num_classes,1971
-metrics.umpyre_stats.total_lines,290332
-metrics.umpyre_stats.empty_lines,34256
-metrics.umpyre_stats.comment_lines,14903
-metrics.umpyre_stats.docs_lines,21508
-metrics.umpyre_stats.function_lines,113850
-metrics.umpyre_stats.empty_lines_ratio,0.11798906079936074
-metrics.umpyre_stats.comment_lines_ratio,0.05133089015334169
-metrics.umpyre_stats.function_lines_ratio,0.39213727732389125
-metrics.umpyre_stats.mean_lines_per_function,14.605516356638871
-metrics.umpyre_stats.files_analyzed,727
+metrics.umpyre_stats.num_functions,7891
+metrics.umpyre_stats.num_classes,1982
+metrics.umpyre_stats.total_lines,292491
+metrics.umpyre_stats.empty_lines,34589
+metrics.umpyre_stats.comment_lines,15049
+metrics.umpyre_stats.docs_lines,21541
+metrics.umpyre_stats.function_lines,115409
+metrics.umpyre_stats.empty_lines_ratio,0.11825663011853356
+metrics.umpyre_stats.comment_lines_ratio,0.05145115576205764
+metrics.umpyre_stats.function_lines_ratio,0.3945728244629749
+metrics.umpyre_stats.mean_lines_per_function,14.625396020783171
+metrics.umpyre_stats.files_analyzed,737
 metrics.umpyre_stats.pypi_version,0.0.30
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-13T23:10:35Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.48894476890564
+collection_duration_seconds,4.656558036804199
