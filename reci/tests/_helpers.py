@@ -58,7 +58,12 @@ def lint_workflow(workflow: dict) -> list[str]:
         proc = subprocess.run(
             [exe, "-no-color", str(path)], capture_output=True, text=True
         )
-    return [] if proc.returncode == 0 else proc.stdout.strip().splitlines()
+    if proc.returncode == 0:
+        return []
+    # exit 1: findings on stdout; other codes (bad invocation/crash): stderr
+    return (proc.stdout + proc.stderr).strip().splitlines() or [
+        f"actionlint exited {proc.returncode} without output"
+    ]
 
 
 def assert_valid_workflow(workflow: dict) -> None:
