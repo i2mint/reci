@@ -29,7 +29,7 @@ reci/
 - **Recipe**: Simplified workflow YAML with `${{ config.* }}`, `bind:`, and `outputs:` extensions
 - **Five-level input resolution**: explicit `with:` > upstream output match > config > action default > error
 - **Config adapters**: Read CI config from `[tool.ci]` in pyproject.toml, `[tool.wads.ci]`, package.json, or `.ci.yml`
-- **Validation rules**: DAG001-DAG007, FLOW001-FLOW006, CONF001/CONF003/CONF004/CONF005, PURE001-PURE002, ACT002
+- **Validation rules**: DAG001-DAG007, FLOW001-FLOW007, CONF001/CONF003/CONF004/CONF005, PURE001-PURE002, ACT002
 
 ## CLI
 

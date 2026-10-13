@@ -657,7 +657,6 @@ def test_CONF005_reports_unusable_keys_and_unexportable_values():
     [
         "steps['p'].outputs.v",
         "steps.p.outputs['v']",
-        "steps[\"p\"].outputs[\"v\"]",
         "steps.P.outputs.V",
     ],
 )
@@ -829,3 +828,116 @@ def test_FLOW006_stays_quiet_when_the_skip_cannot_reach_the_consumer():
     assert _only("FLOW006", mk_graph(resilient, _PRODUCERS)) == []
     never_skipped = plain.replace("  p1:\n", "  p1:\n    if: always()\n")
     assert _only("FLOW006", mk_graph(never_skipped, _PRODUCERS)) == []
+
+
+# -- FLOW004: which references count --------------------------------------------
+
+_P = {"x/p@v1": mk_spec("x/p@v1", outputs=["wheel-path"])}
+
+
+def _flow004(*steps):
+    return _only("FLOW004", mk_graph(_steps("{id: p, uses: x/p@v1}", *steps), _P))
+
+
+@pytest.mark.parametrize(
+    "step",
+    [
+        "{id: r, run: 'echo Steps.P.Outputs.Wheel-Path'}",  # not inside ${{ }}
+        "{id: r, run: 'echo ${{ steps.p.outputs.wheel_path }}'}",  # `_` is not `-`
+        "{id: r, run: \"echo ${{ 'steps.p.outputs.wheel-path' }}\"}",  # a string literal
+        "{id: r, run: 'echo ${{ steps.q.outputs.wheel-path }}'}",  # another step
+    ],
+)
+def test_FLOW004_does_not_count_text_that_is_not_a_reference(step):
+    assert len(_flow004(step)) == 1
+
+
+@pytest.mark.parametrize(
+    "step",
+    [
+        "{id: r, run: 'echo ${{ Steps.P.Outputs.Wheel-Path }}'}",
+        "{id: r, run: \"echo ${{ steps.p['outputs'].wheel-path }}\"}",
+        "{id: r, run: x, if: steps.p.outputs.wheel-path}",  # `if:` needs no ${{ }}
+    ],
+)
+def test_FLOW004_counts_case_variants_and_a_bare_if(step):
+    assert _flow004(step) == []
+
+
+def test_FLOW004_does_not_count_a_reference_before_or_inside_the_producing_step():
+    before = _steps(
+        "{id: r, run: 'echo ${{ steps.p.outputs.wheel-path }}'}",
+        "{id: p, uses: x/p@v1}",
+    )
+    assert len(_only("FLOW004", mk_graph(before, _P))) == 1
+    inside = _steps(
+        "{id: p, uses: x/p@v1, env: {E: '${{ steps.p.outputs.wheel-path }}'}}"
+    )
+    assert len(_only("FLOW004", mk_graph(inside, _P))) == 1
+
+
+# -- FLOW007: references that resolve to nothing --------------------------------
+
+
+def _flow007(recipe, specs=None):
+    return _only("FLOW007", mk_graph(recipe, _P if specs is None else specs))
+
+
+def test_FLOW007_step_output_references_that_are_empty():
+    ghost = _steps("{id: r, run: 'echo ${{ steps.nope.outputs.v }}'}")
+    (f,) = _flow007(ghost)
+    assert "no step 'nope'" in f.message and f.location == "j.r"
+    early = _steps(
+        "{id: r, run: 'echo ${{ steps.p.outputs.wheel-path }}'}",
+        "{id: p, uses: x/p@v1}",
+    )
+    (f,) = _flow007(early)
+    assert "has not run at that point" in f.message
+    typo = _steps(
+        "{id: p, uses: x/p@v1}", "{id: r, run: 'echo ${{ steps.p.outputs.wheel_path }}'}"
+    )
+    (f,) = _flow007(typo)
+    assert "no output 'wheel_path'" in f.message and "did you mean 'wheel-path'" in f.message
+
+
+def test_FLOW007_accepts_valid_step_references_and_undeclared_run_outputs():
+    ok = _steps(
+        "{id: p, uses: x/p@v1}",
+        "{id: q, run: x, outputs: [anything]}",
+        "{id: r, run: 'echo ${{ steps.P.outputs.Wheel-Path }} ${{ steps.q.outputs.zzz }}'}",
+    )
+    assert _flow007(ok) == []
+
+
+def test_FLOW007_needs_references():
+    base = (
+        "on: push\njobs:\n  a:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  b:\n    needs: a\n    steps: [{id: r, run: 'echo ${{ needs.%s.outputs.%s }}'}]\n"
+    )
+    (f,) = _flow007(base % ("a", "v"))
+    assert "declares no such output" in f.message and f.location == "b"
+    (f,) = _flow007(base % ("zz", "v"))
+    assert "'zz' is not a job it needs" in f.message
+    declared = base.replace(
+        "steps: [{id: p, uses: x/p@v1}]",
+        "outputs: {v: x}\n    steps: [{id: p, uses: x/p@v1}]",
+        1,
+    )
+    assert _flow007(declared % ("a", "v")) == []
+    assert _flow007(base % ("setup", "anything")) == []  # config is CONF004's
+    not_needed = base.replace("needs: a\n", "")
+    (f,) = _flow007(not_needed % ("a", "v"))
+    assert "not a job it needs" in f.message
+
+
+def test_FLOW007_accepts_an_output_the_compiler_forwards():
+    specs = {
+        "x/p@v1": mk_spec("x/p@v1", outputs=["v"]),
+        "x/c@v1": mk_spec("x/c@v1", inputs={"v": {}}),
+    }
+    recipe = (
+        "on: push\njobs:\n  a:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  b:\n    steps:\n      - {id: c, uses: x/c@v1}\n"
+        "      - {id: r, run: 'echo ${{ needs.a.outputs.v }}'}\n"
+    )  # b reads v through c, so the compiler forwards it and adds needs: a
+    assert _flow007(recipe, specs) == []
