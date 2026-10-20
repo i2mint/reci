@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.6307461261749268,
+  "collection_duration_seconds": 3.0758535861968994,
   "commit_message": "scaffold: scope keys shared with optional inputs, honour scoped keys; validate: CONF006 empty value shadows default, CONF007 leftover placeholder (#58)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "3c9be763047f9178dea6933fe3bdaf51ba521583",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15151,
-      "comment_lines_ratio": 0.051480781776666304,
-      "docs_lines": 21779,
-      "empty_lines": 34844,
-      "empty_lines_ratio": 0.11839458519082309,
-      "files_analyzed": 743,
-      "function_lines": 116730,
-      "function_lines_ratio": 0.3966306947917799,
-      "mean_lines_per_function": 14.653527491840322,
-      "num_classes": 1984,
-      "num_functions": 7966,
+      "comment_lines": 15005,
+      "comment_lines_ratio": 0.05136148145612624,
+      "docs_lines": 21746,
+      "empty_lines": 34511,
+      "empty_lines_ratio": 0.11812969587020145,
+      "files_analyzed": 733,
+      "function_lines": 115171,
+      "function_lines_ratio": 0.3942254702288247,
+      "mean_lines_per_function": 14.634180432020331,
+      "num_classes": 1973,
+      "num_functions": 7870,
       "pypi_version": "0.0.33",
-      "total_lines": 294304
+      "total_lines": 292145
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-20T04:50:43.697122Z",
+  "timestamp": "2026-10-20T04:50:47.208127Z",
   "workflow_status": {}
 }
