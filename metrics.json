@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 2.7609169483184814,
-  "commit_message": "Merge 5a1a09b6bb6ee3be372462d76bce1018eb82afb9 into 2eb9059106424a59f610e1c3c82a0f5ad0435428",
-  "commit_sha": "0dc5b5bd9c6699953ef60a715f58f899c63b8425",
+  "collection_duration_seconds": 3.664642810821533,
+  "commit_message": "Export a top-level datetime config value as ISO text, like a nested one (#66)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "5a1a09b6bb6ee3be372462d76bce1018eb82afb9",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15005,
-      "comment_lines_ratio": 0.05138364284515733,
-      "docs_lines": 21726,
-      "empty_lines": 34497,
-      "empty_lines_ratio": 0.118132724240546,
-      "files_analyzed": 733,
-      "function_lines": 115060,
-      "function_lines_ratio": 0.39401545789828746,
-      "mean_lines_per_function": 14.631230925737539,
-      "num_classes": 1973,
-      "num_functions": 7864,
+      "comment_lines": 15151,
+      "comment_lines_ratio": 0.05150283161895179,
+      "docs_lines": 21759,
+      "empty_lines": 34830,
+      "empty_lines_ratio": 0.11839770479097689,
+      "files_analyzed": 743,
+      "function_lines": 116619,
+      "function_lines_ratio": 0.3964232539482898,
+      "mean_lines_per_function": 14.650628140703517,
+      "num_classes": 1984,
+      "num_functions": 7960,
       "pypi_version": "0.0.33",
-      "total_lines": 292019
+      "total_lines": 294178
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-20T02:55:01.662050Z",
+  "timestamp": "2026-10-20T02:55:10.251965Z",
   "workflow_status": {}
 }
