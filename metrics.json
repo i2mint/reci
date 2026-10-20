@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.5894320011138916,
+  "collection_duration_seconds": 3.6127781867980957,
   "commit_message": "Validation/config follow-ups, part 2 (#70)\n\n* validation: FLOW007 checks a real setup job, index literals only on steps/needs, mixed-text if: reported, CONF008 for bare boolean config conditions (#67)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n* fix doctest whitespace\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\n\n---------\n\nCo-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>",
   "commit_sha": "0d5afefd21b5c9f8a4372925ad60824155e637a4",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15012,
-      "comment_lines_ratio": 0.05135520684736091,
-      "docs_lines": 21768,
-      "empty_lines": 34530,
-      "empty_lines_ratio": 0.11812518601381378,
-      "files_analyzed": 733,
-      "function_lines": 115308,
-      "function_lines_ratio": 0.39446217633596403,
-      "mean_lines_per_function": 14.638567982734543,
-      "num_classes": 1973,
-      "num_functions": 7877,
+      "comment_lines": 15158,
+      "comment_lines_ratio": 0.051474483489316616,
+      "docs_lines": 21801,
+      "empty_lines": 34863,
+      "empty_lines_ratio": 0.11838995368043576,
+      "files_analyzed": 743,
+      "function_lines": 116867,
+      "function_lines_ratio": 0.39686426058490337,
+      "mean_lines_per_function": 14.657845227643296,
+      "num_classes": 1984,
+      "num_functions": 7973,
       "pypi_version": "0.0.35",
-      "total_lines": 292317
+      "total_lines": 294476
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-20T06:45:15.750277Z",
+  "timestamp": "2026-10-20T06:45:18.690892Z",
   "workflow_status": {}
 }
