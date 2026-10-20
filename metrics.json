@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.0758535861968994,
-  "commit_message": "scaffold: scope keys shared with optional inputs, honour scoped keys; validate: CONF006 empty value shadows default, CONF007 leftover placeholder (#58)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "3c9be763047f9178dea6933fe3bdaf51ba521583",
+  "collection_duration_seconds": 3.60363507270813,
+  "commit_message": "Merge 3c9be763047f9178dea6933fe3bdaf51ba521583 into 78f02a49836c047a57ee711125648592f8ab2a5b",
+  "commit_sha": "909bfc9e56d9f7db2faf06f67b7436c533f5149c",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.634180432020331,
       "num_classes": 1973,
       "num_functions": 7870,
-      "pypi_version": "0.0.33",
+      "pypi_version": "0.0.34",
       "total_lines": 292145
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-20T04:50:47.208127Z",
+  "timestamp": "2026-10-20T04:50:53.839256Z",
   "workflow_status": {}
 }

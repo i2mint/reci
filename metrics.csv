@@ -1,10 +1,8 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-20T04:50:47.208127Z
-commit_sha,3c9be763047f9178dea6933fe3bdaf51ba521583
-commit_message,"scaffold: scope keys shared with optional inputs, honour scoped keys; validate: CONF006 empty value shadows default, CONF007 leftover placeholder (#58)
-
-Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
+timestamp,2026-10-20T04:50:53.839256Z
+commit_sha,909bfc9e56d9f7db2faf06f67b7436c533f5149c
+commit_message,Merge 3c9be763047f9178dea6933fe3bdaf51ba521583 into 78f02a49836c047a57ee711125648592f8ab2a5b
 python_version,3.10
 metrics.umpyre_stats.num_functions,7870
 metrics.umpyre_stats.num_classes,1973
@@ -18,7 +16,7 @@ metrics.umpyre_stats.comment_lines_ratio,0.05136148145612624
 metrics.umpyre_stats.function_lines_ratio,0.3942254702288247
 metrics.umpyre_stats.mean_lines_per_function,14.634180432020331
 metrics.umpyre_stats.files_analyzed,733
-metrics.umpyre_stats.pypi_version,0.0.33
+metrics.umpyre_stats.pypi_version,0.0.34
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-20T02:58:31Z
 metrics.workflow_status.recent_failure_count,0
@@ -35,4 +33,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.0758535861968994
+collection_duration_seconds,3.60363507270813
