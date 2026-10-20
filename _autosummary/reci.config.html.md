@@ -34,13 +34,13 @@ config key.  Keys the recipe references as `${{ config.X }}` are required.
 
 Convert a nested dict to a flat dict with `__` separators.
 
-* **Return type:**
-  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
-
 ```pycon
 >>> flatten_config({'testing': {'python_versions': ['3.10']}})
 {'testing__python_versions': ['3.10']}
 ```
+
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
 
 ### reci.config.resolve_config_for_input(input_name, ref, config)
 

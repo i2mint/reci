@@ -47,9 +47,6 @@ ruamel keeps the spelling of what it loads, so `3.10` stays `3.10`
 Anchors and tags are not part of the spelling.  When ruamel’s text would be
 a different number (negative hex, underscored floats), `str()` is used.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> scalar_source_text(load_yaml_string("v: 3.10")["v"])
 '3.10'
@@ -58,3 +55,6 @@ a different number (negative hex, underscored floats), `str()` is used.
 >>> scalar_source_text(7)
 '7'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)

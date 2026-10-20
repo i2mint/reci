@@ -24,13 +24,13 @@ input renaming, and `outputs:` annotations on `run:` steps.
 | [`RecipeParseError`](#reci.recipe.RecipeParseError)   | Raised when a recipe YAML is structurally invalid.   |
 |---------------------------------------------------------------------|------------------------------------------------------|
 
-### *class* reci.recipe.JobSpec(id, steps=<factory>, needs=<factory>, if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=<factory>, extra=<factory>)
+### *class* reci.recipe.JobSpec(id, steps=list(), needs=list(), if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=dict(), extra=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 One job inside a recipe.
 
-### *class* reci.recipe.Recipe(name, on, jobs=<factory>, env=<factory>, defaults=None, extra=<factory>)
+### *class* reci.recipe.Recipe(name, on, jobs=dict(), env=dict(), defaults=None, extra=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -42,7 +42,7 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when a recipe YAML is structurally invalid.
 
-### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=<factory>, if_=None, name=None, outputs=<factory>, bind=<factory>, env=<factory>, continue_on_error=False, extra=<factory>)
+### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=dict(), if_=None, name=None, outputs=list(), bind=dict(), env=dict(), continue_on_error=False, extra=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 

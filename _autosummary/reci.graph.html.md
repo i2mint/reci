@@ -19,7 +19,7 @@ edges and data-flow dependencies.
 | [`CrossJobEdge`](#reci.graph.CrossJobEdge)(source_job, source_step_id, ...)       | Data-flow edge between steps in different jobs. |
 | [`RecipeGraph`](#reci.graph.RecipeGraph)()                                       | The computational DAG of a recipe.              |
 
-### *class* reci.graph.ActionNode(step_id, job, ref=None, action_spec=None, with_=<factory>, bind=<factory>, if_=None, declared_outputs=<factory>, run=None, name=None, env=<factory>)
+### *class* reci.graph.ActionNode(step_id, job, ref=None, action_spec=None, with_=dict(), bind=dict(), if_=None, declared_outputs=list(), run=None, name=None, env=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -116,9 +116,6 @@ A dependency cycle in `{node: nodes it depends on}`, or `None`.
 The cycle is returned as a closed path following the dependency direction:
 each node depends on the next, and the first node is repeated at the end.
 
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
-
 ```pycon
 >>> find_cycle({'a': ['b'], 'b': ['a']})
 ['a', 'b', 'a']
@@ -127,3 +124,6 @@ each node depends on the next, and the first node is repeated at the end.
 >>> find_cycle({'a': ['b'], 'b': []}) is None
 True
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)

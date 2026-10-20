@@ -21,7 +21,7 @@ Bases: [`Enum`](https://docs.python.org/3/library/enum.html#enum.Enum)
 
 ESLint-style three-level severity.
 
-### *class* reci.validation.report.ValidationReport(findings=<factory>)
+### *class* reci.validation.report.ValidationReport(findings=list())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 

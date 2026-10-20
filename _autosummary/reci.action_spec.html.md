@@ -34,7 +34,7 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when an action.yml cannot be retrieved.
 
-### *class* reci.action_spec.ActionSpec(ref, inputs=<factory>, outputs=<factory>, composite=False)
+### *class* reci.action_spec.ActionSpec(ref, inputs=dict(), outputs=dict(), composite=False)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -75,15 +75,15 @@ The spelling to write into a workflow.
 
 Extract the last path segment of an action ref, normalized.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> action_local_name('i2mint/wads/actions/run-tests@master')
 'run_tests'
 >>> action_local_name('actions/checkout@v4')
 'checkout'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.action_spec.action_spec_from_declaration(ref, , inputs=None, outputs=None)
 
@@ -115,15 +115,15 @@ Tries the raw URL first, then a fallback with `action.yaml`.
 
 Canonical form: lowercase, hyphens/spaces → underscores.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> normalize_name('python-version')
 'python_version'
 >>> normalize_name('Root Dir')
 'root_dir'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.action_spec.parse_action_spec(ref, , action_yml_data)
 

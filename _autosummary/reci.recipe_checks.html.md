@@ -42,25 +42,25 @@ when config is supplied.
 
 An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> as_expression("config.flag"), as_expression("${{ config.flag }}")
 ('${{ config.flag }}', '${{ config.flag }}')
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### reci.recipe_checks.config_names(text)
 
 The config keys referenced in *text*’s `${{ ... }}` expressions, in order.
-
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 ```pycon
 >>> config_names("${{ config.a }} ${{ !config.b && 'config.c' }} config.d")
 ['a', 'b']
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 ### reci.recipe_checks.config_references(recipe)
 
@@ -79,13 +79,13 @@ A literal survives only as the index of a bracket access (`steps['p']`),
 so a name inside a message or comparison (`'steps.p.outputs.v'`) is never
 taken for a reference.
 
-* **Return type:**
-  [`Iterator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
 [" steps['p'].outputs.v == '' "]
 ```
+
+* **Return type:**
+  [`Iterator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 ### reci.recipe_checks.find_recipe_problems(recipe, config)
 
@@ -113,12 +113,11 @@ boolean `true` / `false`; a number as the author wrote it (a TOML or
 YAML `3.10` stays `3.10`, not `3.1`).  `None`, bytes and other
 objects have no faithful text and raise [`TypeError`](https://docs.python.org/3/builtins/exceptions.html#TypeError).
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> serialize_config_value({"d": datetime.date(2024, 1, 2), "t": (1, 2)})
 '{"d": "2024-01-02", "t": [1, 2]}'
+>>> serialize_config_value(datetime.datetime(2024, 1, 2, 3, 4, 5))
+'2024-01-02T03:04:05'
 >>> serialize_config_value(True), serialize_config_value(7)
 ('true', '7')
 >>> serialize_config_value(None)
@@ -126,6 +125,9 @@ Traceback (most recent call last):
 ...
 TypeError: None (null) has no text form; give the key a value or remove it
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.recipe_checks.sub_config_refs(text, repl)
 
@@ -136,14 +138,14 @@ touched, never string literals inside an expression (`'config.json'`) and
 never text outside `${{ }}` (`cat config.json`).  An expression that
 changes is re-emitted as `${{ <code> }}`; the others are left verbatim.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> sub_config_refs("${{ fromJson(config.v) }} cat config.json",
 ...                 lambda m: "NEEDS." + m.group(1))
 '${{ fromJson(NEEDS.v) }} cat config.json'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.recipe_checks.unsupported_config_refs(text)
 
@@ -154,12 +156,12 @@ Only `config.<key>` maps to a setup-job output.  Nested access
 (`toJSON(config)`, `config.*`) have no counterpart, and would reach
 GitHub unrewritten, where `config` is no context.
 
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> unsupported_config_refs("${{ config.a }} ${{ config.b.c }} ${{ config['d'] }}")
 ['config.b.c', 'config[']
 >>> unsupported_config_refs("${{ toJSON(config) }} ${{ 'config' }} ${{ config.a }}")
 ['config']
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]

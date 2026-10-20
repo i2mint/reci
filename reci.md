@@ -1,4 +1,4 @@
-> built 2026-10-13 23:26 UTC from 2eb9059 (main) · reci 0.0.33. Details: build_info.json
+> built 2026-10-20 02:57 UTC from 78f02a4 (main) · reci 0.0.34. Details: build_info.json
 
 # index.html.md
 
@@ -252,7 +252,7 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when an action.yml cannot be retrieved.
 
-### *class* reci.action_spec.ActionSpec(ref, inputs=<factory>, outputs=<factory>, composite=False)
+### *class* reci.action_spec.ActionSpec(ref, inputs=dict(), outputs=dict(), composite=False)
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -293,15 +293,15 @@ The spelling to write into a workflow.
 
 Extract the last path segment of an action ref, normalized.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> action_local_name('i2mint/wads/actions/run-tests@master')
 'run_tests'
 >>> action_local_name('actions/checkout@v4')
 'checkout'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.action_spec.action_spec_from_declaration(ref, , inputs=None, outputs=None)
 
@@ -333,15 +333,15 @@ Tries the raw URL first, then a fallback with `action.yaml`.
 
 Canonical form: lowercase, hyphens/spaces → underscores.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> normalize_name('python-version')
 'python_version'
 >>> normalize_name('Root Dir')
 'root_dir'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.action_spec.parse_action_spec(ref, , action_yml_data)
 
@@ -595,13 +595,13 @@ config key.  Keys the recipe references as `${{ config.X }}` are required.
 
 Convert a nested dict to a flat dict with `__` separators.
 
-* **Return type:**
-  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
-
 ```pycon
 >>> flatten_config({'testing': {'python_versions': ['3.10']}})
 {'testing__python_versions': ['3.10']}
 ```
+
+* **Return type:**
+  [`dict`](https://docs.python.org/3/builtins/stdtypes.html#dict)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)]
 
 ### reci.config.resolve_config_for_input(input_name, ref, config)
 
@@ -636,7 +636,7 @@ edges and data-flow dependencies.
 | [`CrossJobEdge`](_autosummary/reci.graph.html.md#reci.graph.CrossJobEdge)(source_job, source_step_id, ...)       | Data-flow edge between steps in different jobs. |
 | [`RecipeGraph`](_autosummary/reci.graph.html.md#reci.graph.RecipeGraph)()                                       | The computational DAG of a recipe.              |
 
-### *class* reci.graph.ActionNode(step_id, job, ref=None, action_spec=None, with_=<factory>, bind=<factory>, if_=None, declared_outputs=<factory>, run=None, name=None, env=<factory>)
+### *class* reci.graph.ActionNode(step_id, job, ref=None, action_spec=None, with_=dict(), bind=dict(), if_=None, declared_outputs=list(), run=None, name=None, env=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -733,9 +733,6 @@ A dependency cycle in `{node: nodes it depends on}`, or `None`.
 The cycle is returned as a closed path following the dependency direction:
 each node depends on the next, and the first node is repeated at the end.
 
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
-
 ```pycon
 >>> find_cycle({'a': ['b'], 'b': ['a']})
 ['a', 'b', 'a']
@@ -744,6 +741,9 @@ each node depends on the next, and the first node is repeated at the end.
 >>> find_cycle({'a': ['b'], 'b': []}) is None
 True
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
 
 
 # _autosummary/reci.html.md
@@ -794,13 +794,13 @@ input renaming, and `outputs:` annotations on `run:` steps.
 | [`RecipeParseError`](_autosummary/reci.recipe.html.md#reci.recipe.RecipeParseError)   | Raised when a recipe YAML is structurally invalid.   |
 |---------------------------------------------------------------------|------------------------------------------------------|
 
-### *class* reci.recipe.JobSpec(id, steps=<factory>, needs=<factory>, if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=<factory>, extra=<factory>)
+### *class* reci.recipe.JobSpec(id, steps=list(), needs=list(), if_=None, runs_on='ubuntu-latest', strategy=None, permissions=None, continue_on_error=False, env=dict(), extra=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
 One job inside a recipe.
 
-### *class* reci.recipe.Recipe(name, on, jobs=<factory>, env=<factory>, defaults=None, extra=<factory>)
+### *class* reci.recipe.Recipe(name, on, jobs=dict(), env=dict(), defaults=None, extra=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -812,7 +812,7 @@ Bases: [`Exception`](https://docs.python.org/3/builtins/exceptions.html#Exceptio
 
 Raised when a recipe YAML is structurally invalid.
 
-### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=<factory>, if_=None, name=None, outputs=<factory>, bind=<factory>, env=<factory>, continue_on_error=False, extra=<factory>)
+### *class* reci.recipe.StepSpec(id, uses=None, run=None, with_=dict(), if_=None, name=None, outputs=list(), bind=dict(), env=dict(), continue_on_error=False, extra=dict())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -879,25 +879,25 @@ when config is supplied.
 
 An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> as_expression("config.flag"), as_expression("${{ config.flag }}")
 ('${{ config.flag }}', '${{ config.flag }}')
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 ### reci.recipe_checks.config_names(text)
 
 The config keys referenced in *text*’s `${{ ... }}` expressions, in order.
-
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 ```pycon
 >>> config_names("${{ config.a }} ${{ !config.b && 'config.c' }} config.d")
 ['a', 'b']
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 ### reci.recipe_checks.config_references(recipe)
 
@@ -916,13 +916,13 @@ A literal survives only as the index of a bracket access (`steps['p']`),
 so a name inside a message or comparison (`'steps.p.outputs.v'`) is never
 taken for a reference.
 
-* **Return type:**
-  [`Iterator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
 [" steps['p'].outputs.v == '' "]
 ```
+
+* **Return type:**
+  [`Iterator`](https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterator)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 ### reci.recipe_checks.find_recipe_problems(recipe, config)
 
@@ -950,12 +950,11 @@ boolean `true` / `false`; a number as the author wrote it (a TOML or
 YAML `3.10` stays `3.10`, not `3.1`).  `None`, bytes and other
 objects have no faithful text and raise [`TypeError`](https://docs.python.org/3/builtins/exceptions.html#TypeError).
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> serialize_config_value({"d": datetime.date(2024, 1, 2), "t": (1, 2)})
 '{"d": "2024-01-02", "t": [1, 2]}'
+>>> serialize_config_value(datetime.datetime(2024, 1, 2, 3, 4, 5))
+'2024-01-02T03:04:05'
 >>> serialize_config_value(True), serialize_config_value(7)
 ('true', '7')
 >>> serialize_config_value(None)
@@ -963,6 +962,9 @@ Traceback (most recent call last):
 ...
 TypeError: None (null) has no text form; give the key a value or remove it
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.recipe_checks.sub_config_refs(text, repl)
 
@@ -973,14 +975,14 @@ touched, never string literals inside an expression (`'config.json'`) and
 never text outside `${{ }}` (`cat config.json`).  An expression that
 changes is re-emitted as `${{ <code> }}`; the others are left verbatim.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> sub_config_refs("${{ fromJson(config.v) }} cat config.json",
 ...                 lambda m: "NEEDS." + m.group(1))
 '${{ fromJson(NEEDS.v) }} cat config.json'
 ```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.recipe_checks.unsupported_config_refs(text)
 
@@ -991,15 +993,15 @@ Only `config.<key>` maps to a setup-job output.  Nested access
 (`toJSON(config)`, `config.*`) have no counterpart, and would reach
 GitHub unrewritten, where `config` is no context.
 
-* **Return type:**
-  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
-
 ```pycon
 >>> unsupported_config_refs("${{ config.a }} ${{ config.b.c }} ${{ config['d'] }}")
 ['config.b.c', 'config[']
 >>> unsupported_config_refs("${{ toJSON(config) }} ${{ 'config' }} ${{ config.a }}")
 ['config']
 ```
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 
 # _autosummary/reci.validation.formatters.html.md
@@ -1076,7 +1078,7 @@ Bases: [`Enum`](https://docs.python.org/3/library/enum.html#enum.Enum)
 
 ESLint-style three-level severity.
 
-### *class* reci.validation.report.ValidationReport(findings=<factory>)
+### *class* reci.validation.report.ValidationReport(findings=list())
 
 Bases: [`object`](https://docs.python.org/3/builtins/functions.html#object)
 
@@ -1402,9 +1404,6 @@ ruamel keeps the spelling of what it loads, so `3.10` stays `3.10`
 Anchors and tags are not part of the spelling.  When ruamel’s text would be
 a different number (negative hex, underscored floats), `str()` is used.
 
-* **Return type:**
-  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
-
 ```pycon
 >>> scalar_source_text(load_yaml_string("v: 3.10")["v"])
 '3.10'
@@ -1414,6 +1413,9 @@ a different number (negative hex, underscored floats), `str()` is used.
 '7'
 ```
 
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
+
 
 # about-this-build.html.md
 
@@ -1421,20 +1423,18 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-13 23:26 UTC** from commit <a href="https://github.com/i2mint/reci/commit/2eb9059106424a59f610e1c3c82a0f5ad0435428"><code>2eb9059</code></a> on branch <code>main</code>, for **reci 0.0.33** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 02:57 UTC** from commit <a href="https://github.com/i2mint/reci/commit/78f02a49836c047a57ee711125648592f8ab2a5b"><code>78f02a4</code></a> on branch <code>main</code>, for **reci 0.0.34** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.33) is ahead of the latest release on PyPI (0.0.32): these docs describe unreleased code.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/2eb9059106424a59f610e1c3c82a0f5ad0435428"><code>2eb9059106424a59f610e1c3c82a0f5ad0435428</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/78f02a49836c047a57ee711125648592f8ab2a5b"><code>78f02a49836c047a57ee711125648592f8ab2a5b</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.33</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.34</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1443,16 +1443,16 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/38484053545">38484053545</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39361564182">39361564182</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>07f5bebe7e3b3b4999b10a7dc5fa7a1be1cb6ccb</code> (in the history of the built commit) |
+| Event commit | <code>08185445fd781560c3a1788bd2e671e902957ddb</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.17  |
-| Sphinx   | 9.1.0   |
+| epythet  | 0.2.18  |
+| Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
 | Python   | 3.12.15 |
 
@@ -1470,14 +1470,14 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.32/">0.0.32</a>, older than the documented version (0.0.33).
+Latest release: <a href="https://pypi.org/project/reci/0.0.34/">0.0.34</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 2eb9059106424a59f610e1c3c82a0f5ad0435428
-pip install "epythet==0.2.17"
+git checkout 78f02a49836c047a57ee711125648592f8ab2a5b
+pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

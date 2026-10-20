@@ -30,6 +30,7 @@
 <meta content="About this build | reci" name="twitter:title"/>
 <link href="_static/pygments.css?v=d75fae25" rel="stylesheet" type="text/css"/>
 <link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx_autodoc_typehints.css?v=057ac668" rel="stylesheet" type="text/css"/>
 <link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
 <link href="_static/epythet.css?v=51e70d63" rel="stylesheet" type="text/css"/>
 <link href="search.html" rel="search" title="Search"/>
@@ -120,13 +121,10 @@
 
 <section id="about-this-build">
 <h1>About this build<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#about-this-build">¶</a></h1>
-<p>This documentation was built on <strong>2026-10-13 23:26 UTC</strong> from commit <a href="https://github.com/i2mint/reci/commit/2eb9059106424a59f610e1c3c82a0f5ad0435428"><code>2eb9059</code></a> on branch <code>main</code>, for <strong>reci 0.0.33</strong> (from <code>pyproject.toml</code>).</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>The documentation and the package may be misaligned:</p>
-<ul class="simple">
-<li><p>The documented version (0.0.33) is ahead of the latest release on PyPI (0.0.32): these docs describe unreleased code.</p></li>
-</ul>
+<p>This documentation was built on <strong>2026-10-20 02:57 UTC</strong> from commit <a href="https://github.com/i2mint/reci/commit/78f02a49836c047a57ee711125648592f8ab2a5b"><code>78f02a4</code></a> on branch <code>main</code>, for <strong>reci 0.0.34</strong> (from <code>pyproject.toml</code>).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.</p>
 </div>
 <section id="source">
 <h2>Source<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#source" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#source'">¶</a></h2>
@@ -138,13 +136,13 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Commit</p></td>
-<td><p><a href="https://github.com/i2mint/reci/commit/2eb9059106424a59f610e1c3c82a0f5ad0435428"><code>2eb9059106424a59f610e1c3c82a0f5ad0435428</code></a></p></td>
+<td><p><a href="https://github.com/i2mint/reci/commit/78f02a49836c047a57ee711125648592f8ab2a5b"><code>78f02a49836c047a57ee711125648592f8ab2a5b</code></a></p></td>
 </tr>
 <tr class="row-odd"><td><p>Branch</p></td>
 <td><p><code>main</code></p></td>
 </tr>
 <tr class="row-even"><td><p>Tags at this commit</p></td>
-<td><p><code>0.0.33</code></p></td>
+<td><p><code>0.0.34</code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Working tree</p></td>
 <td><p>clean</p></td>
@@ -168,13 +166,13 @@
 <td><p><code>i2mint/reci</code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Run</p></td>
-<td><p><a href="https://github.com/i2mint/reci/actions/runs/38484053545">38484053545</a></p></td>
+<td><p><a href="https://github.com/i2mint/reci/actions/runs/39361564182">39361564182</a></p></td>
 </tr>
 <tr class="row-even"><td><p>Ref</p></td>
 <td><p><code>refs/heads/main</code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Event commit</p></td>
-<td><p><code>07f5bebe7e3b3b4999b10a7dc5fa7a1be1cb6ccb</code> (in the history of the built commit)</p></td>
+<td><p><code>08185445fd781560c3a1788bd2e671e902957ddb</code> (in the history of the built commit)</p></td>
 </tr>
 </tbody>
 </table>
@@ -189,10 +187,10 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>epythet</p></td>
-<td><p>0.2.17</p></td>
+<td><p>0.2.18</p></td>
 </tr>
 <tr class="row-odd"><td><p>Sphinx</p></td>
-<td><p>9.1.0</p></td>
+<td><p>9.1.1</p></td>
 </tr>
 <tr class="row-even"><td><p>docutils</p></td>
 <td><p>0.22.4</p></td>
@@ -238,14 +236,14 @@
 </section>
 <section id="package-on-pypi">
 <h2>Package on PyPI<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#package-on-pypi" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#package-on-pypi'">¶</a></h2>
-<p>Latest release: <a href="https://pypi.org/project/reci/0.0.32/">0.0.32</a>, older than the documented version (0.0.33).</p>
+<p>Latest release: <a href="https://pypi.org/project/reci/0.0.34/">0.0.34</a>, the same as the documented version.</p>
 </section>
 <section id="site"><h2>Site</h2><table class="docutils align-default"><tbody><tr><td><p>Modules documented</p></td><td><p>23</p></td></tr><tr><td><p>Objects documented</p></td><td><p>90</p></td></tr></tbody></table></section>
 <section id="reproduce">
 <h2>Reproduce<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reproduce" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reproduce'">¶</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">git<span class="w"> </span>clone<span class="w"> </span>https://github.com/i2mint/reci<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>reci
-</span><span id="line-2">git<span class="w"> </span>checkout<span class="w"> </span>2eb9059106424a59f610e1c3c82a0f5ad0435428
-</span><span id="line-3">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"epythet==0.2.17"</span>
+</span><span id="line-2">git<span class="w"> </span>checkout<span class="w"> </span>78f02a49836c047a57ee711125648592f8ab2a5b
+</span><span id="line-3">pip<span class="w"> </span>install<span class="w"> </span><span class="s2">"epythet==0.2.18"</span>
 </span><span id="line-4">epythet<span class="w"> </span>quickstart<span class="w"> </span>.<span class="w"> </span>--ignore<span class="w"> </span>tests/<span class="w"> </span>scrap/<span class="w"> </span>examples/
 </span></code></pre></div>
 </div>
@@ -274,7 +272,7 @@
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=565bc8c8"></script>
+<script src="_static/documentation_options.js?v=9dd25805"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>
