@@ -108,7 +108,7 @@ def expression_texts(text: str) -> Iterator[str]:
     >>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
     [" steps['p'].outputs.v == '' "]
     >>> list(expression_texts("${{ fromJSON(env.M)['steps.p.outputs.v'] }}"))
-    ["  fromJSON(env.M)[''] "]
+    [" fromJSON(env.M)[''] "]
     """
     for start, end in _expression_spans(text):
         body = text[start:end]
