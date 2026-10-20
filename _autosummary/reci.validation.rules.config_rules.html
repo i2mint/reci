@@ -126,12 +126,18 @@
 <div id="content" role="main">
 <section id="module-reci.validation.rules.config_rules">
 <span id="reci-validation-rules-config-rules"></span><h1>reci.validation.rules.config_rules<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#module-reci.validation.rules.config_rules">¶</a></h1>
-<p>Config validation rules (CONF001–CONF003).</p>
+<p>Config validation rules (CONF001–CONF007).</p>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.config_rules.check_exportable_config" title="reci.validation.rules.config_rules.check_exportable_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_exportable_config</span></code></a>(graph, config)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.config_rules.check_empty_value_shadows_default" title="reci.validation.rules.config_rules.check_empty_value_shadows_default"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_empty_value_shadows_default</span></code></a>(graph, config)</p></td>
+<td><p>An empty-string config value on an input that has an action default (it replaces it).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.config_rules.check_exportable_config" title="reci.validation.rules.config_rules.check_exportable_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_exportable_config</span></code></a>(graph, config)</p></td>
 <td><p>Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#reci.validation.rules.config_rules.check_leftover_placeholders" title="reci.validation.rules.config_rules.check_leftover_placeholders"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_leftover_placeholders</span></code></a>(graph, config)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&lt;REQUIRED:</span> <span class="pre">...&gt;</span></code> values that <code class="docutils literal notranslate"><span class="pre">reci</span> <span class="pre">scaffold</span></code> wrote and nobody filled in.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#reci.validation.rules.config_rules.check_missing_required_config" title="reci.validation.rules.config_rules.check_missing_required_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_missing_required_config</span></code></a>(graph, config)</p></td>
 <td><p>Config keys that are required but not present.</p></td>
@@ -145,9 +151,29 @@
 </tbody>
 </table>
 <dl class="py function">
+<dt class="sig sig-object py" id="reci.validation.rules.config_rules.check_empty_value_shadows_default">
+<span class="sig-prename descclassname"><span class="pre">reci.validation.rules.config_rules.</span></span><span class="sig-name descname"><span class="pre">check_empty_value_shadows_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/config_rules.html#check_empty_value_shadows_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.config_rules.check_empty_value_shadows_default" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.config_rules.check_empty_value_shadows_default'">¶</a></dt>
+<dd><p>An empty-string config value on an input that has an action default (it replaces it).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="reci.validation.rules.config_rules.check_exportable_config">
 <span class="sig-prename descclassname"><span class="pre">reci.validation.rules.config_rules.</span></span><span class="sig-name descname"><span class="pre">check_exportable_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/config_rules.html#check_exportable_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.config_rules.check_exportable_config" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.config_rules.check_exportable_config'">¶</a></dt>
 <dd><p>Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="reci.validation.rules.config_rules.check_leftover_placeholders">
+<span class="sig-prename descclassname"><span class="pre">reci.validation.rules.config_rules.</span></span><span class="sig-name descname"><span class="pre">check_leftover_placeholders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/reci/validation/rules/config_rules.html#check_leftover_placeholders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#reci.validation.rules.config_rules.check_leftover_placeholders" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#reci.validation.rules.config_rules.check_leftover_placeholders'">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">&lt;REQUIRED:</span> <span class="pre">...&gt;</span></code> values that <code class="docutils literal notranslate"><span class="pre">reci</span> <span class="pre">scaffold</span></code> wrote and nobody filled in.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" rel="nofollow noopener" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a>[<a class="reference internal" href="reci.validation.report.html#reci.validation.report.Finding" title="reci.validation.report.Finding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Finding</span></code></a>]</span></p>
@@ -188,7 +214,9 @@
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
+<li><a :data-current="activeSection === '#reci.validation.rules.config_rules.check_empty_value_shadows_default'" class="reference internal" href="#reci.validation.rules.config_rules.check_empty_value_shadows_default"><code class="docutils literal notranslate"><span class="pre">check_empty_value_shadows_default()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.config_rules.check_exportable_config'" class="reference internal" href="#reci.validation.rules.config_rules.check_exportable_config"><code class="docutils literal notranslate"><span class="pre">check_exportable_config()</span></code></a></li>
+<li><a :data-current="activeSection === '#reci.validation.rules.config_rules.check_leftover_placeholders'" class="reference internal" href="#reci.validation.rules.config_rules.check_leftover_placeholders"><code class="docutils literal notranslate"><span class="pre">check_leftover_placeholders()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.config_rules.check_missing_required_config'" class="reference internal" href="#reci.validation.rules.config_rules.check_missing_required_config"><code class="docutils literal notranslate"><span class="pre">check_missing_required_config()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.config_rules.check_undefined_config_references'" class="reference internal" href="#reci.validation.rules.config_rules.check_undefined_config_references"><code class="docutils literal notranslate"><span class="pre">check_undefined_config_references()</span></code></a></li>
 <li><a :data-current="activeSection === '#reci.validation.rules.config_rules.check_unused_config'" class="reference internal" href="#reci.validation.rules.config_rules.check_unused_config"><code class="docutils literal notranslate"><span class="pre">check_unused_config()</span></code></a></li>
@@ -205,7 +233,7 @@
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=9dd25805"></script>
+<script src="../_static/documentation_options.js?v=39aadc1c"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

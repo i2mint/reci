@@ -11,4 +11,5 @@ reci.config
       collect_required_config_keys
       flatten_config
       resolve_config_for_input
+      scaffold_placeholder_keys
    

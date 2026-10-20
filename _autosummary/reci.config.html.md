@@ -13,10 +13,11 @@ Resolution order for input `root_dir` of action `run-tests`:
 
 ### Functions
 
-| [`collect_required_config_keys`](#reci.config.collect_required_config_keys)(recipe, ...)         | Scan a recipe and return config keys needed by its actions.   |
-|----------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-| [`flatten_config`](#reci.config.flatten_config)(nested, \*[, prefix])              | Convert a nested dict to a flat dict with `__` separators.    |
-| [`resolve_config_for_input`](#reci.config.resolve_config_for_input)(input_name, ref, config) | Find a config value for an action input.                      |
+| [`collect_required_config_keys`](#reci.config.collect_required_config_keys)(recipe, ...)         | Scan a recipe and return config keys needed by its actions.          |
+|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| [`flatten_config`](#reci.config.flatten_config)(nested, \*[, prefix])              | Convert a nested dict to a flat dict with `__` separators.           |
+| [`resolve_config_for_input`](#reci.config.resolve_config_for_input)(input_name, ref, config) | Find a config value for an action input.                             |
+| [`scaffold_placeholder_keys`](#reci.config.scaffold_placeholder_keys)(recipe, ...)            | Config keys `scaffold` should add as `<REQUIRED: ...>` placeholders. |
 
 ### reci.config.collect_required_config_keys(recipe, action_specs)
 
@@ -50,3 +51,16 @@ Returns `(config_key, value)` or `None`.
 
 * **Return type:**
   [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
+### reci.config.scaffold_placeholder_keys(recipe, action_specs, existing)
+
+Config keys `scaffold` should add as `<REQUIRED: ...>` placeholders.
+
+Like the required part of [`collect_required_config_keys()`](#reci.config.collect_required_config_keys), with two refinements: a key
+that one step requires but another step takes as optional is scoped
+(`<action>__<key>`) so the placeholder cannot shadow the optional step’s default; and a
+required key already present in scoped form for every step that needs it is not asked for
+again unscoped.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]

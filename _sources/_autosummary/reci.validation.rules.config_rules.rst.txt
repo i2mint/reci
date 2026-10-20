@@ -8,7 +8,9 @@ reci.validation.rules.config\_rules
 
    .. autosummary::
    
+      check_empty_value_shadows_default
       check_exportable_config
+      check_leftover_placeholders
       check_missing_required_config
       check_undefined_config_references
       check_unused_config

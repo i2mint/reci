@@ -1,34 +1,34 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-20T02:57:53Z",
+  "built_at": "2026-10-20T04:53:16Z",
   "package": {
     "name": "reci",
-    "version": "0.0.34",
+    "version": "0.0.35",
     "display_name": "reci",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "78f02a49836c047a57ee711125648592f8ab2a5b",
-    "short_commit": "78f02a4",
+    "commit": "d97329e25dcbeaa70f8148db46dc486464615116",
+    "short_commit": "d97329e",
     "branch": "main",
     "tags": [
-      "0.0.34"
+      "0.0.35"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/reci",
-    "commit_url": "https://github.com/i2mint/reci/commit/78f02a49836c047a57ee711125648592f8ab2a5b",
+    "commit_url": "https://github.com/i2mint/reci/commit/d97329e25dcbeaa70f8148db46dc486464615116",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/reci",
-    "sha": "08185445fd781560c3a1788bd2e671e902957ddb",
+    "sha": "e19d2daffffe33d05637134857886c5595f12282",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "39361564182",
-    "run_url": "https://github.com/i2mint/reci/actions/runs/39361564182",
+    "run_id": "39371769937",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/39371769937",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -58,18 +58,20 @@
   },
   "site": {
     "modules_documented": 23,
-    "objects_documented": 90
+    "objects_documented": 93
   },
   "pypi": {
     "checked": true,
     "latest": "0.0.34",
-    "relation": "same",
+    "relation": "ahead",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 78f02a49836c047a57ee711125648592f8ab2a5b\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout d97329e25dcbeaa70f8148db46dc486464615116\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.0.35) is ahead of the latest release on PyPI (0.0.34): these docs describe unreleased code."
+    ]
   }
 }

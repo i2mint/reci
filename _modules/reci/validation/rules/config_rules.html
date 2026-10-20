@@ -173,7 +173,7 @@
 
     <div id="content" role="main">
       <h1>Source code for reci.validation.rules.config_rules</h1><div class="highlight"><pre>
-<span></span><code><span id="line-1"><span class="sd">"""Config validation rules (CONF001–CONF003)."""</span>
+<span></span><code><span id="line-1"><span class="sd">"""Config validation rules (CONF001–CONF007)."""</span>
 </span><span id="line-2">
 </span><span id="line-3"><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 </span><span id="line-4">
@@ -274,6 +274,52 @@
 </span><span id="line-88">
 </span><span id="line-89">    <span class="k">yield from</span> <span class="n">_recipe_problems</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">"CONF005"</span><span class="p">)</span></div>
 
+</span><span id="line-90">
+</span><span id="line-91">
+<div class="viewcode-block" id="check_empty_value_shadows_default">
+<a class="viewcode-back" href="../../../../_autosummary/reci.validation.rules.config_rules.html#reci.validation.rules.config_rules.check_empty_value_shadows_default">[docs]</a>
+</span><span id="line-92"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"CONF006"</span><span class="p">)</span>
+</span><span id="line-93"><span class="k">def</span><span class="w"> </span><span class="nf">check_empty_value_shadows_default</span><span class="p">(</span>
+</span><span id="line-94">    <span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</span><span id="line-95"><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
+</span><span id="line-96"><span class="w">    </span><span class="sd">"""An empty-string config value on an input that has an action default (it replaces it)."""</span>
+</span><span id="line-97">    <span class="n">seen</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+</span><span id="line-98">    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+</span><span id="line-99">        <span class="k">for</span> <span class="n">norm_name</span><span class="p">,</span> <span class="n">input_spec</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">input_specs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-100">            <span class="k">if</span> <span class="n">input_spec</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-101">                <span class="k">continue</span>
+</span><span id="line-102">            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">norm_name</span><span class="p">]</span>
+</span><span id="line-103">            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">ref</span><span class="p">:</span>
+</span><span id="line-104">                <span class="n">keys</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">action_local_name</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">norm_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-105">            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+</span><span id="line-106">                <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="s2">""</span> <span class="ow">and</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+</span><span id="line-107">                    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">))</span>
+</span><span id="line-108">                    <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-109">                        <span class="n">rule_id</span><span class="o">=</span><span class="s2">"CONF006"</span><span class="p">,</span>
+</span><span id="line-110">                        <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+</span><span id="line-111">                        <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-112">                            <span class="sa">f</span><span class="s2">"Config key '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' is an empty string, which overrides the "</span>
+</span><span id="line-113">                            <span class="sa">f</span><span class="s2">"default (</span><span class="si">{</span><span class="n">input_spec</span><span class="o">.</span><span class="n">default</span><span class="si">!r}</span><span class="s2">) of '</span><span class="si">{</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="si">}</span><span class="s2">'; remove the key."</span>
+</span><span id="line-114">                        <span class="p">),</span>
+</span><span id="line-115">                        <span class="n">location</span><span class="o">=</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
+</span><span id="line-116">                    <span class="p">)</span>
+</span><span id="line-117">                    <span class="k">break</span></div>
+
+</span><span id="line-118">
+</span><span id="line-119">
+<div class="viewcode-block" id="check_leftover_placeholders">
+<a class="viewcode-back" href="../../../../_autosummary/reci.validation.rules.config_rules.html#reci.validation.rules.config_rules.check_leftover_placeholders">[docs]</a>
+</span><span id="line-120"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"CONF007"</span><span class="p">)</span>
+</span><span id="line-121"><span class="k">def</span><span class="w"> </span><span class="nf">check_leftover_placeholders</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
+</span><span id="line-122"><span class="w">    </span><span class="sd">"""``&lt;REQUIRED: ...&gt;`` values that ``reci scaffold`` wrote and nobody filled in."""</span>
+</span><span id="line-123">    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="line-124">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"&lt;REQUIRED:"</span><span class="p">):</span>
+</span><span id="line-125">            <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-126">                <span class="n">rule_id</span><span class="o">=</span><span class="s2">"CONF007"</span><span class="p">,</span>
+</span><span id="line-127">                <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+</span><span id="line-128">                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Config key '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' still holds the scaffold placeholder </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">; set a real value."</span><span class="p">,</span>
+</span><span id="line-129">            <span class="p">)</span></div>
+
 </span></code></pre></div>
     </div></div>
           </main>
@@ -287,7 +333,7 @@
 </footer>
     </div>
     
-    <script src="../../../../_static/documentation_options.js?v=9dd25805"></script>
+    <script src="../../../../_static/documentation_options.js?v=39aadc1c"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>

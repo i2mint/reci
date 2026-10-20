@@ -1,4 +1,4 @@
-> built 2026-10-20 02:57 UTC from 78f02a4 (main) · reci 0.0.34. Details: build_info.json
+> built 2026-10-20 04:53 UTC from d97329e (main) · reci 0.0.35. Details: build_info.json
 
 # index.html.md
 
@@ -165,6 +165,8 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 | CONF001 | Config     | Required config key missing                                                                                                                               |
 | CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)                  |
 | CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged              |
+| CONF006 | Config     | An empty-string config value overrides the default of an action input                                                                                     |
+| CONF007 | Config     | A `<REQUIRED: ...>` placeholder written by `reci scaffold` was left unfilled                                                                              |
 | PURE001 | Purity     | `run:` step breaks typed contract                                                                                                                         |
 | ACT002  | Action     | Referenced action not found                                                                                                                               |
 
@@ -574,10 +576,11 @@ Resolution order for input `root_dir` of action `run-tests`:
 
 ### Functions
 
-| [`collect_required_config_keys`](_autosummary/reci.config.html.md#reci.config.collect_required_config_keys)(recipe, ...)         | Scan a recipe and return config keys needed by its actions.   |
-|----------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-| [`flatten_config`](_autosummary/reci.config.html.md#reci.config.flatten_config)(nested, \*[, prefix])              | Convert a nested dict to a flat dict with `__` separators.    |
-| [`resolve_config_for_input`](_autosummary/reci.config.html.md#reci.config.resolve_config_for_input)(input_name, ref, config) | Find a config value for an action input.                      |
+| [`collect_required_config_keys`](_autosummary/reci.config.html.md#reci.config.collect_required_config_keys)(recipe, ...)         | Scan a recipe and return config keys needed by its actions.          |
+|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
+| [`flatten_config`](_autosummary/reci.config.html.md#reci.config.flatten_config)(nested, \*[, prefix])              | Convert a nested dict to a flat dict with `__` separators.           |
+| [`resolve_config_for_input`](_autosummary/reci.config.html.md#reci.config.resolve_config_for_input)(input_name, ref, config) | Find a config value for an action input.                             |
+| [`scaffold_placeholder_keys`](_autosummary/reci.config.html.md#reci.config.scaffold_placeholder_keys)(recipe, ...)            | Config keys `scaffold` should add as `<REQUIRED: ...>` placeholders. |
 
 ### reci.config.collect_required_config_keys(recipe, action_specs)
 
@@ -611,6 +614,19 @@ Returns `(config_key, value)` or `None`.
 
 * **Return type:**
   [`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`Any`](https://docs.python.org/3/library/typing.html#typing.Any)] | [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
+### reci.config.scaffold_placeholder_keys(recipe, action_specs, existing)
+
+Config keys `scaffold` should add as `<REQUIRED: ...>` placeholders.
+
+Like the required part of [`collect_required_config_keys()`](_autosummary/reci.config.html.md#reci.config.collect_required_config_keys), with two refinements: a key
+that one step requires but another step takes as optional is scoped
+(`<action>__<key>`) so the placeholder cannot shadow the optional step’s default; and a
+required key already present in scoped form for every step that needs it is not asked for
+again unscoped.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]
 
 
 # _autosummary/reci.graph.html.md
@@ -1108,19 +1124,35 @@ Referenced action has no ActionSpec (could not be fetched or parsed).
 
 # reci.validation.rules.config_rules
 
-Config validation rules (CONF001–CONF003).
+Config validation rules (CONF001–CONF007).
 
 ### Functions
 
-| [`check_exportable_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_exportable_config)(graph, config)           | Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.   |
-|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)     | Config keys that are required but not present.                              |
-| [`check_undefined_config_references`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_undefined_config_references)(graph, config) | `${{ config.X }}` where `X` is not a config key.                            |
-| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)               | Config keys present but not referenced by any action.                       |
+| [`check_empty_value_shadows_default`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_empty_value_shadows_default)(graph, config)   | An empty-string config value on an input that has an action default (it replaces it).   |
+|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| [`check_exportable_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_exportable_config)(graph, config)             | Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.               |
+| [`check_leftover_placeholders`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_leftover_placeholders)(graph, config)         | `<REQUIRED: ...>` values that `reci scaffold` wrote and nobody filled in.               |
+| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)       | Config keys that are required but not present.                                          |
+| [`check_undefined_config_references`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_undefined_config_references)(graph, config)   | `${{ config.X }}` where `X` is not a config key.                                        |
+| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)                 | Config keys present but not referenced by any action.                                   |
+
+### reci.validation.rules.config_rules.check_empty_value_shadows_default(graph, config)
+
+An empty-string config value on an input that has an action default (it replaces it).
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
 
 ### reci.validation.rules.config_rules.check_exportable_config(graph, config)
 
 Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
+
+### reci.validation.rules.config_rules.check_leftover_placeholders(graph, config)
+
+`<REQUIRED: ...>` values that `reci scaffold` wrote and nobody filled in.
 
 * **Return type:**
   [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
@@ -1320,7 +1352,7 @@ Run all registered rules and return a merged report.
 
 | [`action`](_autosummary/reci.validation.rules.action.html.md#module-reci.validation.rules.action)             | Action metadata validation rules (ACT001–ACT003).   |
 |---------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
-| [`config_rules`](_autosummary/reci.validation.rules.config_rules.html.md#module-reci.validation.rules.config_rules) | Config validation rules (CONF001–CONF003).          |
+| [`config_rules`](_autosummary/reci.validation.rules.config_rules.html.md#module-reci.validation.rules.config_rules) | Config validation rules (CONF001–CONF007).          |
 | [`dag`](_autosummary/reci.validation.rules.dag.html.md#module-reci.validation.rules.dag)                   | DAG structure validation rules (DAG001–DAG004).     |
 | [`flow`](_autosummary/reci.validation.rules.flow.html.md#module-reci.validation.rules.flow)                 | Data-flow validation rules (FLOW001–FLOW007).       |
 | [`purity`](_autosummary/reci.validation.rules.purity.html.md#module-reci.validation.rules.purity)             | Purity validation rules (PURE001–PURE003).          |
@@ -1423,18 +1455,20 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-20 02:57 UTC** from commit <a href="https://github.com/i2mint/reci/commit/78f02a49836c047a57ee711125648592f8ab2a5b"><code>78f02a4</code></a> on branch <code>main</code>, for **reci 0.0.34** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 04:53 UTC** from commit <a href="https://github.com/i2mint/reci/commit/d97329e25dcbeaa70f8148db46dc486464615116"><code>d97329e</code></a> on branch <code>main</code>, for **reci 0.0.35** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.0.35) is ahead of the latest release on PyPI (0.0.34): these docs describe unreleased code.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/78f02a49836c047a57ee711125648592f8ab2a5b"><code>78f02a49836c047a57ee711125648592f8ab2a5b</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/d97329e25dcbeaa70f8148db46dc486464615116"><code>d97329e25dcbeaa70f8148db46dc486464615116</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.34</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.35</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1443,9 +1477,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39361564182">39361564182</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39371769937">39371769937</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>08185445fd781560c3a1788bd2e671e902957ddb</code> (in the history of the built commit) |
+| Event commit | <code>e19d2daffffe33d05637134857886c5595f12282</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1470,13 +1504,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.34/">0.0.34</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.34/">0.0.34</a>, older than the documented version (0.0.35).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout 78f02a49836c047a57ee711125648592f8ab2a5b
+git checkout d97329e25dcbeaa70f8148db46dc486464615116
 pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
