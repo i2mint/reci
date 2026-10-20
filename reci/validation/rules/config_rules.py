@@ -90,7 +90,9 @@ def check_exportable_config(graph, config: dict[str, Any]) -> Iterable[Finding]:
 
 
 @register_rule("CONF006")
-def check_empty_value_shadows_default(graph, config: dict[str, Any]) -> Iterable[Finding]:
+def check_empty_value_shadows_default(
+    graph, config: dict[str, Any]
+) -> Iterable[Finding]:
     """An empty-string config value on an input that has an action default (it replaces it)."""
     seen: set[str] = set()
     for node in graph.nodes():

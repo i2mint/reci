@@ -78,7 +78,9 @@ def scaffold_placeholder_keys(
             if norm_name in provided or search in same_job or search in everywhere:
                 continue
             scoped = f"{action_local_name(node.ref)}__{norm_name}" if node.ref else None
-            uses.setdefault(norm_name, []).append((scoped, inp.required and inp.default is None))
+            uses.setdefault(norm_name, []).append(
+                (scoped, inp.required and inp.default is None)
+            )
     for _, name, needs_ok in config_references(recipe):
         if needs_ok:  # the recipe itself names it: needed unscoped
             uses.setdefault(name, []).append((None, True))
@@ -89,7 +91,9 @@ def scaffold_placeholder_keys(
             continue
         if all(scoped and scoped in existing for scoped in required):
             continue
-        if len(required) < len(items):  # shared with an optional step: keep the placeholder scoped
+        if len(required) < len(
+            items
+        ):  # shared with an optional step: keep the placeholder scoped
             out.extend(sc or name for sc in required if sc not in existing)
         else:
             out.append(name)
