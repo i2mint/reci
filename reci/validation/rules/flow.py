@@ -258,13 +258,13 @@ def check_output_references(graph, config: dict[str, Any]) -> Iterable[Finding]:
 
     edges = detect_cross_job_edges(graph, config)
     seen: set[tuple[str, str]] = set()
-    for finding in _output_reference_findings(graph, edges):
+    for finding in _output_reference_findings(graph, edges, config):
         if (finding.location, finding.message) not in seen:
             seen.add((finding.location, finding.message))
             yield finding
 
 
-def _output_reference_findings(graph, edges) -> Iterable[Finding]:
+def _output_reference_findings(graph, edges, config=None) -> Iterable[Finding]:
     for job_id, job in graph.recipe.jobs.items():
         nodes = graph.job_nodes(job_id)
         by_id = {n.step_id.casefold(): (i, n) for i, n in enumerate(nodes)}
@@ -289,7 +289,9 @@ def _output_reference_findings(graph, edges) -> Iterable[Finding]:
         everywhere = [*job_level, *(e for scope in step_scopes for e in scope)]
         for body in everywhere:
             for source, name in _NEEDS_OUTPUT_REF.findall(body):
-                yield from _check_needs_ref(graph, edges, needed, job_id, source, name)
+                yield from _check_needs_ref(
+                    graph, edges, needed, job_id, source, name, config
+                )
 
 
 def _check_step_ref(by_id, index, location, step_id, name):
@@ -320,9 +322,10 @@ def _check_step_ref(by_id, index, location, step_id, name):
     )
 
 
-def _check_needs_ref(graph, edges, needed, job_id, source, name):
-    if source.casefold() == "setup":
-        return  # config: CONF004's
+def _check_needs_ref(graph, edges, needed, job_id, source, name, config=None):
+    is_recipe_job = any(j.casefold() == source.casefold() for j in graph.recipe.jobs)
+    if source.casefold() == "setup" and (config or not is_recipe_job):
+        return  # the generated setup job (or none): config, CONF004's
     job = next(
         (j for j in graph.recipe.jobs if j.casefold() == source.casefold()), None
     )

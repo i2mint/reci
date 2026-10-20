@@ -89,28 +89,54 @@ def unsupported_config_refs(text: str) -> list[str]:
     return found
 
 
+# ``steps`` / ``needs`` and a path of ``.name`` / ``['name']`` accesses, then an open
+# ``[``: the text before a quoted index that can name a step or a job.  A literal indexing
+# anything else (``fromJSON(env.M)['steps.p.outputs.v']``) is just data.
+_CONTEXT_INDEX_RE = re.compile(
+    r"(?<![\w.\-])(?:steps|needs)(?:\s*\.\s*[\w\-]+|\s*\[\s*'(?:[^']|'')*'\s*\])*\s*\[\s*$",
+    re.IGNORECASE,
+)
+
+
 def expression_texts(text: str) -> Iterator[str]:
     """The body of each ``${{ }}`` in *text*, string literals blanked.
 
-    A literal survives only as the index of a bracket access (``steps['p']``),
-    so a name inside a message or comparison (``'steps.p.outputs.v'``) is never
-    taken for a reference.
+    A literal survives only as the index of a bracket access on the ``steps`` or
+    ``needs`` context (``steps['p']``), so a name inside a message or comparison
+    (``'steps.p.outputs.v'``), or indexing something else, is never taken for a reference.
 
     >>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
     [" steps['p'].outputs.v == '' "]
+    >>> list(expression_texts("${{ fromJSON(env.M)['steps.p.outputs.v'] }}"))
+    ["  fromJSON(env.M)[''] "]
     """
     for start, end in _expression_spans(text):
         body = text[start:end]
         pieces, pos = [], 0
         for literal in _STRING_LITERAL_RE.finditer(body):
             before = body[pos : literal.start()]
-            indexed = before.rstrip().endswith("[") and body[
-                literal.end() :
-            ].lstrip().startswith("]")
+            indexed = (
+                _CONTEXT_INDEX_RE.search(body[: literal.start()]) is not None
+                and body[literal.end() :].lstrip().startswith("]")
+            )
             pieces += [before, literal.group() if indexed else "''"]
             pos = literal.end()
         pieces.append(body[pos:])
         yield "".join(pieces)
+
+
+def outside_expressions(text: str) -> str:
+    """*text* with every ``${{ }}`` expression removed.
+
+    >>> outside_expressions("config.flag && ${{ x }}").strip()
+    'config.flag &&'
+    """
+    pieces, last = [], 0
+    for start, end in _expression_spans(text):
+        pieces.append(text[last : start - 3])
+        last = end + 2
+    pieces.append(text[last:])
+    return " ".join(pieces)
 
 
 def as_expression(text: str) -> str:
@@ -333,6 +359,35 @@ def config_references(recipe: Recipe) -> list[tuple[str, str, bool]]:
     return refs
 
 
+def _conditions(recipe: Recipe) -> Iterator[tuple[str, str]]:
+    """``(location, text)`` for each ``if:`` of the recipe's jobs and steps."""
+    for job_id, job in recipe.jobs.items():
+        if job.if_:
+            yield job_id, job.if_
+        for step in job.steps:
+            if step.if_:
+                yield f"{job_id}.{step.id}", step.if_
+
+
+def bool_config_conditions(
+    recipe: Recipe, config: dict[str, Any] | None
+) -> list[tuple[str, str]]:
+    """``(location, key)`` for each ``if:`` that is just a boolean config value.
+
+    Config values reach the workflow as *strings*, so ``if: config.flag`` is true for
+    ``'false'`` too; compare it: ``config.flag == 'true'``.
+    """
+    found = []
+    for location, text in _conditions(recipe):
+        body = text.strip()
+        if body.startswith("${{") and body.endswith("}}"):
+            body = body[3:-2].strip()
+        match = re.fullmatch(r"!?\s*config\.([\w\-]+)", body)
+        if match and isinstance((config or {}).get(match.group(1)), bool):
+            found.append((location, match.group(1)))
+    return found
+
+
 def find_recipe_problems(
     recipe: Recipe, config: dict[str, Any] | None
 ) -> list[RecipeProblem]:
@@ -381,6 +436,21 @@ def find_recipe_problems(
         else:
             continue
         problems.append(RecipeProblem("CONF004", message, location))
+
+    for location, condition in _conditions(recipe):
+        if "${{" in condition:
+            for ref in _CONFIG_NAME_RE.finditer(outside_expressions(condition)):
+                problems.append(
+                    RecipeProblem(
+                        "CONF004",
+                        f"'{location}' has an if: that mixes plain text with "
+                        f"'${{{{ }}}}' and uses {ref.group()} outside the expression, "
+                        f"where reci cannot rewrite it; put the whole condition "
+                        f"inside '${{{{ }}}}'.",
+                        location,
+                    )
+                )
+                break
 
     known = set(recipe.jobs) | ({SETUP_JOB_ID} if config else set())
     for job_id, job in recipe.jobs.items():

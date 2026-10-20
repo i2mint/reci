@@ -161,6 +161,7 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 | CONF005 | Config | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged |
 | CONF006 | Config | An empty-string config value overrides the default of an action input |
 | CONF007 | Config | A `<REQUIRED: ...>` placeholder written by `reci scaffold` was left unfilled |
+| CONF008 | Config | An `if:` that is just a boolean config value (`if: config.flag`): config values reach the workflow as strings, so it is true for `'false'` too; compare with `== 'true'` |
 | PURE001 | Purity | `run:` step breaks typed contract |
 | ACT002 | Action | Referenced action not found |
 
