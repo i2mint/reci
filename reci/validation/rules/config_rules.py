@@ -130,9 +130,7 @@ def check_leftover_placeholders(graph, config: dict[str, Any]) -> Iterable[Findi
 
 
 @register_rule("CONF008")
-def check_boolean_config_condition(
-    graph, config: dict[str, Any]
-) -> Iterable[Finding]:
+def check_boolean_config_condition(graph, config: dict[str, Any]) -> Iterable[Finding]:
     """An ``if:`` that is only a boolean config value: config values are strings."""
     from reci.recipe_checks import bool_config_conditions
 

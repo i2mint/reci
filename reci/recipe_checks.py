@@ -115,10 +115,9 @@ def expression_texts(text: str) -> Iterator[str]:
         pieces, pos = [], 0
         for literal in _STRING_LITERAL_RE.finditer(body):
             before = body[pos : literal.start()]
-            indexed = (
-                _CONTEXT_INDEX_RE.search(body[: literal.start()]) is not None
-                and body[literal.end() :].lstrip().startswith("]")
-            )
+            indexed = _CONTEXT_INDEX_RE.search(
+                body[: literal.start()]
+            ) is not None and body[literal.end() :].lstrip().startswith("]")
             pieces += [before, literal.group() if indexed else "''"]
             pos = literal.end()
         pieces.append(body[pos:])
