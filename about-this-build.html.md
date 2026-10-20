@@ -2,7 +2,7 @@
 
 # About this build
 
-This documentation was built on **2026-10-20 06:46 UTC** from commit <a href="https://github.com/i2mint/reci/commit/ee7e910d522428e894c95fad7fde6a5c5f70f14e"><code>ee7e910</code></a> on branch <code>main</code>, for **reci 0.0.36** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 10:01 UTC** from commit <a href="https://github.com/i2mint/reci/commit/ad7f7d2604d52749423b655ab3ad254b2aa0c047"><code>ad7f7d2</code></a> on branch <code>main</code>, for **reci 0.0.37** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -11,9 +11,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/ee7e910d522428e894c95fad7fde6a5c5f70f14e"><code>ee7e910d522428e894c95fad7fde6a5c5f70f14e</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/ad7f7d2604d52749423b655ab3ad254b2aa0c047"><code>ad7f7d2604d52749423b655ab3ad254b2aa0c047</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.36</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.37</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -22,9 +22,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39382126578">39382126578</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39404695770">39404695770</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>0d5afefd21b5c9f8a4372925ad60824155e637a4</code> (in the history of the built commit) |
+| Event commit | <code>2fff744b23f50a4835b0edf4ecb3287731ad9f48</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -49,13 +49,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.36/">0.0.36</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.37/">0.0.37</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout ee7e910d522428e894c95fad7fde6a5c5f70f14e
+git checkout ad7f7d2604d52749423b655ab3ad254b2aa0c047
 pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
