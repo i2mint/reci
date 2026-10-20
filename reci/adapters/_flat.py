@@ -65,16 +65,27 @@ def _set_new(target: MutableMapping, key: str, value: Any) -> None:
     """Store a new *key* in the deepest existing table its ``__`` prefix names.
 
     ``testing__new`` goes inside ``[testing]`` when that table exists, else it is
-    stored flat; :func:`flatten` reads both back as the same key.
+    stored flat; :func:`flatten` reads both back as the same key.  A table that is a
+    YAML anchor (or an alias of one) is skipped, since a write into it would also
+    change every other place that shares it.
     """
     parts = key.split("__")
     for end in range(len(parts) - 1, 0, -1):
         node: Any = target
+        shared = False
         for part in parts[:end]:
             node = node.get(part) if isinstance(node, dict) else None
+            shared = shared or _is_shared(node)
+        if shared:
+            continue
         rest = "__".join(parts[end:])
         # Never overwrite a table: that would drop the leaves flattened under it
         if isinstance(node, dict) and not isinstance(node.get(rest), dict):
             node[rest] = value
             return
     target[key] = value
+
+
+def _is_shared(node: Any) -> bool:
+    """Is *node* a YAML mapping carrying an anchor (so it may be aliased elsewhere)?"""
+    return getattr(getattr(node, "anchor", None), "value", None) is not None

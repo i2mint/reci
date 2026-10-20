@@ -275,3 +275,14 @@ def test_writing_a_key_that_names_a_table_does_not_wipe_the_table():
         "testing__pytest__markers": "slow",
         "testing__pytest": "-q",
     }
+
+
+def test_yaml_write_does_not_nest_a_new_key_into_an_anchored_table(tmp_path):
+    # i2mint/reci#60: a key added to `use` (an alias of `base`) also landed in `base`.
+    p = tmp_path / ".ci.yml"
+    p.write_text("base: &b\n  x: 1\nuse: *b\n")
+    ad = YamlAdapter()
+    ad.write(str(p), {**ad.read(str(p)), "use__k2": 2})
+    got = ad.read(str(p))
+    assert got["use__k2"] == 2
+    assert "base__k2" not in got
