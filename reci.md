@@ -1,4 +1,4 @@
-> built 2026-10-20 04:53 UTC from d97329e (main) · reci 0.0.35. Details: build_info.json
+> built 2026-10-20 06:46 UTC from ee7e910 (main) · reci 0.0.36. Details: build_info.json
 
 # index.html.md
 
@@ -151,24 +151,25 @@ For each action input, the compiler resolves its value using this precedence:
 
 ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 
-| Rule    | Category   | What it catches                                                                                                                                           |
-|---------|------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| DAG001  | Structure  | Cycle detected                                                                                                                                            |
-| DAG002  | Structure  | Duplicate output name in a job                                                                                                                            |
-| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                                   |
-| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                                |
-| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                                    |
-| FLOW001 | Data flow  | Required input has no source                                                                                                                              |
-| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches, in a job or across jobs)                                                                                     |
-| FLOW006 | Data flow  | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer)                                         |
-| FLOW007 | Data flow  | `steps.<id>.outputs.<n>` or `needs.<job>.outputs.<n>` reference that resolves to nothing (unknown or not-yet-run step, undeclared output, job not needed) |
-| CONF001 | Config     | Required config key missing                                                                                                                               |
-| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)                  |
-| CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged              |
-| CONF006 | Config     | An empty-string config value overrides the default of an action input                                                                                     |
-| CONF007 | Config     | A `<REQUIRED: ...>` placeholder written by `reci scaffold` was left unfilled                                                                              |
-| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                                         |
-| ACT002  | Action     | Referenced action not found                                                                                                                               |
+| Rule    | Category   | What it catches                                                                                                                                                          |
+|---------|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DAG001  | Structure  | Cycle detected                                                                                                                                                           |
+| DAG002  | Structure  | Duplicate output name in a job                                                                                                                                           |
+| DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                                                  |
+| DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                                               |
+| DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                                                   |
+| FLOW001 | Data flow  | Required input has no source                                                                                                                                             |
+| FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches, in a job or across jobs)                                                                                                    |
+| FLOW006 | Data flow  | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer)                                                        |
+| FLOW007 | Data flow  | `steps.<id>.outputs.<n>` or `needs.<job>.outputs.<n>` reference that resolves to nothing (unknown or not-yet-run step, undeclared output, job not needed)                |
+| CONF001 | Config     | Required config key missing                                                                                                                                              |
+| CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)                                 |
+| CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged                             |
+| CONF006 | Config     | An empty-string config value overrides the default of an action input                                                                                                    |
+| CONF007 | Config     | A `<REQUIRED: ...>` placeholder written by `reci scaffold` was left unfilled                                                                                             |
+| CONF008 | Config     | An `if:` that is just a boolean config value (`if: config.flag`): config values reach the workflow as strings, so it is true for `'false'` too; compare with `== 'true'` |
+| PURE001 | Purity     | `run:` step breaks typed contract                                                                                                                                        |
+| ACT002  | Action     | Referenced action not found                                                                                                                                              |
 
 ## Config adapters
 
@@ -865,15 +866,17 @@ and the validation rules (which report them), so both always agree.
 
 ### Functions
 
-| [`as_expression`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.as_expression)(text)                  | An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.             |
-|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| [`config_names`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
-| [`config_references`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
-| [`expression_texts`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.expression_texts)(text)               | The body of each `${{ }}` in *text*, string literals blanked.                        |
-| [`find_recipe_problems`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                              |
-| [`serialize_config_value`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.serialize_config_value)(value)        | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
-| [`sub_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.sub_config_refs)(text, repl)          | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
-| [`unsupported_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.unsupported_config_refs)(text)        | The uses of the `config` context in *text* that reci cannot rewrite.                 |
+| [`as_expression`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.as_expression)(text)                    | An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.             |
+|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`bool_config_conditions`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.bool_config_conditions)(recipe, config) | `(location, key)` for each `if:` that is just a boolean config value.                |
+| [`config_names`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_names)(text)                     | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
+| [`config_references`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.config_references)(recipe)              | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
+| [`expression_texts`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.expression_texts)(text)                 | The body of each `${{ }}` in *text*, string literals blanked.                        |
+| [`find_recipe_problems`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.find_recipe_problems)(recipe, config)   | Problems that would make the compiled workflow invalid.                              |
+| [`outside_expressions`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.outside_expressions)(text)              | *text* with every `${{ }}` expression removed.                                       |
+| [`serialize_config_value`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.serialize_config_value)(value)          | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
+| [`sub_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.sub_config_refs)(text, repl)            | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
+| [`unsupported_config_refs`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.unsupported_config_refs)(text)          | The uses of the `config` context in *text* that reci cannot rewrite.                 |
 
 ### Classes
 
@@ -903,6 +906,16 @@ An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
+### reci.recipe_checks.bool_config_conditions(recipe, config)
+
+`(location, key)` for each `if:` that is just a boolean config value.
+
+Config values reach the workflow as *strings*, so `if: config.flag` is true for
+`'false'` too; compare it: `config.flag == 'true'`.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]
+
 ### reci.recipe_checks.config_names(text)
 
 The config keys referenced in *text*’s `${{ ... }}` expressions, in order.
@@ -928,13 +941,15 @@ Duplicates within one location are reported once.
 
 The body of each `${{ }}` in *text*, string literals blanked.
 
-A literal survives only as the index of a bracket access (`steps['p']`),
-so a name inside a message or comparison (`'steps.p.outputs.v'`) is never
-taken for a reference.
+A literal survives only as the index of a bracket access on the `steps` or
+`needs` context (`steps['p']`), so a name inside a message or comparison
+(`'steps.p.outputs.v'`), or indexing something else, is never taken for a reference.
 
 ```pycon
 >>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
 [" steps['p'].outputs.v == '' "]
+>>> list(expression_texts("${{ fromJSON(env.M)['steps.p.outputs.v'] }}"))
+[" fromJSON(env.M)[''] "]
 ```
 
 * **Return type:**
@@ -956,6 +971,18 @@ Problems that would make the compiled workflow invalid.
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`RecipeProblem`](_autosummary/reci.recipe_checks.html.md#reci.recipe_checks.RecipeProblem)]
+
+### reci.recipe_checks.outside_expressions(text)
+
+*text* with every `${{ }}` expression removed.
+
+```pycon
+>>> outside_expressions("config.flag && ${{ x }}").strip()
+'config.flag &&'
+```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.recipe_checks.serialize_config_value(value)
 
@@ -1128,13 +1155,21 @@ Config validation rules (CONF001–CONF007).
 
 ### Functions
 
-| [`check_empty_value_shadows_default`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_empty_value_shadows_default)(graph, config)   | An empty-string config value on an input that has an action default (it replaces it).   |
-|-----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
-| [`check_exportable_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_exportable_config)(graph, config)             | Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.               |
-| [`check_leftover_placeholders`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_leftover_placeholders)(graph, config)         | `<REQUIRED: ...>` values that `reci scaffold` wrote and nobody filled in.               |
-| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)       | Config keys that are required but not present.                                          |
-| [`check_undefined_config_references`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_undefined_config_references)(graph, config)   | `${{ config.X }}` where `X` is not a config key.                                        |
-| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)                 | Config keys present but not referenced by any action.                                   |
+| [`check_boolean_config_condition`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_boolean_config_condition)(graph, config)    | An `if:` that is only a boolean config value: config values are strings.              |
+|---------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------|
+| [`check_empty_value_shadows_default`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_empty_value_shadows_default)(graph, config) | An empty-string config value on an input that has an action default (it replaces it). |
+| [`check_exportable_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_exportable_config)(graph, config)           | Config keys must be valid output ids; values must survive $GITHUB_OUTPUT.             |
+| [`check_leftover_placeholders`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_leftover_placeholders)(graph, config)       | `<REQUIRED: ...>` values that `reci scaffold` wrote and nobody filled in.             |
+| [`check_missing_required_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_missing_required_config)(graph, config)     | Config keys that are required but not present.                                        |
+| [`check_undefined_config_references`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_undefined_config_references)(graph, config) | `${{ config.X }}` where `X` is not a config key.                                      |
+| [`check_unused_config`](_autosummary/reci.validation.rules.config_rules.html.md#reci.validation.rules.config_rules.check_unused_config)(graph, config)               | Config keys present but not referenced by any action.                                 |
+
+### reci.validation.rules.config_rules.check_boolean_config_condition(graph, config)
+
+An `if:` that is only a boolean config value: config values are strings.
+
+* **Return type:**
+  [`Iterable`](https://docs.python.org/3/library/typing.html#typing.Iterable)[[`Finding`](_autosummary/reci.validation.report.html.md#reci.validation.report.Finding)]
 
 ### reci.validation.rules.config_rules.check_empty_value_shadows_default(graph, config)
 
@@ -1455,20 +1490,18 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-20 04:53 UTC** from commit <a href="https://github.com/i2mint/reci/commit/d97329e25dcbeaa70f8148db46dc486464615116"><code>d97329e</code></a> on branch <code>main</code>, for **reci 0.0.35** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-10-20 06:46 UTC** from commit <a href="https://github.com/i2mint/reci/commit/ee7e910d522428e894c95fad7fde6a5c5f70f14e"><code>ee7e910</code></a> on branch <code>main</code>, for **reci 0.0.36** (from <code>pyproject.toml</code>).
 
-#### WARNING
-The documentation and the package may be misaligned:
-
-- The documented version (0.0.35) is ahead of the latest release on PyPI (0.0.34): these docs describe unreleased code.
+#### NOTE
+Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
 
 ## Source
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/d97329e25dcbeaa70f8148db46dc486464615116"><code>d97329e25dcbeaa70f8148db46dc486464615116</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/ee7e910d522428e894c95fad7fde6a5c5f70f14e"><code>ee7e910d522428e894c95fad7fde6a5c5f70f14e</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.35</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.36</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1477,9 +1510,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39371769937">39371769937</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39382126578">39382126578</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>e19d2daffffe33d05637134857886c5595f12282</code> (in the history of the built commit) |
+| Event commit | <code>0d5afefd21b5c9f8a4372925ad60824155e637a4</code> (in the history of the built commit) |
 
 ## Tools
 
@@ -1504,13 +1537,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.34/">0.0.34</a>, older than the documented version (0.0.35).
+Latest release: <a href="https://pypi.org/project/reci/0.0.36/">0.0.36</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout d97329e25dcbeaa70f8148db46dc486464615116
+git checkout ee7e910d522428e894c95fad7fde6a5c5f70f14e
 pip install "epythet==0.2.18"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

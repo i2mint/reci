@@ -15,10 +15,12 @@ reci.recipe\_checks
    .. autosummary::
    
       as_expression
+      bool_config_conditions
       config_names
       config_references
       expression_texts
       find_recipe_problems
+      outside_expressions
       serialize_config_value
       sub_config_refs
       unsupported_config_refs

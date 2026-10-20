@@ -320,6 +320,30 @@
 </span><span id="line-128">                <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Config key '</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">' still holds the scaffold placeholder </span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2">; set a real value."</span><span class="p">,</span>
 </span><span id="line-129">            <span class="p">)</span></div>
 
+</span><span id="line-130">
+</span><span id="line-131">
+<div class="viewcode-block" id="check_boolean_config_condition">
+<a class="viewcode-back" href="../../../../_autosummary/reci.validation.rules.config_rules.html#reci.validation.rules.config_rules.check_boolean_config_condition">[docs]</a>
+</span><span id="line-132"><span class="nd">@register_rule</span><span class="p">(</span><span class="s2">"CONF008"</span><span class="p">)</span>
+</span><span id="line-133"><span class="k">def</span><span class="w"> </span><span class="nf">check_boolean_config_condition</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Finding</span><span class="p">]:</span>
+</span><span id="line-134"><span class="w">    </span><span class="sd">"""An ``if:`` that is only a boolean config value: config values are strings."""</span>
+</span><span id="line-135">    <span class="kn">from</span><span class="w"> </span><span class="nn">reci.recipe_checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">bool_config_conditions</span>
+</span><span id="line-136">
+</span><span id="line-137">    <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">recipe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-138">        <span class="k">return</span>
+</span><span id="line-139">    <span class="k">for</span> <span class="n">location</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">bool_config_conditions</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">recipe</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+</span><span id="line-140">        <span class="k">yield</span> <span class="n">Finding</span><span class="p">(</span>
+</span><span id="line-141">            <span class="n">rule_id</span><span class="o">=</span><span class="s2">"CONF008"</span><span class="p">,</span>
+</span><span id="line-142">            <span class="n">severity</span><span class="o">=</span><span class="n">Severity</span><span class="o">.</span><span class="n">WARNING</span><span class="p">,</span>
+</span><span id="line-143">            <span class="n">message</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-144">                <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">' has an if: that is just config.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, but config values "</span>
+</span><span id="line-145">                <span class="sa">f</span><span class="s2">"reach the workflow as strings, so the condition is true even for "</span>
+</span><span id="line-146">                <span class="sa">f</span><span class="s2">"'false'."</span>
+</span><span id="line-147">            <span class="p">),</span>
+</span><span id="line-148">            <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span>
+</span><span id="line-149">            <span class="n">suggestion</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Compare it: config.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> == 'true'."</span><span class="p">,</span>
+</span><span id="line-150">        <span class="p">)</span></div>
+
 </span></code></pre></div>
     </div></div>
           </main>
@@ -333,7 +357,7 @@
 </footer>
     </div>
     
-    <script src="../../../../_static/documentation_options.js?v=39aadc1c"></script>
+    <script src="../../../../_static/documentation_options.js?v=0e525676"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>

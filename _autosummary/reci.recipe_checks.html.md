@@ -12,15 +12,17 @@ and the validation rules (which report them), so both always agree.
 
 ### Functions
 
-| [`as_expression`](#reci.recipe_checks.as_expression)(text)                  | An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.             |
-|---------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
-| [`config_names`](#reci.recipe_checks.config_names)(text)                   | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
-| [`config_references`](#reci.recipe_checks.config_references)(recipe)            | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
-| [`expression_texts`](#reci.recipe_checks.expression_texts)(text)               | The body of each `${{ }}` in *text*, string literals blanked.                        |
-| [`find_recipe_problems`](#reci.recipe_checks.find_recipe_problems)(recipe, config) | Problems that would make the compiled workflow invalid.                              |
-| [`serialize_config_value`](#reci.recipe_checks.serialize_config_value)(value)        | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
-| [`sub_config_refs`](#reci.recipe_checks.sub_config_refs)(text, repl)          | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
-| [`unsupported_config_refs`](#reci.recipe_checks.unsupported_config_refs)(text)        | The uses of the `config` context in *text* that reci cannot rewrite.                 |
+| [`as_expression`](#reci.recipe_checks.as_expression)(text)                    | An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.             |
+|-----------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [`bool_config_conditions`](#reci.recipe_checks.bool_config_conditions)(recipe, config) | `(location, key)` for each `if:` that is just a boolean config value.                |
+| [`config_names`](#reci.recipe_checks.config_names)(text)                     | The config keys referenced in *text*'s <br/><br/>```<br/>``<br/>```<br/><br/>${{ .   |
+| [`config_references`](#reci.recipe_checks.config_references)(recipe)              | `(location, key, needs_context_available)` for each `${{ config.key }}`.             |
+| [`expression_texts`](#reci.recipe_checks.expression_texts)(text)                 | The body of each `${{ }}` in *text*, string literals blanked.                        |
+| [`find_recipe_problems`](#reci.recipe_checks.find_recipe_problems)(recipe, config)   | Problems that would make the compiled workflow invalid.                              |
+| [`outside_expressions`](#reci.recipe_checks.outside_expressions)(text)              | *text* with every `${{ }}` expression removed.                                       |
+| [`serialize_config_value`](#reci.recipe_checks.serialize_config_value)(value)          | A config value as the text of a `$GITHUB_OUTPUT` entry.                              |
+| [`sub_config_refs`](#reci.recipe_checks.sub_config_refs)(text, repl)            | Substitute every `config.<key>` inside a <br/><br/>```<br/>``<br/>```<br/><br/>${{ . |
+| [`unsupported_config_refs`](#reci.recipe_checks.unsupported_config_refs)(text)          | The uses of the `config` context in *text* that reci cannot rewrite.                 |
 
 ### Classes
 
@@ -50,6 +52,16 @@ An `if:` value as a `${{ }}` expression: GitHub evaluates it either way.
 * **Return type:**
   [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
+### reci.recipe_checks.bool_config_conditions(recipe, config)
+
+`(location, key)` for each `if:` that is just a boolean config value.
+
+Config values reach the workflow as *strings*, so `if: config.flag` is true for
+`'false'` too; compare it: `config.flag == 'true'`.
+
+* **Return type:**
+  [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`tuple`](https://docs.python.org/3/builtins/stdtypes.html#tuple)[[`str`](https://docs.python.org/3/builtins/stdtypes.html#str), [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)]]
+
 ### reci.recipe_checks.config_names(text)
 
 The config keys referenced in *text*’s `${{ ... }}` expressions, in order.
@@ -75,13 +87,15 @@ Duplicates within one location are reported once.
 
 The body of each `${{ }}` in *text*, string literals blanked.
 
-A literal survives only as the index of a bracket access (`steps['p']`),
-so a name inside a message or comparison (`'steps.p.outputs.v'`) is never
-taken for a reference.
+A literal survives only as the index of a bracket access on the `steps` or
+`needs` context (`steps['p']`), so a name inside a message or comparison
+(`'steps.p.outputs.v'`), or indexing something else, is never taken for a reference.
 
 ```pycon
 >>> list(expression_texts("${{ steps['p'].outputs.v == 'steps.q.outputs.w' }} x"))
 [" steps['p'].outputs.v == '' "]
+>>> list(expression_texts("${{ fromJSON(env.M)['steps.p.outputs.v'] }}"))
+[" fromJSON(env.M)[''] "]
 ```
 
 * **Return type:**
@@ -103,6 +117,18 @@ Problems that would make the compiled workflow invalid.
 
 * **Return type:**
   [`list`](https://docs.python.org/3/builtins/stdtypes.html#list)[[`RecipeProblem`](#reci.recipe_checks.RecipeProblem)]
+
+### reci.recipe_checks.outside_expressions(text)
+
+*text* with every `${{ }}` expression removed.
+
+```pycon
+>>> outside_expressions("config.flag && ${{ x }}").strip()
+'config.flag &&'
+```
+
+* **Return type:**
+  [`str`](https://docs.python.org/3/builtins/stdtypes.html#str)
 
 ### reci.recipe_checks.serialize_config_value(value)
 

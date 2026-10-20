@@ -8,6 +8,7 @@ reci.validation.rules.config\_rules
 
    .. autosummary::
    
+      check_boolean_config_condition
       check_empty_value_shadows_default
       check_exportable_config
       check_leftover_placeholders
