@@ -1,26 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-20T02:55:31.458610Z
-commit_sha,0dc5b5bd9c6699953ef60a715f58f899c63b8425
-commit_message,Merge 5a1a09b6bb6ee3be372462d76bce1018eb82afb9 into 2eb9059106424a59f610e1c3c82a0f5ad0435428
+timestamp,2026-10-20T02:56:53.366573Z
+commit_sha,08185445fd781560c3a1788bd2e671e902957ddb
+commit_message,"Export a top-level datetime config value as ISO text, like a nested one (#66) (#68)
+
+Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
 python_version,3.10
-metrics.umpyre_stats.num_functions,7960
-metrics.umpyre_stats.num_classes,1984
-metrics.umpyre_stats.total_lines,294178
-metrics.umpyre_stats.empty_lines,34830
-metrics.umpyre_stats.comment_lines,15151
-metrics.umpyre_stats.docs_lines,21759
-metrics.umpyre_stats.function_lines,116619
-metrics.umpyre_stats.empty_lines_ratio,0.11839770479097689
-metrics.umpyre_stats.comment_lines_ratio,0.05150283161895179
-metrics.umpyre_stats.function_lines_ratio,0.3964232539482898
-metrics.umpyre_stats.mean_lines_per_function,14.650628140703517
-metrics.umpyre_stats.files_analyzed,743
+metrics.umpyre_stats.num_functions,7864
+metrics.umpyre_stats.num_classes,1973
+metrics.umpyre_stats.total_lines,292019
+metrics.umpyre_stats.empty_lines,34497
+metrics.umpyre_stats.comment_lines,15005
+metrics.umpyre_stats.docs_lines,21726
+metrics.umpyre_stats.function_lines,115060
+metrics.umpyre_stats.empty_lines_ratio,0.118132724240546
+metrics.umpyre_stats.comment_lines_ratio,0.05138364284515733
+metrics.umpyre_stats.function_lines_ratio,0.39401545789828746
+metrics.umpyre_stats.mean_lines_per_function,14.631230925737539
+metrics.umpyre_stats.files_analyzed,733
 metrics.umpyre_stats.pypi_version,0.0.33
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-20T02:55:17Z
+metrics.workflow_status.last_success_timestamp,2026-10-20T02:55:37Z
 metrics.workflow_status.recent_failure_count,0
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/39361404005
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/39361411891
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.450068712234497
+collection_duration_seconds,4.855529069900513
