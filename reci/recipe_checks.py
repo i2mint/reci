@@ -208,6 +208,8 @@ def serialize_config_value(value: Any) -> str:
 
     >>> serialize_config_value({"d": datetime.date(2024, 1, 2), "t": (1, 2)})
     '{"d": "2024-01-02", "t": [1, 2]}'
+    >>> serialize_config_value(datetime.datetime(2024, 1, 2, 3, 4, 5))
+    '2024-01-02T03:04:05'
     >>> serialize_config_value(True), serialize_config_value(7)
     ('true', '7')
     >>> serialize_config_value(None)
@@ -239,7 +241,9 @@ def serialize_config_value(value: Any) -> str:
         return text if _DECIMAL_SPELLING_RE.fullmatch(text) else str(value)
     if isinstance(value, int):
         return str(int(value))
-    if isinstance(value, (str, datetime.date, datetime.time)):
+    if isinstance(value, (datetime.date, datetime.time)):  # also datetime.datetime
+        return value.isoformat()  # same ISO text as inside a list or mapping
+    if isinstance(value, str):
         return str(value)
     raise TypeError(f"{type(value).__name__} has no text form")
 

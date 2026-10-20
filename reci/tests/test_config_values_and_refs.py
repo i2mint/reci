@@ -166,3 +166,8 @@ def test_toml_boolean_arrays_export_as_json(tmp_path):
     assert serialize_config_value(config["flags"]) == "[true, false]"
     assert serialize_config_value(config["ok"]) == "true"
     _compile(ONE_JOB, config)
+
+
+def test_top_level_datetime_exports_as_iso_text_like_a_nested_one():
+    assert serialize_config_value(datetime.datetime(2024, 1, 2, 3, 4, 5)) == "2024-01-02T03:04:05"
+    assert serialize_config_value({"at": datetime.datetime(2024, 1, 2, 3, 4, 5)}) == '{"at": "2024-01-02T03:04:05"}'
