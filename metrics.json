@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 2.769284963607788,
-  "commit_message": "Merge 06f5a2b20867740e83bd86ac7bc0781103d3e6f9 into d97329e25dcbeaa70f8148db46dc486464615116",
-  "commit_sha": "5e814d2a7bd25bebe212f95ea4f9a000958ccecc",
+  "collection_duration_seconds": 2.578321695327759,
+  "commit_message": "fix doctest whitespace\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "06f5a2b20867740e83bd86ac7bc0781103d3e6f9",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -22,7 +22,7 @@
       "mean_lines_per_function": 14.657845227643296,
       "num_classes": 1984,
       "num_functions": 7973,
-      "pypi_version": "0.0.35",
+      "pypi_version": "0.0.34",
       "total_lines": 294476
     },
     "wily": {
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-20T06:43:50.169575Z",
+  "timestamp": "2026-10-20T06:43:52.561173Z",
   "workflow_status": {}
 }

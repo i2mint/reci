@@ -1,0 +1,47 @@
+{
+  "collection_duration_seconds": 2.578321695327759,
+  "commit_message": "fix doctest whitespace\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "06f5a2b20867740e83bd86ac7bc0781103d3e6f9",
+  "metrics": {
+    "coverage": {
+      "branch_coverage": 0.0,
+      "error": "No coverage file found",
+      "line_coverage": 0.0,
+      "statements_covered": 0,
+      "statements_total": 0
+    },
+    "umpyre_stats": {
+      "comment_lines": 15158,
+      "comment_lines_ratio": 0.051474483489316616,
+      "docs_lines": 21801,
+      "empty_lines": 34863,
+      "empty_lines_ratio": 0.11838995368043576,
+      "files_analyzed": 743,
+      "function_lines": 116867,
+      "function_lines_ratio": 0.39686426058490337,
+      "mean_lines_per_function": 14.657845227643296,
+      "num_classes": 1984,
+      "num_functions": 7973,
+      "pypi_version": "0.0.34",
+      "total_lines": 294476
+    },
+    "wily": {
+      "cyclomatic_avg": 0.0,
+      "error": "wily build failed: \u001b[31mFailed to setup archiver: 'Dirty repository, make sure you commit/stash files first'\u001b[0m\n",
+      "files_analyzed": 0,
+      "maintainability_index": 0.0,
+      "total_loc": 0
+    },
+    "workflow_status": {
+      "last_run_status": "failure",
+      "last_success_timestamp": "2026-10-20T04:53:55Z",
+      "recent_failure_count": 2,
+      "run_url": "https://github.com/i2mint/reci/actions/runs/39381795208",
+      "total_runs_analyzed": 10
+    }
+  },
+  "python_version": "3.10",
+  "schema_version": "1.0",
+  "timestamp": "2026-10-20T06:43:52.561173Z",
+  "workflow_status": {}
+}
