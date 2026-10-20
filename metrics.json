@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 3.144343376159668,
-  "commit_message": "Export a top-level datetime config value as ISO text, like a nested one (#66)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
-  "commit_sha": "5a1a09b6bb6ee3be372462d76bce1018eb82afb9",
+  "collection_duration_seconds": 2.7609169483184814,
+  "commit_message": "Merge 5a1a09b6bb6ee3be372462d76bce1018eb82afb9 into 2eb9059106424a59f610e1c3c82a0f5ad0435428",
+  "commit_sha": "0dc5b5bd9c6699953ef60a715f58f899c63b8425",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-20T02:54:52.715728Z",
+  "timestamp": "2026-10-20T02:55:01.662050Z",
   "workflow_status": {}
 }
