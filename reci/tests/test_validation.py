@@ -977,3 +977,49 @@ def test_FLOW007_reports_a_repeated_reference_once_and_tolerates_odd_output_keys
         "      - {run: 'echo ${{ needs.a.outputs.v }}'}\n"
     )
     assert len(_flow007(recipe)) == 1
+
+
+# -- reci#67 follow-ups ---------------------------------------------------------
+
+
+def test_FLOW007_checks_a_real_setup_job_unless_config_generates_one():
+    recipe = (
+        "on: push\njobs:\n  setup:\n    steps: [{id: p, uses: x/p@v1}]\n"
+        "  b:\n    needs: setup\n"
+        "    steps: [{id: r, run: 'echo ${{ needs.setup.outputs.v }}'}]\n"
+    )
+    graph = mk_graph(recipe, _P)
+    (f,) = _only("FLOW007", graph)
+    assert "declares no such output" in f.message
+    assert _only("FLOW007", graph, {"v": 1}) == []  # config: the generated setup job
+
+
+def test_FLOW004_ignores_a_step_name_indexing_something_else():
+    from reci.recipe_checks import expression_texts
+
+    (body,) = expression_texts("${{ fromJSON(env.M)['steps.p.outputs.v'] }}")
+    assert "steps.p" not in body
+    (body,) = expression_texts("${{ steps['p'].outputs['v'] }}")
+    assert "'p'" in body and "'v'" in body
+
+
+def test_CONF004_if_mixing_text_and_expression_with_config_outside():
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n"
+        "      - {id: s, run: x, if: \"config.flag == 'true' && ${{ always() }}\"}\n"
+    )
+    (f,) = _only("CONF004", mk_graph(recipe, _P), {"flag": "true"})
+    assert "mixes plain text" in f.message
+
+
+def test_CONF008_bare_boolean_config_condition():
+    recipe = (
+        "on: push\njobs:\n  j:\n    steps:\n"
+        "      - {id: a, run: x, if: config.flag}\n"
+        "      - {id: b, run: x, if: '${{ !config.flag }}'}\n"
+        "      - {id: c, run: x, if: \"config.flag == 'true'\"}\n"
+        "      - {id: d, run: x, if: config.name}\n"
+    )
+    findings = _only("CONF008", mk_graph(recipe, _P), {"flag": True, "name": "n"})
+    assert sorted(f.location for f in findings) == ["j.a", "j.b"]
+    assert all(f.severity is Severity.WARNING for f in findings)

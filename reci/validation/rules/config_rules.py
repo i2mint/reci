@@ -127,3 +127,26 @@ def check_leftover_placeholders(graph, config: dict[str, Any]) -> Iterable[Findi
                 severity=Severity.ERROR,
                 message=f"Config key '{key}' still holds the scaffold placeholder {value!r}; set a real value.",
             )
+
+
+@register_rule("CONF008")
+def check_boolean_config_condition(
+    graph, config: dict[str, Any]
+) -> Iterable[Finding]:
+    """An ``if:`` that is only a boolean config value: config values are strings."""
+    from reci.recipe_checks import bool_config_conditions
+
+    if graph.recipe is None:
+        return
+    for location, key in bool_config_conditions(graph.recipe, config):
+        yield Finding(
+            rule_id="CONF008",
+            severity=Severity.WARNING,
+            message=(
+                f"'{location}' has an if: that is just config.{key}, but config values "
+                f"reach the workflow as strings, so the condition is true even for "
+                f"'false'."
+            ),
+            location=location,
+            suggestion=f"Compare it: config.{key} == 'true'.",
+        )
