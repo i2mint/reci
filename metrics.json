@@ -1,7 +1,7 @@
 {
-  "collection_duration_seconds": 4.354928255081177,
-  "commit_message": "fix: FLOW004 reference scanning and new FLOW007 (#38) (#65)\n\nCloses #38.",
-  "commit_sha": "07f5bebe7e3b3b4999b10a7dc5fa7a1be1cb6ccb",
+  "collection_duration_seconds": 3.144343376159668,
+  "commit_message": "Export a top-level datetime config value as ISO text, like a nested one (#66)\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>",
+  "commit_sha": "5a1a09b6bb6ee3be372462d76bce1018eb82afb9",
   "metrics": {
     "coverage": {
       "branch_coverage": 0.0,
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 14908,
-      "comment_lines_ratio": 0.05131594346571938,
-      "docs_lines": 21528,
-      "empty_lines": 34277,
-      "empty_lines_ratio": 0.11798742917725136,
-      "files_analyzed": 727,
-      "function_lines": 114009,
-      "function_lines_ratio": 0.39243891860633223,
-      "mean_lines_per_function": 14.610918877354864,
-      "num_classes": 1971,
-      "num_functions": 7803,
-      "pypi_version": "0.0.32",
-      "total_lines": 290514
+      "comment_lines": 15005,
+      "comment_lines_ratio": 0.05138364284515733,
+      "docs_lines": 21726,
+      "empty_lines": 34497,
+      "empty_lines_ratio": 0.118132724240546,
+      "files_analyzed": 733,
+      "function_lines": 115060,
+      "function_lines_ratio": 0.39401545789828746,
+      "mean_lines_per_function": 14.631230925737539,
+      "num_classes": 1973,
+      "num_functions": 7864,
+      "pypi_version": "0.0.33",
+      "total_lines": 292019
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -34,14 +34,14 @@
     },
     "workflow_status": {
       "last_run_status": "success",
-      "last_success_timestamp": "2026-10-13T23:24:11Z",
+      "last_success_timestamp": "2026-10-13T23:27:01Z",
       "recent_failure_count": 0,
-      "run_url": "https://github.com/i2mint/reci/actions/runs/38483905674",
+      "run_url": "https://github.com/i2mint/reci/actions/runs/38484273667",
       "total_runs_analyzed": 10
     }
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-10-13T23:25:32.230874Z",
+  "timestamp": "2026-10-20T02:54:52.715728Z",
   "workflow_status": {}
 }
