@@ -1,4 +1,4 @@
-"""Config validation rules (CONF001–CONF003)."""
+"""Config validation rules (CONF001–CONF007)."""
 
 from __future__ import annotations
 
@@ -87,3 +87,41 @@ def check_exportable_config(graph, config: dict[str, Any]) -> Iterable[Finding]:
     from reci.validation.rules.dag import _recipe_problems
 
     yield from _recipe_problems(graph, config, "CONF005")
+
+
+@register_rule("CONF006")
+def check_empty_value_shadows_default(graph, config: dict[str, Any]) -> Iterable[Finding]:
+    """An empty-string config value on an input that has an action default (it replaces it)."""
+    seen: set[str] = set()
+    for node in graph.nodes():
+        for norm_name, input_spec in node.input_specs.items():
+            if input_spec.default is None:
+                continue
+            keys = [norm_name]
+            if node.ref:
+                keys.insert(0, f"{action_local_name(node.ref)}__{norm_name}")
+            for key in keys:
+                if config.get(key) == "" and (key, node.key) not in seen:
+                    seen.add((key, node.key))
+                    yield Finding(
+                        rule_id="CONF006",
+                        severity=Severity.WARNING,
+                        message=(
+                            f"Config key '{key}' is an empty string, which overrides the "
+                            f"default ({input_spec.default!r}) of '{node.key}'; remove the key."
+                        ),
+                        location=node.key,
+                    )
+                    break
+
+
+@register_rule("CONF007")
+def check_leftover_placeholders(graph, config: dict[str, Any]) -> Iterable[Finding]:
+    """``<REQUIRED: ...>`` values that ``reci scaffold`` wrote and nobody filled in."""
+    for key, value in config.items():
+        if isinstance(value, str) and value.lstrip().startswith("<REQUIRED:"):
+            yield Finding(
+                rule_id="CONF007",
+                severity=Severity.ERROR,
+                message=f"Config key '{key}' still holds the scaffold placeholder {value!r}; set a real value.",
+            )

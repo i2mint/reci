@@ -12,8 +12,7 @@ from reci.action_spec import action_spec_from_ref, ActionSpec, ActionFetchError
 from reci.recipe import parse_recipe, RecipeParseError
 from reci.graph import RecipeGraph
 from reci.compiler import CompilationError, compile_recipe
-from reci.config import collect_required_config_keys
-from reci.recipe_checks import config_references
+from reci.config import scaffold_placeholder_keys
 from reci.yaml_gen import dump_workflow
 from reci.validation.formatters import (
     format_cli,
@@ -133,7 +132,6 @@ def scaffold(
     """Generate workflow YAML and config skeleton."""
     rec = parse_recipe(recipe)
     specs = _fetch_specs(rec)
-    required = collect_required_config_keys(rec, specs)
 
     adapter = get_adapter(config_adapter)
     path = config_path or adapter.default_path()
@@ -141,16 +139,10 @@ def scaffold(
     # Read existing config or start fresh
     existing = adapter.read(path) if Path(path).exists() else {}
     # Only required inputs get a placeholder: a "" for an optional one would
-    # override the action's own default.
-    # A ${{ config.X }} matches a key ignoring case (output ids do): not a new one.
-    existing_ids = {k.casefold() for k in existing if isinstance(k, str)}
-    referenced = {name for _, name, _ in config_references(rec)}
-    for key, is_required in required.items():
-        known = key in existing or (
-            key in referenced and key.casefold() in existing_ids
-        )
-        if is_required and not known:
-            existing[key] = f"<REQUIRED: {key}>"
+    # override the action's own default, and a key a step requires but another takes
+    # as optional is scoped so it cannot shadow that default.
+    for key in scaffold_placeholder_keys(rec, specs, existing):
+        existing[key] = f"<REQUIRED: {key}>"
 
     # Compile before writing anything: a refused recipe leaves no half-written config
     workflow = _compile_or_exit(rec, specs, existing)

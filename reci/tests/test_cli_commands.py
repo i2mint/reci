@@ -305,3 +305,44 @@ def test_scaffold_accepts_a_config_ref_that_differs_from_a_key_only_in_case(proj
         str(project / "ref.yml"), config_path=str(cfg), output=str(project / "ci.yml")
     )
     assert "<REQUIRED" not in cfg.read_text()
+
+
+_SHARED = (
+    "on: push\njobs:\n  t:\n    steps:\n"
+    "      - {id: o, uses: x/opt@v1}\n      - {id: p, uses: x/opt2@v1}\n"
+)
+
+
+def _shared_cfg(project, text=""):
+    SPECS["x/opt2@v1"] = mk_spec("x/opt2@v1", inputs={"n": {"default": "5"}})
+    (project / "shared.yml").write_text(_SHARED)
+    cfg = project / "shared.toml"
+    cfg.write_text(text)
+    cli.scaffold(str(project / "shared.yml"), config_path=str(cfg), output=str(project / "s.yml"))
+    return cfg
+
+
+def test_scaffold_scopes_a_key_shared_with_an_optional_input(project):
+    text = _shared_cfg(project).read_text()
+    assert "opt__n" in text and "<REQUIRED: opt__n>" in text
+    assert "\nn = " not in text and "<REQUIRED: n>" not in text
+
+
+def test_scaffold_scoped_key_already_present_satisfies_the_requirement(project):
+    cfg = _shared_cfg(project, '[tool.ci]\nopt__n = "3"\n')
+    assert "<REQUIRED" not in cfg.read_text()
+    cfg2 = project / "plain.toml"
+    cfg2.write_text('[tool.ci]\nopt__n = "3"\n')
+    (project / "plain.yml").write_text("on: push\njobs:\n  t:\n    steps: [{id: o, uses: x/opt@v1}]\n")
+    cli.scaffold(str(project / "plain.yml"), config_path=str(cfg2), output=str(project / "p.yml"))
+    assert "<REQUIRED: n>" not in cfg2.read_text()
+
+
+def test_validate_flags_placeholders_and_empty_values_shadowing_defaults(project, capsys):
+    (project / "v.yml").write_text("on: push\njobs:\n  t:\n    steps: [{id: o, uses: x/opt@v1}]\n")
+    cfg = project / "v.toml"
+    cfg.write_text('[tool.ci]\nn = "<REQUIRED: n>"\nflavor = ""\n')
+    with pytest.raises(SystemExit):
+        cli.validate(recipe=str(project / "v.yml"), config_path=str(cfg))
+    out = capsys.readouterr().out
+    assert "CONF007" in out and "CONF006" in out
