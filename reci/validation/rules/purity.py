@@ -1,4 +1,4 @@
-"""Purity validation rules (PURE001–PURE003)."""
+"""Purity validation rules (PURE001–PURE002)."""
 
 from __future__ import annotations
 

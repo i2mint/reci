@@ -1,4 +1,4 @@
-"""Config validation rules (CONF001–CONF007)."""
+"""Config validation rules (CONF001, CONF003–CONF008)."""
 
 from __future__ import annotations
 
