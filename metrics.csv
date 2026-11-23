@@ -1,8 +1,10 @@
 metric,value
 schema_version,1.0
-timestamp,2026-11-23T21:33:57.959752Z
-commit_sha,75761998f98d750cf2e721b9be6663419e61392d
-commit_message,Merge a72805f4abd7fb7e21af3cee599a83ba80e4e2d6 into ad7f7d2604d52749423b655ab3ad254b2aa0c047
+timestamp,2026-11-23T21:41:34.279290Z
+commit_sha,3ad00dbb6e160ccd61dc9c927927b5e7dcf00179
+commit_message,"docs: the rule inventory names only registered rules, and a test keeps it so (#12) (#72)
+
+Planned rules (FLOW003, CONF002, PURE003, ACT001, ACT003) are listed as planned in the README instead of advertised in docstrings."
 python_version,3.10
 metrics.umpyre_stats.num_functions,7964
 metrics.umpyre_stats.num_classes,1978
@@ -18,9 +20,9 @@ metrics.umpyre_stats.mean_lines_per_function,14.717227523857359
 metrics.umpyre_stats.files_analyzed,734
 metrics.umpyre_stats.pypi_version,0.0.37
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-20T10:03:04Z
-metrics.workflow_status.recent_failure_count,2
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/39404966954
+metrics.workflow_status.last_success_timestamp,2026-11-23T21:34:06Z
+metrics.workflow_status.recent_failure_count,0
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/45270779052
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -36,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.327051401138306
+collection_duration_seconds,3.6787400245666504
