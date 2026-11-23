@@ -1,28 +1,28 @@
 metric,value
 schema_version,1.0
-timestamp,2026-10-20T10:00:39.707778Z
-commit_sha,2fff744b23f50a4835b0edf4ecb3287731ad9f48
-commit_message,"YAML adapter: do not nest new keys into anchored tables (#60) (#71)
+timestamp,2026-11-23T21:33:49.144236Z
+commit_sha,a72805f4abd7fb7e21af3cee599a83ba80e4e2d6
+commit_message,"docs: the rule inventory names only registered rules, and a test keeps it so (#12)
 
-Co-authored-by: Claude Sonnet 5.5 <noreply@anthropic.com>"
+Planned rules (FLOW003, CONF002, PURE003, ACT001, ACT003) are listed as planned in the README instead of advertised in docstrings."
 python_version,3.10
-metrics.umpyre_stats.num_functions,7974
-metrics.umpyre_stats.num_classes,1984
-metrics.umpyre_stats.total_lines,294487
-metrics.umpyre_stats.empty_lines,34865
-metrics.umpyre_stats.comment_lines,15158
-metrics.umpyre_stats.docs_lines,21804
-metrics.umpyre_stats.function_lines,116876
-metrics.umpyre_stats.empty_lines_ratio,0.11839232292087597
-metrics.umpyre_stats.comment_lines_ratio,0.05147256075819985
-metrics.umpyre_stats.function_lines_ratio,0.39687999809838803
-metrics.umpyre_stats.mean_lines_per_function,14.657135690995736
-metrics.umpyre_stats.files_analyzed,743
-metrics.umpyre_stats.pypi_version,0.0.36
+metrics.umpyre_stats.num_functions,7964
+metrics.umpyre_stats.num_classes,1978
+metrics.umpyre_stats.total_lines,294996
+metrics.umpyre_stats.empty_lines,34872
+metrics.umpyre_stats.comment_lines,15395
+metrics.umpyre_stats.docs_lines,22159
+metrics.umpyre_stats.function_lines,117208
+metrics.umpyre_stats.empty_lines_ratio,0.1182117723630151
+metrics.umpyre_stats.comment_lines_ratio,0.052187148300315934
+metrics.umpyre_stats.function_lines_ratio,0.3973206416358188
+metrics.umpyre_stats.mean_lines_per_function,14.717227523857359
+metrics.umpyre_stats.files_analyzed,734
+metrics.umpyre_stats.pypi_version,0.0.37
 metrics.workflow_status.last_run_status,success
-metrics.workflow_status.last_success_timestamp,2026-10-20T09:59:10Z
+metrics.workflow_status.last_success_timestamp,2026-10-20T10:03:04Z
 metrics.workflow_status.recent_failure_count,2
-metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/39404515566
+metrics.workflow_status.run_url,https://github.com/i2mint/reci/actions/runs/39404966954
 metrics.workflow_status.total_runs_analyzed,10
 metrics.wily.cyclomatic_avg,0.0
 metrics.wily.maintainability_index,0.0
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,4.525563955307007
+collection_duration_seconds,3.9119081497192383
