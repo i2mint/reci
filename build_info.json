@@ -1,41 +1,41 @@
 {
   "schema_version": 1,
-  "built_at": "2026-10-20T10:01:31Z",
+  "built_at": "2026-11-23T21:42:22Z",
   "package": {
     "name": "reci",
-    "version": "0.0.37",
+    "version": "0.0.38",
     "display_name": "reci",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "ad7f7d2604d52749423b655ab3ad254b2aa0c047",
-    "short_commit": "ad7f7d2",
+    "commit": "02574758c6525d575fd853764cc50edddc104731",
+    "short_commit": "0257475",
     "branch": "main",
     "tags": [
-      "0.0.37"
+      "0.0.38"
     ],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/reci",
-    "commit_url": "https://github.com/i2mint/reci/commit/ad7f7d2604d52749423b655ab3ad254b2aa0c047",
+    "commit_url": "https://github.com/i2mint/reci/commit/02574758c6525d575fd853764cc50edddc104731",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/reci",
-    "sha": "2fff744b23f50a4835b0edf4ecb3287731ad9f48",
+    "sha": "3ad00dbb6e160ccd61dc9c927927b5e7dcf00179",
     "sha_in_history": true,
     "ref": "refs/heads/main",
     "ref_name": "main",
-    "run_id": "39404695770",
-    "run_url": "https://github.com/i2mint/reci/actions/runs/39404695770",
+    "run_id": "45272085392",
+    "run_url": "https://github.com/i2mint/reci/actions/runs/45272085392",
     "server_url": "https://github.com"
   },
   "tools": {
-    "epythet": "0.2.18",
+    "epythet": "0.2.25",
     "sphinx": "9.1.1",
     "docutils": "0.22.4",
-    "python": "3.12.15"
+    "python": "3.12.16"
   },
   "config": {
     "theme": "auto",
@@ -62,11 +62,11 @@
   },
   "pypi": {
     "checked": true,
-    "latest": "0.0.37",
+    "latest": "0.0.38",
     "relation": "same",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout ad7f7d2604d52749423b655ab3ad254b2aa0c047\npip install \"epythet==0.2.18\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/reci && cd reci\ngit checkout 02574758c6525d575fd853764cc50edddc104731\npip install \"epythet==0.2.25\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
     "aligned": true,

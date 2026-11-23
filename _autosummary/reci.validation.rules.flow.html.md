@@ -1,6 +1,6 @@
 # reci.validation.rules.flow
 
-Data-flow validation rules (FLOW001–FLOW007).
+Data-flow validation rules (FLOW001, FLOW002, FLOW004–FLOW007).
 
 ### Functions
 

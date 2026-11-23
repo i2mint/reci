@@ -1,4 +1,4 @@
-> built 2026-10-20 10:01 UTC from ad7f7d2 (main) · reci 0.0.37. Details: build_info.json
+> built 2026-11-23 21:42 UTC from 0257475 (main) · reci 0.0.38. Details: build_info.json
 
 # index.html.md
 
@@ -155,21 +155,28 @@ ESLint-style severity (`error`/`warning`/`info`) with ruff-style rule prefixes:
 |---------|------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | DAG001  | Structure  | Cycle detected                                                                                                                                                           |
 | DAG002  | Structure  | Duplicate output name in a job                                                                                                                                           |
+| DAG004  | Structure  | A step neither consumes nor produces any wired data (isolated node)                                                                                                      |
 | DAG005  | Structure  | Data flow between jobs makes their `needs` form a cycle                                                                                                                  |
 | DAG006  | Structure  | `needs:` names a job that does not exist (`setup` exists only with config)                                                                                               |
 | DAG007  | Structure  | A recipe job is named `setup` while config is supplied                                                                                                                   |
 | FLOW001 | Data flow  | Required input has no source                                                                                                                                             |
 | FLOW002 | Data flow  | Ambiguous wiring (multiple upstream matches, in a job or across jobs)                                                                                                    |
+| FLOW004 | Data flow  | Declared output never consumed downstream (info)                                                                                                                         |
+| FLOW005 | Data flow  | A string output wired to a likely-boolean input                                                                                                                          |
 | FLOW006 | Data flow  | Job output consumed downstream comes from a matrix job (non-deterministic) or a job with `if:` (skipped consumer)                                                        |
 | FLOW007 | Data flow  | `steps.<id>.outputs.<n>` or `needs.<job>.outputs.<n>` reference that resolves to nothing (unknown or not-yet-run step, undeclared output, job not needed)                |
 | CONF001 | Config     | Required config key missing                                                                                                                                              |
+| CONF003 | Config     | Config key present but not referenced by any action (info)                                                                                                               |
 | CONF004 | Config     | `${{ config.X }}` names a key that is not in the config, or sits where GitHub has no `needs` context (workflow `env`, job `permissions`)                                 |
 | CONF005 | Config     | A config key is not a valid output id, or a value holds characters (CR, NUL, C0/C1 controls, U+2028/9) the setup job cannot export unchanged                             |
 | CONF006 | Config     | An empty-string config value overrides the default of an action input                                                                                                    |
 | CONF007 | Config     | A `<REQUIRED: ...>` placeholder written by `reci scaffold` was left unfilled                                                                                             |
 | CONF008 | Config     | An `if:` that is just a boolean config value (`if: config.flag`): config values reach the workflow as strings, so it is true for `'false'` too; compare with `== 'true'` |
 | PURE001 | Purity     | `run:` step breaks typed contract                                                                                                                                        |
+| PURE002 | Purity     | A `run:` step writes to `$GITHUB_OUTPUT` (info)                                                                                                                          |
 | ACT002  | Action     | Referenced action not found                                                                                                                                              |
+
+Planned, not implemented yet (each lands with accept and reject tests when a real workflow needs it): FLOW003 (input resolved from an action.yml default), CONF002 (optional config key missing), PURE003 (`if:` on a step, with pattern alternatives), ACT001 (`required: true` in action.yml not enforced at runtime), ACT003 (action output not declared in action.yml). The design notes behind them are in `misc/docs/ci_tool_research_report.md`.
 
 ## Config adapters
 
@@ -1132,7 +1139,7 @@ Collection of validation findings.
 
 # reci.validation.rules.action
 
-Action metadata validation rules (ACT001–ACT003).
+Action metadata validation rules (ACT002).
 
 ### Functions
 
@@ -1151,7 +1158,7 @@ Referenced action has no ActionSpec (could not be fetched or parsed).
 
 # reci.validation.rules.config_rules
 
-Config validation rules (CONF001–CONF007).
+Config validation rules (CONF001, CONF003–CONF008).
 
 ### Functions
 
@@ -1218,7 +1225,7 @@ Config keys present but not referenced by any action.
 
 # reci.validation.rules.dag
 
-DAG structure validation rules (DAG001–DAG004).
+DAG structure validation rules (DAG001, DAG002, DAG004–DAG007).
 
 ### Functions
 
@@ -1282,7 +1289,7 @@ A recipe job uses the id of the generated `setup` job.
 
 # reci.validation.rules.flow
 
-Data-flow validation rules (FLOW001–FLOW007).
+Data-flow validation rules (FLOW001, FLOW002, FLOW004–FLOW007).
 
 ### Functions
 
@@ -1385,19 +1392,19 @@ Run all registered rules and return a merged report.
 
 ### Modules
 
-| [`action`](_autosummary/reci.validation.rules.action.html.md#module-reci.validation.rules.action)             | Action metadata validation rules (ACT001–ACT003).   |
-|---------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
-| [`config_rules`](_autosummary/reci.validation.rules.config_rules.html.md#module-reci.validation.rules.config_rules) | Config validation rules (CONF001–CONF007).          |
-| [`dag`](_autosummary/reci.validation.rules.dag.html.md#module-reci.validation.rules.dag)                   | DAG structure validation rules (DAG001–DAG004).     |
-| [`flow`](_autosummary/reci.validation.rules.flow.html.md#module-reci.validation.rules.flow)                 | Data-flow validation rules (FLOW001–FLOW007).       |
-| [`purity`](_autosummary/reci.validation.rules.purity.html.md#module-reci.validation.rules.purity)             | Purity validation rules (PURE001–PURE003).          |
+| [`action`](_autosummary/reci.validation.rules.action.html.md#module-reci.validation.rules.action)             | Action metadata validation rules (ACT002).                      |
+|---------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------|
+| [`config_rules`](_autosummary/reci.validation.rules.config_rules.html.md#module-reci.validation.rules.config_rules) | Config validation rules (CONF001, CONF003–CONF008).             |
+| [`dag`](_autosummary/reci.validation.rules.dag.html.md#module-reci.validation.rules.dag)                   | DAG structure validation rules (DAG001, DAG002, DAG004–DAG007). |
+| [`flow`](_autosummary/reci.validation.rules.flow.html.md#module-reci.validation.rules.flow)                 | Data-flow validation rules (FLOW001, FLOW002, FLOW004–FLOW007). |
+| [`purity`](_autosummary/reci.validation.rules.purity.html.md#module-reci.validation.rules.purity)             | Purity validation rules (PURE001–PURE002).                      |
 
 
 # _autosummary/reci.validation.rules.purity.html.md
 
 # reci.validation.rules.purity
 
-Purity validation rules (PURE001–PURE003).
+Purity validation rules (PURE001–PURE002).
 
 ### Functions
 
@@ -1490,7 +1497,7 @@ a different number (negative hex, underscored floats), `str()` is used.
 
 # About this build
 
-This documentation was built on **2026-10-20 10:01 UTC** from commit <a href="https://github.com/i2mint/reci/commit/ad7f7d2604d52749423b655ab3ad254b2aa0c047"><code>ad7f7d2</code></a> on branch <code>main</code>, for **reci 0.0.37** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-11-23 21:42 UTC** from commit <a href="https://github.com/i2mint/reci/commit/02574758c6525d575fd853764cc50edddc104731"><code>0257475</code></a> on branch <code>main</code>, for **reci 0.0.38** (from <code>pyproject.toml</code>).
 
 #### NOTE
 Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
@@ -1499,9 +1506,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 |                     |                                                                                                                                                    |
 |---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/reci/commit/ad7f7d2604d52749423b655ab3ad254b2aa0c047"><code>ad7f7d2604d52749423b655ab3ad254b2aa0c047</code></a> |
+| Commit              | <a href="https://github.com/i2mint/reci/commit/02574758c6525d575fd853764cc50edddc104731"><code>02574758c6525d575fd853764cc50edddc104731</code></a> |
 | Branch              | <code>main</code>                                                                                                                                  |
-| Tags at this commit | <code>0.0.37</code>                                                                                                                                |
+| Tags at this commit | <code>0.0.38</code>                                                                                                                                |
 | Working tree        | clean                                                                                                                                              |
 | Remote              | <code>https://github.com/i2mint/reci</code>                                                                                                        |
 
@@ -1510,18 +1517,18 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/reci</code>                                                                   |
-| Run          | <a href="https://github.com/i2mint/reci/actions/runs/39404695770">39404695770</a>          |
+| Run          | <a href="https://github.com/i2mint/reci/actions/runs/45272085392">45272085392</a>          |
 | Ref          | <code>refs/heads/main</code>                                                               |
-| Event commit | <code>2fff744b23f50a4835b0edf4ecb3287731ad9f48</code> (in the history of the built commit) |
+| Event commit | <code>3ad00dbb6e160ccd61dc9c927927b5e7dcf00179</code> (in the history of the built commit) |
 
 ## Tools
 
 |          |         |
 |----------|---------|
-| epythet  | 0.2.18  |
+| epythet  | 0.2.25  |
 | Sphinx   | 9.1.1   |
 | docutils | 0.22.4  |
-| Python   | 3.12.15 |
+| Python   | 3.12.16 |
 
 ## Configuration as resolved
 
@@ -1537,14 +1544,14 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/reci/0.0.37/">0.0.37</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/reci/0.0.38/">0.0.38</a>, the same as the documented version.
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/reci && cd reci
-git checkout ad7f7d2604d52749423b655ab3ad254b2aa0c047
-pip install "epythet==0.2.18"
+git checkout 02574758c6525d575fd853764cc50edddc104731
+pip install "epythet==0.2.25"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
 

@@ -1,6 +1,6 @@
 # reci.validation.rules.purity
 
-Purity validation rules (PURE001–PURE003).
+Purity validation rules (PURE001–PURE002).
 
 ### Functions
 

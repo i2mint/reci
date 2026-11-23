@@ -1,6 +1,6 @@
 # reci.validation.rules.config_rules
 
-Config validation rules (CONF001–CONF007).
+Config validation rules (CONF001, CONF003–CONF008).
 
 ### Functions
 

@@ -1,6 +1,6 @@
 # reci.validation.rules.dag
 
-DAG structure validation rules (DAG001–DAG004).
+DAG structure validation rules (DAG001, DAG002, DAG004–DAG007).
 
 ### Functions
 

@@ -29,7 +29,7 @@
 <meta content="reci" property="og:title"/>
 <meta content="reci" name="twitter:title"/>
 <link href="_static/pygments.css?v=d75fae25" rel="stylesheet" type="text/css"/>
-<link href="_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
+<link href="_static/theme.css?v=009055c6" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinx_autodoc_typehints.css?v=057ac668" rel="stylesheet" type="text/css"/>
 <link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
 <link href="_static/epythet.css?v=51e70d63" rel="stylesheet" type="text/css"/>
@@ -147,16 +147,16 @@ say what you want:</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="#reci/data/skills/ci-setup/"><span class="xref myst">ci-setup</span></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/i2mint/reci/tree/HEAD/reci/data/skills/ci-setup" rel="nofollow noopener"><span class="xref myst">ci-setup</span><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p></td>
 <td><p>Examines your project, proposes a CI plan, writes a recipe, compiles to a workflow</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#reci/data/skills/ci-migrate/"><span class="xref myst">ci-migrate</span></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/i2mint/reci/tree/HEAD/reci/data/skills/ci-migrate" rel="nofollow noopener"><span class="xref myst">ci-migrate</span><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p></td>
 <td><p>Converts an existing GitHub Actions workflow into a reci recipe</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#reci/data/skills/ci-advisor/"><span class="xref myst">ci-advisor</span></a></p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/i2mint/reci/tree/HEAD/reci/data/skills/ci-advisor" rel="nofollow noopener"><span class="xref myst">ci-advisor</span><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p></td>
 <td><p>Interactive discussion about what CI pipeline makes sense for your project</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#reci/data/skills/reci-dev/"><span class="xref myst">reci-dev</span></a></p></td>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/i2mint/reci/tree/HEAD/reci/data/skills/reci-dev" rel="nofollow noopener"><span class="xref myst">reci-dev</span><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></p></td>
 <td><p>Guide for contributors — architecture, adding rules, adding adapters</p></td>
 </tr>
 </tbody>
@@ -282,37 +282,53 @@ and other tools, see the standard’s
 <td><p>Structure</p></td>
 <td><p>Duplicate output name in a job</p></td>
 </tr>
-<tr class="row-even"><td><p>DAG005</p></td>
+<tr class="row-even"><td><p>DAG004</p></td>
+<td><p>Structure</p></td>
+<td><p>A step neither consumes nor produces any wired data (isolated node)</p></td>
+</tr>
+<tr class="row-odd"><td><p>DAG005</p></td>
 <td><p>Structure</p></td>
 <td><p>Data flow between jobs makes their <code class="docutils literal notranslate"><span class="pre">needs</span></code> form a cycle</p></td>
 </tr>
-<tr class="row-odd"><td><p>DAG006</p></td>
+<tr class="row-even"><td><p>DAG006</p></td>
 <td><p>Structure</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">needs:</span></code> names a job that does not exist (<code class="docutils literal notranslate"><span class="pre">setup</span></code> exists only with config)</p></td>
 </tr>
-<tr class="row-even"><td><p>DAG007</p></td>
+<tr class="row-odd"><td><p>DAG007</p></td>
 <td><p>Structure</p></td>
 <td><p>A recipe job is named <code class="docutils literal notranslate"><span class="pre">setup</span></code> while config is supplied</p></td>
 </tr>
-<tr class="row-odd"><td><p>FLOW001</p></td>
+<tr class="row-even"><td><p>FLOW001</p></td>
 <td><p>Data flow</p></td>
 <td><p>Required input has no source</p></td>
 </tr>
-<tr class="row-even"><td><p>FLOW002</p></td>
+<tr class="row-odd"><td><p>FLOW002</p></td>
 <td><p>Data flow</p></td>
 <td><p>Ambiguous wiring (multiple upstream matches, in a job or across jobs)</p></td>
 </tr>
-<tr class="row-odd"><td><p>FLOW006</p></td>
+<tr class="row-even"><td><p>FLOW004</p></td>
+<td><p>Data flow</p></td>
+<td><p>Declared output never consumed downstream (info)</p></td>
+</tr>
+<tr class="row-odd"><td><p>FLOW005</p></td>
+<td><p>Data flow</p></td>
+<td><p>A string output wired to a likely-boolean input</p></td>
+</tr>
+<tr class="row-even"><td><p>FLOW006</p></td>
 <td><p>Data flow</p></td>
 <td><p>Job output consumed downstream comes from a matrix job (non-deterministic) or a job with <code class="docutils literal notranslate"><span class="pre">if:</span></code> (skipped consumer)</p></td>
 </tr>
-<tr class="row-even"><td><p>FLOW007</p></td>
+<tr class="row-odd"><td><p>FLOW007</p></td>
 <td><p>Data flow</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">steps.&lt;id&gt;.outputs.&lt;n&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">needs.&lt;job&gt;.outputs.&lt;n&gt;</span></code> reference that resolves to nothing (unknown or not-yet-run step, undeclared output, job not needed)</p></td>
 </tr>
-<tr class="row-odd"><td><p>CONF001</p></td>
+<tr class="row-even"><td><p>CONF001</p></td>
 <td><p>Config</p></td>
 <td><p>Required config key missing</p></td>
+</tr>
+<tr class="row-odd"><td><p>CONF003</p></td>
+<td><p>Config</p></td>
+<td><p>Config key present but not referenced by any action (info)</p></td>
 </tr>
 <tr class="row-even"><td><p>CONF004</p></td>
 <td><p>Config</p></td>
@@ -338,12 +354,17 @@ and other tools, see the standard’s
 <td><p>Purity</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">run:</span></code> step breaks typed contract</p></td>
 </tr>
-<tr class="row-even"><td><p>ACT002</p></td>
+<tr class="row-even"><td><p>PURE002</p></td>
+<td><p>Purity</p></td>
+<td><p>A <code class="docutils literal notranslate"><span class="pre">run:</span></code> step writes to <code class="docutils literal notranslate"><span class="pre">$GITHUB_OUTPUT</span></code> (info)</p></td>
+</tr>
+<tr class="row-odd"><td><p>ACT002</p></td>
 <td><p>Action</p></td>
 <td><p>Referenced action not found</p></td>
 </tr>
 </tbody>
 </table>
+<p>Planned, not implemented yet (each lands with accept and reject tests when a real workflow needs it): FLOW003 (input resolved from an action.yml default), CONF002 (optional config key missing), PURE003 (<code class="docutils literal notranslate"><span class="pre">if:</span></code> on a step, with pattern alternatives), ACT001 (<code class="docutils literal notranslate"><span class="pre">required:</span> <span class="pre">true</span></code> in action.yml not enforced at runtime), ACT003 (action output not declared in action.yml). The design notes behind them are in <code class="docutils literal notranslate"><span class="pre">misc/docs/ci_tool_research_report.md</span></code>.</p>
 </section>
 <section id="config-adapters">
 <h2>Config adapters<a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#config-adapters" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#config-adapters'">¶</a></h2>
@@ -410,7 +431,7 @@ and other tools, see the standard’s
 
 </section>
 </section>
-<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-10-20 10:01 UTC from <a href="https://github.com/i2mint/reci/commit/ad7f7d2604d52749423b655ab3ad254b2aa0c047">ad7f7d2</a> (main) · reci 0.0.37 · <a href="about-this-build.html">about this build</a></p>
+<p class="epythet-provenance" style="font-size:.8em;opacity:.65;margin-top:2.5em;text-align:right">built 2026-11-23 21:42 UTC from <a href="https://github.com/i2mint/reci/commit/02574758c6525d575fd853764cc50edddc104731">0257475</a> (main) · reci 0.0.38 · <a href="about-this-build.html">about this build</a></p>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
@@ -439,11 +460,11 @@ and other tools, see the standard’s
 </div>
 </footer>
 </div>
-<script src="_static/documentation_options.js?v=aa2ad26f"></script>
+<script src="_static/documentation_options.js?v=423071ad"></script>
 <script src="_static/doctools.js?v=fd6eb6e6"></script>
 <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>
 <script src="_static/copybutton.js?v=fd10adb8"></script>
-<script defer="defer" src="_static/theme.js?v=5db23cf8"></script>
+<script defer="defer" src="_static/theme.js?v=49cc6205"></script>
 </body>
 </html>
