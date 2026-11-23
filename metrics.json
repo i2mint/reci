@@ -1,5 +1,5 @@
 {
-  "collection_duration_seconds": 3.6787400245666504,
+  "collection_duration_seconds": 4.347546100616455,
   "commit_message": "docs: the rule inventory names only registered rules, and a test keeps it so (#12) (#72)\n\nPlanned rules (FLOW003, CONF002, PURE003, ACT001, ACT003) are listed as planned in the README instead of advertised in docstrings.",
   "commit_sha": "3ad00dbb6e160ccd61dc9c927927b5e7dcf00179",
   "metrics": {
@@ -11,19 +11,19 @@
       "statements_total": 0
     },
     "umpyre_stats": {
-      "comment_lines": 15395,
-      "comment_lines_ratio": 0.052187148300315934,
-      "docs_lines": 22159,
-      "empty_lines": 34872,
-      "empty_lines_ratio": 0.1182117723630151,
-      "files_analyzed": 734,
-      "function_lines": 117208,
-      "function_lines_ratio": 0.3973206416358188,
-      "mean_lines_per_function": 14.717227523857359,
-      "num_classes": 1978,
-      "num_functions": 7964,
+      "comment_lines": 15438,
+      "comment_lines_ratio": 0.05200571328473448,
+      "docs_lines": 22171,
+      "empty_lines": 35168,
+      "empty_lines_ratio": 0.11846980987158584,
+      "files_analyzed": 744,
+      "function_lines": 118523,
+      "function_lines_ratio": 0.39926630105237626,
+      "mean_lines_per_function": 14.719696969696969,
+      "num_classes": 1990,
+      "num_functions": 8052,
       "pypi_version": "0.0.37",
-      "total_lines": 294996
+      "total_lines": 296852
     },
     "wily": {
       "cyclomatic_avg": 0.0,
@@ -42,6 +42,6 @@
   },
   "python_version": "3.10",
   "schema_version": "1.0",
-  "timestamp": "2026-11-23T21:41:34.279290Z",
+  "timestamp": "2026-11-23T21:41:41.528004Z",
   "workflow_status": {}
 }
