@@ -1,23 +1,23 @@
 metric,value
 schema_version,1.0
-timestamp,2026-11-23T21:33:49.144236Z
+timestamp,2026-11-23T21:33:56.042086Z
 commit_sha,a72805f4abd7fb7e21af3cee599a83ba80e4e2d6
 commit_message,"docs: the rule inventory names only registered rules, and a test keeps it so (#12)
 
 Planned rules (FLOW003, CONF002, PURE003, ACT001, ACT003) are listed as planned in the README instead of advertised in docstrings."
 python_version,3.10
-metrics.umpyre_stats.num_functions,7964
-metrics.umpyre_stats.num_classes,1978
-metrics.umpyre_stats.total_lines,294996
-metrics.umpyre_stats.empty_lines,34872
-metrics.umpyre_stats.comment_lines,15395
-metrics.umpyre_stats.docs_lines,22159
-metrics.umpyre_stats.function_lines,117208
-metrics.umpyre_stats.empty_lines_ratio,0.1182117723630151
-metrics.umpyre_stats.comment_lines_ratio,0.052187148300315934
-metrics.umpyre_stats.function_lines_ratio,0.3973206416358188
-metrics.umpyre_stats.mean_lines_per_function,14.717227523857359
-metrics.umpyre_stats.files_analyzed,734
+metrics.umpyre_stats.num_functions,8052
+metrics.umpyre_stats.num_classes,1990
+metrics.umpyre_stats.total_lines,296852
+metrics.umpyre_stats.empty_lines,35168
+metrics.umpyre_stats.comment_lines,15438
+metrics.umpyre_stats.docs_lines,22171
+metrics.umpyre_stats.function_lines,118523
+metrics.umpyre_stats.empty_lines_ratio,0.11846980987158584
+metrics.umpyre_stats.comment_lines_ratio,0.05200571328473448
+metrics.umpyre_stats.function_lines_ratio,0.39926630105237626
+metrics.umpyre_stats.mean_lines_per_function,14.719696969696969
+metrics.umpyre_stats.files_analyzed,744
 metrics.umpyre_stats.pypi_version,0.0.37
 metrics.workflow_status.last_run_status,success
 metrics.workflow_status.last_success_timestamp,2026-10-20T10:03:04Z
@@ -38,4 +38,4 @@ metrics.coverage.branch_coverage,0.0
 metrics.coverage.statements_covered,0
 metrics.coverage.statements_total,0
 metrics.coverage.error,No coverage file found
-collection_duration_seconds,3.9119081497192383
+collection_duration_seconds,4.739200830459595
