@@ -29,7 +29,7 @@ reci/
 - **Recipe**: Simplified workflow YAML with `${{ config.* }}`, `bind:`, and `outputs:` extensions
 - **Five-level input resolution**: explicit `with:` > upstream output match > config > action default > error
 - **Config adapters**: Read CI config from `[tool.ci]` in pyproject.toml, `[tool.wads.ci]`, package.json, or `.ci.yml`
-- **Validation rules**: DAG001-DAG007, FLOW001-FLOW007, CONF001/CONF003/CONF004/CONF005/CONF006/CONF007, PURE001-PURE002, ACT002
+- **Validation rules**: DAG001/DAG002/DAG004/DAG005/DAG006/DAG007, FLOW001/FLOW002/FLOW004/FLOW005/FLOW006/FLOW007, CONF001/CONF003/CONF004/CONF005/CONF006/CONF007/CONF008, PURE001/PURE002, ACT002 (the README's table is the list; `reci/tests/test_rule_inventory.py` keeps both in step with the registry)
 
 ## CLI
 

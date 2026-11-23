@@ -1,4 +1,4 @@
-"""Action metadata validation rules (ACT001–ACT003)."""
+"""Action metadata validation rules (ACT002)."""
 
 from __future__ import annotations
 

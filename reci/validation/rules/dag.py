@@ -1,4 +1,4 @@
-"""DAG structure validation rules (DAG001–DAG004)."""
+"""DAG structure validation rules (DAG001, DAG002, DAG004–DAG007)."""
 
 from __future__ import annotations
 
